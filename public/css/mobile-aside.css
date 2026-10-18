@@ -1,0 +1,73 @@
+/* السايدبار كقائمة منزلقة على الجوال (زر الفتح منسق في app-theme.css) */
+.mobile-aside-overlay {
+    display: none;
+}
+
+@media (max-width: 991.98px) {
+    body.mobile-aside-open {
+        overflow: hidden;
+    }
+
+    #kt_aside {
+        display: flex !important;
+        bottom: 0;
+        height: 100vh !important;
+        left: auto !important;
+        max-width: 86vw;
+        position: fixed !important;
+        right: 0 !important;
+        top: 0;
+        transform: translateX(100%);
+        transition: transform 0.28s ease;
+        width: 260px !important;
+        z-index: 1002;
+    }
+
+    body.mobile-aside-open #kt_aside {
+        transform: translateX(0);
+        box-shadow: -12px 0 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* زر التصغير لا معنى له على الجوال */
+    #kt_aside #kt_aside_toggle {
+        display: none;
+    }
+
+    /* إظهار الشعار أعلى القائمة المنزلقة */
+    #kt_aside .brand {
+        display: flex !important;
+        justify-content: center;
+    }
+
+    .mobile-aside-overlay {
+        background: rgba(21, 21, 33, 0.5);
+        backdrop-filter: blur(2px);
+        bottom: 0;
+        display: block;
+        left: 0;
+        opacity: 0;
+        pointer-events: none;
+        position: fixed;
+        right: 0;
+        top: 0;
+        transition: opacity 0.24s ease;
+        z-index: 1001;
+    }
+
+    body.mobile-aside-open .mobile-aside-overlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    #kt_wrapper,
+    #kt_content {
+        margin-right: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* السايدبار على الجوال: القوائم الفرعية تفتح بالنقر وتظهر كاملة */
+    #kt_aside .aside-menu-wrapper {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
