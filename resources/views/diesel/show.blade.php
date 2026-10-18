@@ -126,6 +126,13 @@
                             </div>
 
                         </div>
+
+                        <div class="form-group row">
+                            <label for="notes" class="col-lg-2 col-form-label text-lg-right">ملاحظات:</label>
+                            <div class="col-lg-8">
+                                <textarea id="notes" rows="3" class="form-control" disabled>{{ $diesel->notes ?? '—' }}</textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!--end::Card-->

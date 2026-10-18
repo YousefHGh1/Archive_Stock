@@ -49,6 +49,7 @@ class DieselController extends Controller
             'quantity'     => 'required|numeric',
             'price'        => 'nullable|numeric|min:0',
             'date'         => 'required|date',
+            'notes'        => 'nullable|string|max:5000',
         ]);
 
         Diesel::create($validatedData);
@@ -99,7 +100,9 @@ class DieselController extends Controller
             'invoice_num'  => 'required|numeric',
             'quantity'     => 'required|numeric',
             'price'        => 'nullable|numeric|min:0',
-            'date'         => 'required|date']);
+            'date'         => 'required|date',
+            'notes'        => 'nullable|string|max:5000',
+        ]);
 
         $diesel->update($validatedData);
 
@@ -157,7 +160,7 @@ class DieselController extends Controller
         // تصدير جميع النتائج المفلترة إلى ملف Excel (CSV)
         if ($request->input('export') === 'excel') {
             return $this->exportReportCsv('diesel-report-' . date('Y-m-d') . '.csv', [
-                'نوع المحروقات', 'اسم المورد', 'كمية التوريد', 'جهة التوريد', 'سند التوريد', 'رقم الفاتورة', 'تاريخ التوريد',
+                'نوع المحروقات', 'اسم المورد', 'كمية التوريد', 'جهة التوريد', 'سند التوريد', 'رقم الفاتورة', 'تاريخ التوريد', 'ملاحظات',
             ], $query->get()->map(function ($entry) {
                 return [
                     $entry->typesfuel->name ?? '-',
@@ -167,6 +170,7 @@ class DieselController extends Controller
                     $entry->voucher,
                     $entry->invoice_num,
                     $entry->date,
+                    $entry->notes,
                 ];
             }));
         }

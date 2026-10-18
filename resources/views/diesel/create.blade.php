@@ -196,6 +196,20 @@
                                 </div>
 
                             </div>
+
+                            <div class="form-group row">
+                                <label for="notes" class="col-lg-2 col-form-label text-lg-right">
+                                    <h6>ملاحظات:</h6>
+                                </label>
+                                <div class="col-lg-8">
+                                    <textarea name="notes" id="notes" rows="3"
+                                        class="@error('notes') is-invalid @enderror form-control" maxlength="5000"
+                                        placeholder="أدخل الملاحظات">{{ old('notes') }}</textarea>
+                                    @error('notes')
+                                        <span class="text-sm text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
                         <div class="card-footer">
                             <div class="row">

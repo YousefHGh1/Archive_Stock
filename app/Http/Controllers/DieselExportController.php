@@ -54,6 +54,7 @@ class DieselExportController extends Controller
             'num_note'       => 'required|numeric',
             'quantity'       => 'required|numeric',
             'date'           => 'required|date',
+            'notes'          => 'nullable|string|max:5000',
         ]);
 
         $totalDieselQuantity       = Diesel::sum("quantity");
@@ -100,11 +101,16 @@ class DieselExportController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $validatedData = $request->validate([
+            'notes' => 'nullable|string|max:5000',
+        ]);
+
         $dieselexport              = DieselExport::find($id);
         $dieselexport->num_section = $request->num_section;
         $dieselexport->num_note    = $request->num_note;
         $dieselexport->section_id  = $request->section_id;
         $dieselexport->voucher     = $request->voucher;
+        $dieselexport->notes       = $validatedData['notes'] ?? null;
 
         // لادخال كمية الصادر بناء على كمية الوارد
         if ((Diesel::sum("quantity") > $request->quantity)) {
@@ -178,7 +184,7 @@ class DieselExportController extends Controller
         // تصدير جميع النتائج المفلترة إلى ملف Excel (CSV)
         if ($request->input('export') === 'excel') {
             return $this->exportReportCsv('diesel-export-report-' . date('Y-m-d') . '.csv', [
-                'نوع المحروقات', 'الدائرة', 'القسم الفرعي', 'رقم الإيصال', 'كمية الصادر', 'الجهة المستلمة', 'رقم الدفتر', 'تاريخ الصادر',
+                'نوع المحروقات', 'الدائرة', 'القسم الفرعي', 'رقم الإيصال', 'كمية الصادر', 'الجهة المستلمة', 'رقم الدفتر', 'تاريخ الصادر', 'ملاحظات',
             ], $query->get()->map(function ($row) {
                 return [
                     $row->typesfuel->name ?? '-',
@@ -189,6 +195,7 @@ class DieselExportController extends Controller
                     $row->num_section,
                     $row->num_note,
                     $row->date,
+                    $row->notes,
                 ];
             }));
         }

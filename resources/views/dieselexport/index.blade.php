@@ -184,6 +184,7 @@
                             <th style="min-width: 10px">{{ 'كمية الصادر' }}</th>
                             <th style="min-width: 10px">{{ 'رقم الإيصال' }}</th>
                             <th style="min-width: 10px">{{ 'تاريخ الصادر ' }} </th>
+                            <th style="min-width: 10px">{{ 'ملاحظات' }}</th>
                             <th style="min-width: 10px">{{ 'الاجراءات ' }} </th>
                         </tr>
                     </thead>
@@ -198,6 +199,7 @@
                                 <td class="py-8 pl-0"> {{ $dieselexports->quantity }} </td>
                                 <td class="py-8 pl-0"> {{ $dieselexports->voucher }} </td>
                                 <td class="py-8 pl-0">{{ $dieselexports->date }}</td>
+                                <td class="py-8 pl-0">{{ $dieselexports->notes ?: '—' }}</td>
                                 <td data-field="Actions" data-autohide-disabled="false" aria-label="null"
                                     class="datatable-cell">
                                     <a href="#" onclick="confirmDelete('{{ $dieselexports->id }}', this)"

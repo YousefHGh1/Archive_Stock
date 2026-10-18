@@ -187,6 +187,18 @@
                                 </div>
                             </div>
 
+                            <div class="form-group row">
+                                <label for="notes" class="col-lg-2 col-form-label text-lg-right">ملاحظات:</label>
+                                <div class="col-lg-8">
+                                    <textarea name="notes" id="notes" rows="3"
+                                        class="@error('notes') is-invalid @enderror form-control" maxlength="5000"
+                                        placeholder="أدخل الملاحظات">{{ old('notes') }}</textarea>
+                                    @error('notes')
+                                        <span class="text-sm text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
                         </div>
 
                         <!-- Submit & Reset Buttons -->
@@ -461,31 +473,4 @@
                 });
             });
         </script>
-    @endsection
-    <script>
-        $(document).ready(function() {
-            $('select[name="section_id"]').on('change', function() {
-                var section_id = $(this).val();
-                if (section_id) {
-                    $.ajax({
-                        url: "{{ URL::to('getsub_section') }}/" + section_id,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            $('select[name="sub_section_id"]').empty();
-                            $.each(data, function(id, name) {
-                                // Append the correct value (ID) for sub_section_id
-                                $('select[name="sub_section_id"]').append(
-                                    '<option value="' + id + '">' + name +
-                                    '</option>'
-                                );
-                            });
-                        },
-                    });
-                } else {
-                    console.log('AJAX load did not work');
-                }
-            });
-        });
-    </script>
 @endsection
