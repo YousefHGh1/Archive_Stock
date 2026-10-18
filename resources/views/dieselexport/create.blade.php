@@ -15,6 +15,136 @@
 @endsection
 
 @section('css')
+    <style>
+        .fuel-export-form .card-body {
+            padding: 1.75rem 2rem;
+        }
+
+        .fuel-export-form .fuel-form-section {
+            counter-increment: fuel-stage;
+            padding: 1.35rem 1.5rem 1.15rem;
+            margin-bottom: 1.25rem;
+            background: #f8fafc;
+            border: 1px solid #e5eaf0;
+            border-right: 3px solid #3699ff;
+            border-radius: .25rem;
+        }
+
+        .fuel-export-form .fuel-form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .fuel-export-form .card-body {
+            counter-reset: fuel-stage;
+        }
+
+        .fuel-export-form .fuel-section-heading {
+            display: flex;
+            align-items: center;
+            padding-bottom: .8rem;
+            margin: 0 0 1.25rem;
+            color: #344256;
+            font-size: 1.08rem;
+            font-weight: 700;
+            border-bottom: 1px solid #e4eaf1;
+        }
+
+        .quick-add-modal .modal-header {
+            align-items: center;
+        }
+
+        .quick-add-modal .modal-title {
+            margin: 0;
+        }
+
+        .quick-add-modal .modal-body {
+            color: #5e6775;
+        }
+
+        .quick-add-modal .quick-add-context {
+            margin-bottom: 1rem;
+            color: #5e6775;
+            line-height: 1.6;
+        }
+
+        .fuel-export-form .fuel-section-heading::before {
+            display: inline-flex;
+            flex: 0 0 1.65rem;
+            align-items: center;
+            justify-content: center;
+            width: 1.65rem;
+            height: 1.65rem;
+            margin-left: .7rem;
+            content: counter(fuel-stage, decimal-leading-zero);
+            background: #3699ff;
+            border-radius: .25rem;
+            color: #fff;
+            font-size: .72rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .fuel-export-form .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .fuel-export-form .form-group > label {
+            display: block;
+            padding: 0 0 .4rem;
+            color: #596779;
+            font-weight: 500;
+        }
+
+        .fuel-export-form .form-group > label h6 {
+            margin: 0;
+            font-size: inherit;
+            font-weight: inherit;
+        }
+
+        .fuel-export-form .form-control,
+        .fuel-export-form .bootstrap-select > .dropdown-toggle {
+            min-height: 42px;
+            border-color: #d9e0e8;
+        }
+
+        .fuel-export-form textarea.form-control {
+            min-height: 100px;
+        }
+
+        .fuel-export-form .card-footer {
+            padding: 1rem 2rem;
+        }
+
+        .fuel-export-form .card-footer > .row {
+            margin: 0;
+        }
+
+        .fuel-export-form .card-footer > .row > div:first-child {
+            display: none;
+        }
+
+        .fuel-export-form .card-footer > .row > div:last-child {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: .55rem;
+        }
+
+        @media (max-width: 767.98px) {
+            .fuel-export-form .card-body {
+                padding: 1rem;
+            }
+
+            .fuel-export-form .fuel-form-section {
+                padding: 1rem;
+            }
+
+            .fuel-export-form .card-footer {
+                padding: 1rem;
+            }
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -24,7 +154,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <!--begin::Card-->
-                <div class="card card-custom gutter-b example example-compact">
+                <div class="card card-custom gutter-b example example-compact fuel-export-form" dir="rtl">
                     <div class="card-header">
                         <div class="card-title">
                             <h3 class="card-label"> بيانات المحروقات الصادر <i class="mr-2"></i></h3>
@@ -57,148 +187,153 @@
                         @csrf
                         {!! csrf_field() !!}
 
-                        <div class="card-body" style="margin:20px;">
-                            <!-- Section Selection -->
-                            <div class="pb-5 form-group row">
-                                <label for="section_id" class="col-lg-2 col-form-label text-lg-right">الدائرة:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
-                                        <select name="section_id" id="section_id"
-                                            class="@error('section_id') is-invalid @enderror form-control selectpicker"
-                                            data-size="7" data-live-search="true">
-                                            <option value="">اختر الدائرة</option>
-                                            @foreach ($section as $sections)
-                                                <option value="{{ $sections->id }}"
-                                                    {{ old('section_id') == $sections->id ? 'selected' : '' }}>
-                                                    {{ $sections->name_section }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                        <div class="card-body">
+                            <section class="fuel-form-section" aria-labelledby="outgoing-party-heading">
+                                <h4 id="outgoing-party-heading" class="fuel-section-heading">الجهة المستلمة والمحروقات</h4>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label for="section_id">الدائرة</label>
+                                        <div class="input-group">
+                                            <div class="flex-grow-1">
+                                                <select name="section_id" id="section_id"
+                                                    class="@error('section_id') is-invalid @enderror form-control selectpicker"
+                                                    data-size="7" data-live-search="true">
+                                                    <option value="">اختر الدائرة</option>
+                                                    @foreach ($section as $sections)
+                                                        <option value="{{ $sections->id }}"
+                                                            {{ old('section_id') == $sections->id ? 'selected' : '' }}>
+                                                            {{ $sections->name_section }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-primary" title="إضافة دائرة"
+                                                    aria-label="إضافة دائرة" data-toggle="modal"
+                                                    data-target="#quickAddSectionModal">
+                                                    <i class="ki ki-solid-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                         @error('section_id')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                            <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                                                        <button type="button" class="btn btn-link p-0" title="إضافة دائرة"
-                                                                            data-toggle="modal" data-target="#quickAddSectionModal" aria-label="إضافة دائرة">
-                                                                            <i class="p-3 ki ki-solid-plus icon-md"></i>
-                                                                        </button>
-                                </div>
-
-                                <label for="sub_section_id" class="col-lg-2 col-form-label text-lg-right">القسم:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
-                                        <select name="sub_section_id" id="sub_section_id"
-                                            class="@error('sub_section_id') is-invalid @enderror form-control"
-                                            data-size="7" data-live-search="true">
-                                            <option value="">اختر القسم</option>
-                                            @foreach ($subSection as $subSections)
-                                                <option value="{{ $subSections->id }}"
-                                                    {{ old('sub_section_id') == $subSections->id ? 'selected' : '' }}>
-                                                    {{ $subSections->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                    <div class="col-md-6 form-group">
+                                        <label for="sub_section_id">القسم</label>
+                                        <div class="input-group">
+                                            <div class="flex-grow-1">
+                                                <select name="sub_section_id" id="sub_section_id"
+                                                    class="@error('sub_section_id') is-invalid @enderror form-control"
+                                                    data-size="7" data-live-search="true">
+                                                    <option value="">اختر القسم</option>
+                                                    @foreach ($subSection as $subSections)
+                                                        <option value="{{ $subSections->id }}"
+                                                            {{ old('sub_section_id') == $subSections->id ? 'selected' : '' }}>
+                                                            {{ $subSections->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-primary"
+                                                    title="إضافة قسم فرعي" aria-label="إضافة قسم فرعي"
+                                                    data-toggle="modal" data-target="#quickAddSubSectionModal">
+                                                    <i class="ki ki-solid-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                         @error('sub_section_id')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                            <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                                                        <button type="button" class="btn btn-link p-0" title="إضافة قسم فرعي"
-                                                                            data-toggle="modal" data-target="#quickAddSubSectionModal" aria-label="إضافة قسم فرعي">
-                                                                            <i class="p-3 ki ki-solid-plus icon-md"></i>
-                                                                        </button>
-                                </div>
-                            </div>
-
-                            <!-- Receipt and Note Number -->
-                            <div class="pb-5 form-group row">
-                                <label for="num_section" class="col-lg-2 col-form-label text-lg-right">الجهة المستلمة:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
+                                    <div class="col-md-6 form-group">
+                                        <label for="num_section">الجهة المستلمة</label>
                                         <input name="num_section" id="num_section" type="text"
                                             class="@error('num_section') is-invalid @enderror form-control"
                                             placeholder="ادخل الجهة المستلمة" value="{{ old('num_section') }}">
+                                        @error('num_section')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="typesfuel_id">نوع المحروقات</label>
+                                        <div class="dropdown bootstrap-select form-control dropup">
+                                            <select name="typesfuel_id" id="typesfuel_id"
+                                                class="@error('typesfuel_id') is-invalid @enderror form-control selectpicker"
+                                                data-size="7" data-live-search="true">
+                                                <option value="">اختر نوع المحروقات</option>
+                                                @foreach ($typesfuel as $typesfuels)
+                                                    <option value="{{ $typesfuels->id }}"
+                                                        {{ old('typesfuel_id') == $typesfuels->id ? 'selected' : '' }}>
+                                                        {{ $typesfuels->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        @error('typesfuel_id')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
-                                <label for="num_note" class="col-lg-2 col-form-label text-lg-right">رقم الدفتر:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
-                                        <input name="num_note" id="num_note" type="number"
-                                            class="@error('num_note') is-invalid @enderror form-control"
-                                            placeholder="ادخل رقم الدفتر" value="{{ old('num_note') }}">
-                                    </div>
-                                </div>
-                            </div>
+                            </section>
 
-                            <!-- Quantity and Voucher -->
-                            <div class="pb-5 form-group row">
-                                <label for="quantity" class="col-lg-2 col-form-label text-lg-right">كمية الصادر:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
+                            <section class="fuel-form-section" aria-labelledby="outgoing-reference-heading">
+                                <h4 id="outgoing-reference-heading" class="fuel-section-heading">الكمية وأرقام المراجع</h4>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label for="quantity">كمية الصادر</label>
                                         <input name="quantity" id="quantity" type="number"
                                             class="@error('quantity') is-invalid @enderror form-control" min="0"
                                             placeholder="ادخل كمية الصادر" value="{{ old('quantity') }}">
+                                        @error('quantity')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
-                                </div>
-                                <label for="voucher" class="col-lg-2 col-form-label text-lg-right">رقم الإيصال:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
+                                    <div class="col-md-6 form-group">
+                                        <label for="num_note">رقم الدفتر</label>
+                                        <input name="num_note" id="num_note" type="number"
+                                            class="@error('num_note') is-invalid @enderror form-control"
+                                            placeholder="ادخل رقم الدفتر" value="{{ old('num_note') }}">
+                                        @error('num_note')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="voucher">رقم الإيصال</label>
                                         <input name="voucher" type="number" min="0"
                                             class="@error('voucher') is-invalid @enderror form-control" id="voucher"
-                                            placeholder="ادخل رقم الإيصال" value="{{ old('voucher') }}" />
+                                            placeholder="ادخل رقم الإيصال" value="{{ old('voucher') }}">
+                                        @error('voucher')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
-                            </div>
+                            </section>
 
-                            <!-- Export Date and Fuel Type -->
-                            <div class="form-group row">
-                                <label for="date" class="col-lg-2 col-form-label text-lg-right">تاريخ التصدير:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
+                            <section class="fuel-form-section" aria-labelledby="outgoing-date-heading">
+                                <h4 id="outgoing-date-heading" class="fuel-section-heading">التاريخ والملاحظات</h4>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label for="date">تاريخ التصدير</label>
                                         <input name="date" type="date"
                                             class="@error('date') is-invalid @enderror form-control" id="date"
                                             value="{{ old('date', date('Y-m-d')) }}">
+                                        @error('date')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-12 form-group">
+                                        <label for="notes">ملاحظات</label>
+                                        <textarea name="notes" id="notes" rows="3"
+                                            class="@error('notes') is-invalid @enderror form-control" maxlength="5000"
+                                            placeholder="أدخل الملاحظات">{{ old('notes') }}</textarea>
+                                        @error('notes')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
-
-                                <label for="typesfuel_id" class="col-lg-2 col-form-label text-lg-right">
-                                    <h6>نوع المحروقات:</h6>
-                                </label>
-                                <div class="col-3">
-                                    <div class="dropdown bootstrap-select form-control dropup">
-                                        <select name="typesfuel_id" id="typesfuel_id"
-                                            class="@error('typesfuel_id') is-invalid @enderror form-control selectpicker"
-                                            data-size="7" data-live-search="true">
-                                            <option value="">اختر نوع المحروقات</option>
-                                            @foreach ($typesfuel as $typesfuels)
-                                                <option value="{{ $typesfuels->id }}"
-                                                    {{ old('typesfuel_id') == $typesfuels->id ? 'selected' : '' }}>
-                                                    {{ $typesfuels->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    @error('typesfuel_id')
-                                        <span class="text-sm text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label for="notes" class="col-lg-2 col-form-label text-lg-right">ملاحظات:</label>
-                                <div class="col-lg-8">
-                                    <textarea name="notes" id="notes" rows="3"
-                                        class="@error('notes') is-invalid @enderror form-control" maxlength="5000"
-                                        placeholder="أدخل الملاحظات">{{ old('notes') }}</textarea>
-                                    @error('notes')
-                                        <span class="text-sm text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
+                            </section>
                         </div>
 
                         <!-- Submit & Reset Buttons -->
@@ -265,9 +400,9 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <div class="quick-add-context">سيتم اختيار الدائرة تلقائياً بعد الإضافة.</div>
                 </div>
                 <div class="modal-body">
+                    <p class="quick-add-context">سيتم اختيار الدائرة تلقائياً بعد الإضافة.</p>
                     <form action="{{ route('section.store') }}" method="POST" data-ajax-quick-add data-entity="section">
                         @csrf
                         <div data-form-error class="alert alert-danger"></div>
@@ -297,9 +432,9 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <div class="quick-add-context">سيتم اختيار القسم الفرعي تلقائياً بعد الإضافة.</div>
                 </div>
                 <div class="modal-body">
+                    <p class="quick-add-context">سيتم اختيار القسم الفرعي تلقائياً بعد الإضافة.</p>
                     <form action="{{ route('subSection.store') }}" method="POST" data-ajax-quick-add data-entity="subSection">
                         @csrf
                         <div data-form-error class="alert alert-danger"></div>
@@ -335,34 +470,39 @@
 
     @section('scripts')
         <script>
-            $(document).ready(function() {
-                $('select[name="section_id"]').on('change', function() {
-                    var section_id = $(this).val();
-                    if (section_id) {
-                        $.ajax({
-                            url: "{{ URL::to('getsub_section') }}/" + section_id,
-                            type: "GET",
-                            dataType: "json",
-                            success: function(data) {
-                                $('select[name="sub_section_id"]').empty();
-                                $.each(data, function(id, name) {
-                                    // Append the correct value (ID) for sub_section_id
-                                    $('select[name="sub_section_id"]').append(
-                                        '<option value="' + id + '">' + name +
-                                        '</option>'
-                                    );
-                                });
-                            },
-                        });
-                    } else {
-                        console.log('AJAX load did not work');
-                    }
-                });
-            });
-        </script>
-
-        <script>
             $(function() {
+                function refreshSubSection() {
+                    var $subSection = $('#sub_section_id');
+                    if ($subSection.hasClass('selectpicker')) {
+                        $subSection.selectpicker('refresh');
+                    }
+                }
+
+                function loadSubSections(sectionId) {
+                    var $subSection = $('#sub_section_id');
+                    if (!sectionId) {
+                        $subSection.empty().append(new Option('اختر القسم', ''));
+                        refreshSubSection();
+                        return $.Deferred().resolve().promise();
+                    }
+
+                    return $.ajax({
+                        url: "{{ URL::to('getsub_section') }}/" + sectionId,
+                        type: 'GET',
+                        dataType: 'json'
+                    }).done(function(data) {
+                        $subSection.empty().append(new Option('اختر القسم', ''));
+                        $.each(data, function(id, name) {
+                            $subSection.append(new Option(name, id));
+                        });
+                        refreshSubSection();
+                    });
+                }
+
+                $('#section_id').on('change', function() {
+                    loadSubSections($(this).val());
+                });
+
                 function resetFeedback(form) {
                     var $form = $(form);
                     $form.find('[data-form-error]').hide().text('');
@@ -407,13 +547,14 @@
                         if (entityType === 'section') {
                             addOption('#section_id', entity.id, entity.name_section || entity.name || entity.label || entity);
                         } else if (entityType === 'subSection') {
-                            // If subsection belongs to a different section, switch it first then add
                             if (entity.section_id && String($('#section_id').val()) !== String(entity.section_id)) {
-                                $('#section_id').val(String(entity.section_id)).trigger('change');
-                                // Give time for AJAX to reload sub-sections, then add the new one
-                                setTimeout(function() {
+                                $('#section_id').val(String(entity.section_id));
+                                if ($('#section_id').hasClass('selectpicker')) {
+                                    $('#section_id').selectpicker('refresh');
+                                }
+                                loadSubSections(entity.section_id).always(function() {
                                     addOption('#sub_section_id', entity.id, entity.name || entity.label || entity);
-                                }, 600);
+                                });
                             } else {
                                 addOption('#sub_section_id', entity.id, entity.name || entity.label || entity);
                             }

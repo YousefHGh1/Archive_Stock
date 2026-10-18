@@ -209,32 +209,32 @@
 
                                 <label for="subSection_id" class="col-lg-2 col-form-label ">
                                     <h6> الأقسام:</h6>
-                                    <button type="button" class="btn btn-link p-0" title="إضافة قسم جديد"
-                                        data-toggle="modal" data-target="#quickAddSubSectionModal"
-                                        aria-label="إضافة قسم جديد">
-                                        <i class="p-3 ki ki-solid-plus icon-md"></i>
-                                    </button>
                                 </label>
 
                                 <div class="col-lg-3">
                                     <div class="input-group">
-                                        <select name="subSection_id" id="subSection_id" onclick="console.log($(this).val())"
-                                            onchange="console.log('change is firing')" data-size="7" tabindex="null"
-                                            class="@error('subSection_id') is-invalid @enderror form-control selectpicker"
-                                            data-live-search="true" title="أدخل اسم القسم " required>
-                                            {{-- <option value="">اختر القسم </option> --}}
-                                            @foreach ($subSection as $subSections)
-                                                <option value="{{ $subSections->id }}">
-                                                    {{ $subSections->name }}
-                                                </option>
-                                            @endforeach
-                                            @if ($errors->has('subSection_id'))
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $errors->first('subSection_id') }}</strong>
-                                                </span>
-                                            @endif
-                                        </select>
+                                        <div class="flex-grow-1">
+                                            <select name="subSection_id" id="subSection_id" data-size="7" tabindex="null"
+                                                class="@error('subSection_id') is-invalid @enderror form-control selectpicker"
+                                                data-live-search="true" title="أدخل اسم القسم " required>
+                                                @foreach ($subSection as $subSections)
+                                                    <option value="{{ $subSections->id }}">
+                                                        {{ $subSections->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-primary"
+                                                title="إضافة قسم جديد" aria-label="إضافة قسم جديد"
+                                                data-toggle="modal" data-target="#quickAddSubSectionModal">
+                                                <i class="ki ki-solid-plus"></i>
+                                            </button>
+                                        </div>
                                     </div>
+                                    @error('subSection_id')
+                                        <span class="text-sm text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
 
 
