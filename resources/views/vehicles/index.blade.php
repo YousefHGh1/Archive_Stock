@@ -6,7 +6,7 @@
 <div class="card-header flex-wrap pt-6 pb-0 border-0">
 <div class="card-title"><h3 class="card-label">عرض المركبات</h3></div>
 <div class="card-toolbar">
-@can('vehicles-create')<a href="{{ route('vehicles.create') }}" class="btn btn-primary">إضافة مركبة</a>@endcan
+@can('vehicles-create')<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#vehicleCreateModal">إضافة مركبة</button>@endcan
 </div></div>
 <div class="card-body">
 <form method="GET" class="row mb-4">
@@ -32,4 +32,45 @@
 </tbody></table></div>
 {!! $vehicles->withQueryString()->links('pagination::bootstrap-5') !!}
 </div></div></div>
+
+@can('vehicles-create')
+<div class="modal fade" id="vehicleCreateModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">إضافة مركبة</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form method="POST" action="{{ route('vehicles.store') }}" enctype="multipart/form-data">
+                <div class="modal-body">
+                    @csrf
+                    <div class="row">
+                        <div class="form-group col-md-6"><label>نوع المركبة *</label><input name="vehicle_type" value="{{ old('vehicle_type') }}" class="form-control" required>@error('vehicle_type')<span class="text-danger">{{ $message }}</span>@enderror</div>
+                        <div class="form-group col-md-6"><label>رقم المركبة *</label><input name="plate_number" value="{{ old('plate_number') }}" class="form-control" required>@error('plate_number')<span class="text-danger">{{ $message }}</span>@enderror</div>
+                        <div class="form-group col-md-6"><label>رقم الشاصي VIN *</label><input name="vin" value="{{ old('vin') }}" class="form-control" required>@error('vin')<span class="text-danger">{{ $message }}</span>@enderror</div>
+                        <div class="form-group col-md-6"><label>سنة الإنتاج</label><input type="number" name="manufacture_year" value="{{ old('manufacture_year') }}" class="form-control">@error('manufacture_year')<span class="text-danger">{{ $message }}</span>@enderror</div>
+                        <div class="form-group col-md-6"><label>اللون</label><input name="color" value="{{ old('color') }}" class="form-control"></div>
+                        <div class="form-group col-md-6"><label>صورة المركبة (jpg/png/webp حتى 2MB)</label><input type="file" name="image" class="form-control" accept="image/*">@error('image')<span class="text-danger">{{ $message }}</span>@enderror</div>
+                        <div class="form-group col-md-6"><label>الحالة</label><select name="is_active" class="form-control"><option value="1" selected>نشطة</option><option value="0">غير نشطة</option></select></div>
+                        <div class="form-group col-12"><label>ملاحظات</label><textarea name="notes" class="form-control">{{ old('notes') }}</textarea></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endcan
 @endsection
+@section('scripts')
+@if($errors->any() && old('vehicle_type') !== null)
+<script>$(function(){ $('#vehicleCreateModal').modal('show'); });</script>
+@endif
+@if(request('open') === 'create')
+<script>$(function(){ $('#vehicleCreateModal').modal('show'); });</script>
+@endif
+@endsection
+
