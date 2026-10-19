@@ -192,6 +192,7 @@
                             <th>الرصيد</th>
                             <th>المورد / القسم</th>
                             <th>القسم الفرعي</th>
+                            <th>رقم الدفتر</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -217,6 +218,13 @@
                                     @endif
                                 </td>
                                 <td>{{ $transaction['sub_section'] }}</td>
+                                <td>
+                                    @if($transaction['type'] == 'export')
+                                        {{ $transaction['num_section'] }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
