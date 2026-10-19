@@ -2544,6 +2544,45 @@
                                                 </div>
                                             </li>
                     @endcanany
+
+                    @canany(['vehicles-read', 'drivers-read', 'vehicle-operations-read', 'vehicle-reports-read'])
+                        <li class="menu-section">
+                            <h4 class="menu-text">المركبات والسائقون</h4>
+                            <i class="menu-icon ki ki-bold-more-hor icon-md"></i>
+                        </li>
+                        <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon"><i class="flaticon-bus"></i></span>
+                                <span class="menu-text">إدارة المركبات</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu"><i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    @can('vehicles-read')
+                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('vehicles.index') }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">عرض المركبات</span></a></li>
+                                    @endcan
+                                    @can('vehicles-create')
+                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('vehicles.create') }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">إضافة مركبة</span></a></li>
+                                    @endcan
+                                    @can('drivers-read')
+                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('drivers.index') }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">عرض السائقين</span></a></li>
+                                    @endcan
+                                    @can('drivers-create')
+                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('drivers.create') }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">إضافة سائق</span></a></li>
+                                    @endcan
+                                    @can('vehicle-operations-read')
+                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('vehicle-operations.index') }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">عمليات المركبات</span></a></li>
+                                    @endcan
+                                    @can('vehicle-operations-create')
+                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('vehicle-operations.create') }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">تسجيل عملية</span></a></li>
+                                    @endcan
+                                    @can('vehicle-reports-read')
+                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('vehicle-reports.index') }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">تقارير المركبات</span></a></li>
+                                    @endcan
+                                </ul>
+                            </div>
+                        </li>
+                    @endcanany
                     
                     @can('HR')
 

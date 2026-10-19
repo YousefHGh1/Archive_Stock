@@ -160,5 +160,12 @@ class PermissionSeeder extends Seeder
                 ['name' => $permission, 'guard_name' => 'web']
             );
         }
+
+        foreach (['vehicles', 'vehicles-create', 'vehicles-read', 'vehicles-update', 'vehicles-delete', 'drivers', 'drivers-create', 'drivers-read', 'drivers-update', 'drivers-delete', 'vehicle-operations', 'vehicle-operations-create', 'vehicle-operations-read', 'vehicle-operations-update', 'vehicle-operations-delete', 'vehicle-reports', 'vehicle-reports-read'] as $permission) {
+            DB::table('permissions')->updateOrInsert(
+                ['name' => $permission, 'guard_name' => 'web'],
+                ['name' => $permission, 'guard_name' => 'web']
+            );
+        }
     }
 }

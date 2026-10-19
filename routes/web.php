@@ -112,6 +112,20 @@ Route::middleware('auth')->group(function () {
     Route::resource('user', UserController::class);
     Route::resource('employee', EmployeeController::class);
 
+    // ************************** Vehicles / Drivers / Operations **************************
+    Route::resource('vehicles', App\Http\Controllers\VehicleController::class);
+    Route::resource('drivers', App\Http\Controllers\DriverController::class);
+    Route::resource('vehicle-operations', App\Http\Controllers\VehicleOperationController::class);
+    Route::prefix('vehicle-reports')->name('vehicle-reports.')->group(function () {
+        Route::get('/', [App\Http\Controllers\VehicleReportController::class, 'index'])->name('index');
+        Route::get('/diesel', [App\Http\Controllers\VehicleReportController::class, 'diesel'])->name('diesel');
+        Route::get('/oil', [App\Http\Controllers\VehicleReportController::class, 'oil'])->name('oil');
+        Route::get('/monthly', [App\Http\Controllers\VehicleReportController::class, 'monthly'])->name('monthly');
+        Route::get('/maintenance', [App\Http\Controllers\VehicleReportController::class, 'maintenance'])->name('maintenance');
+        Route::get('/driver', [App\Http\Controllers\VehicleReportController::class, 'driver'])->name('driver');
+        Route::get('/summary', [App\Http\Controllers\VehicleReportController::class, 'summary'])->name('summary');
+    });
+
     // Role Management Routes
     Route::prefix('roles')->name('roles.')->group(function () {
         Route::get('/', [RoleManagementController::class, 'index'])->name('index');
