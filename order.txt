@@ -108,6 +108,8 @@ key:generate	إنشاء APP_KEY
 env:encrypt	تشفير env
 env:decrypt	فك التشفير
 ***************************************************
-git pull origin main
+cd  public_html
+cd Archive-Stock
+pull origin main
 php artisan config:clear && php artisan view:clear && php artisan cache:clear
 php artisan config:cache && php artisan view:cache && php artisan event:cache
