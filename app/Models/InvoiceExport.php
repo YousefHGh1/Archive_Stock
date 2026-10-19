@@ -10,7 +10,7 @@ class InvoiceExport extends Model
 {
     use HasFactory, SoftDeletes;
 
-    public $fillable = ['voucher_no', 'voucher_date', 'invoice_no', 'subSection_id','beneficiary', 'skip_reason'];
+    public $fillable = ['voucher_no', 'voucher_date', 'invoice_no', 'subSection_id','beneficiary', 'skip_reason', 'notes'];
 
     public function products()
     {

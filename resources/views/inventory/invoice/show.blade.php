@@ -76,6 +76,11 @@
                                     <div class="mb-10 font-size-lg font-weight-bold">معامل الصرف :
                                         {{ $invoice->currency->name }}
                                     </div>
+                                    @if ($invoice->notes)
+                                        <div class="mb-10 font-size-lg font-weight-bold">ملاحظات :
+                                            {{ $invoice->notes }}
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="py-10 col-md-9 pl-md-10">
                                     <div class="table-responsive">

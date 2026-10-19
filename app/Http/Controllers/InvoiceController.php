@@ -46,6 +46,7 @@ class InvoiceController extends Controller
                 'invoices.voucher_no',
                 'invoices.voucher_date',
                 'invoices.invoice_no',
+                'invoices.notes',
                 'supplier_items.supplier_item_name',
                 'currencies.name',
                 DB::raw('GROUP_CONCAT(items.item_name," (", invoice_products.quantity, ") &nbsp;") AS products')
@@ -55,6 +56,7 @@ class InvoiceController extends Controller
                 'invoices.voucher_no',
                 'invoices.voucher_date',
                 'invoices.invoice_no',
+                'invoices.notes',
                 'supplier_items.supplier_item_name',
                 'currencies.name'
             )
@@ -85,6 +87,7 @@ class InvoiceController extends Controller
                 'voucher_date' => 'required|date',
                 'invoice_no'   => 'nullable',
                 'skip_reason'  => 'required|string|max:500',
+                'notes'        => 'nullable|string|max:5000',
             ];
 
             $messages = [
@@ -106,6 +109,7 @@ class InvoiceController extends Controller
                 'quantity.*'       => 'required|numeric|min:0.1',
                 'price'            => 'required|array|min:1',
                 'price.*'          => 'required|numeric|min:0',
+                'notes'            => 'nullable|string|max:5000',
             ];
 
             $messages = [
@@ -161,6 +165,7 @@ class InvoiceController extends Controller
 
         $invoice->currency_value_at_time = $currency ? $currency->value : 1;
         $invoice->skip_reason            = $validatedData['skip_reason'] ?? null;
+        $invoice->notes                  = $validatedData['notes'] ?? null;
         $invoice->save();
 
         if ($skipVoucherNo) {
@@ -264,6 +269,7 @@ class InvoiceController extends Controller
             'quantity.*'       => 'required|numeric|min:0.1',
             'price'            => 'required|array|min:1',
             'price.*'          => 'required|numeric|min:0',
+            'notes'            => 'nullable|string|max:5000',
         ], [
             'voucher_date.required'     => 'يرجى إدخال تاريخ السند.',
             'voucher_date.date'         => 'تاريخ السند غير صحيح.',
@@ -283,44 +289,40 @@ class InvoiceController extends Controller
             'price.*.min'               => 'السعر لا يمكن أن يكون أقل من صفر.',
         ]);
 
-        $currency = null;
-        if (! empty($validatedData['currency_id'])) {
+        DB::transaction(function () use ($validatedData, $id) {
+            $invoice = Invoice::findOrFail($id);
             $currency = Currency::findOrFail($validatedData['currency_id']);
-        }
 
-        $invoice->voucher_no             = $validatedData['voucher_no'];
-        $invoice->voucher_date           = $validatedData['voucher_date'];
-        $invoice->invoice_no             = $validatedData['invoice_no'];
-        $invoice->supplier_item_id       = $validatedData['supplier_item_id'];
-        $invoice->currency_id            = $validatedData['currency_id'] ?? null;
-        $invoice->currency_value_at_time = $currency ? $currency->value : 1;
-        $invoice->save();
+            $invoice->voucher_no = $validatedData['voucher_no'];
+            $invoice->voucher_date = $validatedData['voucher_date'];
+            $invoice->invoice_no = $validatedData['invoice_no'];
+            $invoice->supplier_item_id = $validatedData['supplier_item_id'];
+            $invoice->currency_id = $validatedData['currency_id'];
+            $invoice->currency_value_at_time = $currency->value;
+            $invoice->notes = $validatedData['notes'] ?? null;
+            $invoice->save();
 
-        foreach ($invoice->invoiceproduct as $product) {
-            $item           = Item::findOrFail($product->item_id);
-            $item->balance -= $product->quantity;
-            $item->update();
+            foreach ($invoice->invoiceproduct as $existingProduct) {
+                $item = Item::whereKey($existingProduct->item_id)->lockForUpdate()->firstOrFail();
+                $item->balance -= $existingProduct->quantity;
+                $item->save();
+                $existingProduct->delete();
+            }
 
-            $product->delete();
-        }
+            foreach ($validatedData['product'] as $index => $itemId) {
+                $item = Item::whereKey($itemId)->lockForUpdate()->firstOrFail();
+                $quantity = $validatedData['quantity'][$index];
 
-        for ($i = 0; $i < count($validatedData['product']); $i++) {
-            $product  = Item::findOrFail($validatedData['product'][$i]);
-            $quantity = $validatedData['quantity'][$i];
-            $price    = $validatedData['price'][$i];
+                $item->balance += $quantity;
+                $item->save();
 
-            $invoiceProduct             = new InvoiceProduct();
-            $invoiceProduct->invoice_id = $invoice->id;
-            $invoiceProduct->item_id    = $product->id;
-
-            $item           = Item::findOrFail($invoiceProduct->item_id);
-            $item->balance += $quantity;
-            $item->update();
-
-            $invoiceProduct->quantity = $quantity;
-            $invoiceProduct->price    = $price;
-            $invoiceProduct->save();
-        }
+                $invoice->invoiceproduct()->create([
+                    'item_id' => $item->id,
+                    'quantity' => $quantity,
+                    'price' => $validatedData['price'][$index],
+                ]);
+            }
+        });
 
         return redirect()->back()->with('success', 'تم تحديث الفاتورة بنجاح.');
     }

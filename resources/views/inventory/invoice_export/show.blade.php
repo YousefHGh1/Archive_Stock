@@ -75,6 +75,11 @@
                                     <div class="mb-10 font-size-lg font-weight-bold">اسم المستلم :
                                         {{ $invoiceExport->beneficiary }}
                                     </div>
+                                    @if ($invoiceExport->notes)
+                                        <div class="mb-10 font-size-lg font-weight-bold">ملاحظات :
+                                            {{ $invoiceExport->notes }}
+                                        </div>
+                                    @endif
 
                                 </div>
                                 <div class="py-10 col-md-9 pl-md-10">

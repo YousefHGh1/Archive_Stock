@@ -268,6 +268,18 @@
                                 </div>
                             </div>
 
+                            <div class="p-3 form-group row">
+                                <label for="notes" class="col-lg-2 col-form-label">
+                                    <h6>ملاحظات:</h6>
+                                </label>
+                                <div class="col-lg-9">
+                                    <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes"
+                                        rows="3" maxlength="5000">{{ old('notes') }}</textarea>
+                                    @error('notes')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
 
                             <table class="table table-bordered" id="products-table">
                                 <thead>

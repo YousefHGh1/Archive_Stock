@@ -155,6 +155,19 @@
                                 @endcanany
                             </div>
 
+                            <div class="p-3 form-group row">
+                                <label for="notes" class="col-lg-2 col-form-label">
+                                    <h6>ملاحظات:</h6>
+                                </label>
+                                <div class="col-lg-9">
+                                    <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes"
+                                        rows="3" maxlength="5000">{{ old('notes', $invoiceExport->notes) }}</textarea>
+                                    @error('notes')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <table class="table table-bordered" id="products-table">
                                 <thead>
                                     <tr>
@@ -162,7 +175,7 @@
                                         <th>الكمية</th>
                                         {{-- <th>السعر</th> --}}
                                         <th width="5%">جديد</th>
-                                        @canany(['admin', 'Super-User'])
+                                        @canany(['admin', 'stock', 'Super-User'])
                                         <th width="5%">حذف</th>
                                         @endcanany
                                     </tr>
@@ -181,7 +194,7 @@
                                             <td>
                           <select name="product[]"
                                                     class="form-control selectpicker @error('product.' . $index) is-invalid @enderror"
-                                                    @if(auth()->user()->hasRole('Super-User')) {{ '' }} @else disabled @endif>
+                                                    @canany(['admin', 'stock', 'Super-User']) @else disabled @endcanany>
                                                     <option value=""  selected>اختر المنتج</option>
 
                                                     @foreach ($products as $itemOption)
@@ -198,28 +211,29 @@
                                             <td><input type="number" step="0.01" min="0.1" name="quantity[]"
                                                     value="{{ $rowQuantities[$index] ?? '' }}"
                                                     class="form-control @error('quantity.' . $index) is-invalid @enderror"
-                                                    @if(auth()->user()->hasRole('Super-User')) {{ '' }} @else disabled @endif>
+                                                    @canany(['admin', 'stock', 'Super-User']) @else disabled @endcanany>
                                                 @error('quantity.' . $index)
                                                     <div class="text-danger mt-1 field-error">{{ $message }}</div>
                                                 @enderror
                                             </td>
+                                            <td></td>
                                             {{-- <td><input type="number" name="price[]"
                                                     value="{{ $InvoiceExport_product->price }}" class="form-control"></td> --}}
-                                            @if(auth()->user()->hasRole('Super-User'))
+                                            @canany(['admin', 'stock', 'Super-User'])
                                             <td><button type="button" class="btn btn-danger delete-row">حذف</button></td>
-                                            @endif
+                                            @endcanany
                                         </tr>
                                     @endforeach
                                     <tr>
                                         <td colspan="2"></td>
                                         <td>
-                                            @if(auth()->user()->hasRole('Super-User'))
+                                            @canany(['admin', 'stock', 'Super-User'])
                                                 <button type="button" class="btn btn-primary" id="add-row">+</button>
-                                            @endif
+                                            @endcanany
                                         </td>
-                                        @if(auth()->user()->hasRole('Super-User'))
+                                        @canany(['admin', 'stock', 'Super-User'])
                                             <td></td>
-                                        @endif
+                                        @endcanany
                                     </tr>
 
                                 </tbody>
@@ -231,9 +245,9 @@
                             <div class="row">
                                 <div class="col-lg-2"></div>
                                 <div class="col-lg-10">
-                                    @if(auth()->user()->hasRole('Super-User'))
+                                    @canany(['admin', 'stock', 'Super-User'])
                                     <button type="submit" class="ml-5 btn btn-success">حفظ</button>
-                                    @endif
+                                    @endcanany
 
                                     <x-add-resource-button />
 
@@ -267,14 +281,6 @@
             $(this).closest('tr').remove();
         });
 
-        @if(auth()->user()->hasRole('Super-User'))
-        // إضافة زر "delete-row" إلى كل صف في جدول المنتجات
-        $("#products-table tbody tr.product-row").each(function() {
-            var deleteBtnHtml = '<td><button type="button" class="btn btn-danger delete-row">حذف</button></td>';
-            $(this).append(deleteBtnHtml);
-        });
-        @endif
-
         // تحويل الزر "add-row" لإضافة الصف إلى جدول المنتجات
         $("#add-row").click(function() {
             var html = "<tr class='product-row'>";
@@ -286,9 +292,10 @@
             @endforeach
             html += "</select></td>";
             html += "<td><input type='number' step='0.01' min='0.1' name='quantity[]' class='form-control'></td>";
-            @if(auth()->user()->hasRole('Super-User'))
+            html += "<td></td>";
+            @canany(['admin', 'stock', 'Super-User'])
                 html += "<td><button type='button' class='btn btn-danger delete-row'>حذف</button></td>";
-            @endif
+            @endcanany
             html += "</tr>";
             $("#products-table tbody").append(html);
             $("#products-table tbody .selectpicker").selectpicker('refresh');

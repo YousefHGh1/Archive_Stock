@@ -13,7 +13,7 @@ class Invoice extends Model
 {
     use HasFactory, SoftDeletes;
 
-    public $fillable = ['voucher_no', 'voucher_date', 'invoice_no', 'supplier_item_id', 'currency_id', 'skip_reason'];
+    public $fillable = ['voucher_no', 'voucher_date', 'invoice_no', 'supplier_item_id', 'currency_id', 'skip_reason', 'notes'];
 
     public function products()
     {

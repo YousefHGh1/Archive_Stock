@@ -42,8 +42,8 @@ class InvoiceExportController extends Controller
             ->join('invoice_export_products', 'invoice_exports.id', '=', 'invoice_export_products.invoice_export_id')
             ->join('items', 'invoice_export_products.item_id', '=', 'items.id')
             ->whereNull('invoice_exports.deleted_at') // Exclude soft deleted records
-            ->select('invoice_exports.id', 'invoice_exports.voucher_no', 'invoice_exports.voucher_date', 'invoice_exports.invoice_no', 'invoice_exports.beneficiary', 'sub_sections.name', DB::raw('GROUP_CONCAT(items.item_name," (", invoice_export_products.quantity, ") &nbsp;") AS products'))
-            ->groupBy('invoice_exports.id', 'invoice_exports.voucher_no', 'invoice_exports.voucher_date', 'invoice_exports.invoice_no', 'invoice_exports.beneficiary', 'sub_sections.name')
+            ->select('invoice_exports.id', 'invoice_exports.voucher_no', 'invoice_exports.voucher_date', 'invoice_exports.invoice_no', 'invoice_exports.beneficiary', 'invoice_exports.notes', 'sub_sections.name', DB::raw('GROUP_CONCAT(items.item_name," (", invoice_export_products.quantity, ") &nbsp;") AS products'))
+            ->groupBy('invoice_exports.id', 'invoice_exports.voucher_no', 'invoice_exports.voucher_date', 'invoice_exports.invoice_no', 'invoice_exports.beneficiary', 'invoice_exports.notes', 'sub_sections.name')
             ->get();
         // $invoice_exports= InvoiceExport::all();
         // $subSection = subSection::all();
@@ -84,6 +84,7 @@ class InvoiceExportController extends Controller
             $rules = [
                 'voucher_date' => 'required|date',
                 'skip_reason'  => 'required|string|max:500',
+                'notes'        => 'nullable|string|max:5000',
             ];
         } else {
             $rules = [
@@ -91,6 +92,7 @@ class InvoiceExportController extends Controller
                 'invoice_no'    => 'required',
                 'subSection_id' => 'required',
                 'beneficiary'   => 'required',
+                'notes'         => 'nullable|string|max:5000',
                 'product'       => 'required|array|min:1',
                 'product.*'     => 'required|exists:items,id',
                 'quantity'      => 'required|array|min:1',
@@ -136,6 +138,7 @@ class InvoiceExportController extends Controller
         }
 
         $invoiceExport->skip_reason = $validatedData['skip_reason'] ?? null;
+        $invoiceExport->notes = $validatedData['notes'] ?? null;
         $invoiceExport->save();
 
         if ($skipVoucherNo) {
@@ -222,6 +225,7 @@ class InvoiceExportController extends Controller
             'voucher_date'  => 'required|date',
             'invoice_no'    => 'required',
             'subSection_id' => 'required',
+            'notes'         => 'nullable|string|max:5000',
             'product'       => 'required|array|min:1',
             'product.*'     => 'required|exists:items,id',
             'quantity'      => 'required|array|min:1',
@@ -238,54 +242,44 @@ class InvoiceExportController extends Controller
             'quantity.*.min'          => 'الكمية يجب ألا تقل عن 0.1.',
         ]);
 
-        // تحديث بيانات الفاتورة
-        $invoiceExport                = InvoiceExport::findOrFail($id);
-        $invoiceExport->voucher_no    = $validatedData['voucher_no'];
-        $invoiceExport->voucher_date  = $validatedData['voucher_date'];
-        $invoiceExport->invoice_no    = $validatedData['invoice_no'];
-        $invoiceExport->subSection_id = $validatedData['subSection_id'];
-        $invoiceExport->save();
+        DB::transaction(function () use ($validatedData, $id) {
+            $invoiceExport = InvoiceExport::findOrFail($id);
+            $invoiceExport->voucher_no = $validatedData['voucher_no'];
+            $invoiceExport->voucher_date = $validatedData['voucher_date'];
+            $invoiceExport->invoice_no = $validatedData['invoice_no'];
+            $invoiceExport->subSection_id = $validatedData['subSection_id'];
+            $invoiceExport->notes = $validatedData['notes'] ?? null;
+            $invoiceExport->save();
 
-        // حذف الأصناف المرتبطة بالفاتورة
-        foreach ($invoiceExport->InvoiceExport_product as $product) {
-            // العثور على الصنف المرتبط بالفاتورة
-            $item = Item::findOrFail($product->item_id);
-
-            // تحديث الرصيد
-            $item->balance += $product->quantity;
-            $item->update();
-
-            // حذف الصنف من الفاتورة
-            $product->delete();
-        }
-
-        // // حذف كل الأصناف السابقة التي تم إضافتها إلى الفاتورة
-        // $invoiceExport->InvoiceExport_product()->delete();
-
-        // إضافة الأصناف المحدثة إلى الفاتورة
-        for ($i = 0; $i < count($validatedData['product']); $i++) {
-            $product  = Item::findOrFail($validatedData['product'][$i]);
-            $quantity = $validatedData['quantity'][$i];
-            // $price = $validatedData['price'][$i];
-
-            $invoiceExport_product                    = new InvoiceExport_product();
-            $invoiceExport_product->invoice_export_id = $invoiceExport->id;
-            $invoiceExport_product->item_id           = $product->id;
-            $invoiceExport_product->quantity          = $quantity;
-
-            if ($invoiceExport_product->quantity = $quantity) {
-                // Find the item
-                $item = Item::findOrFail($invoiceExport_product->item_id);
-
-                // Update the item's balance
-                $item->balance -= $invoiceExport_product->quantity;
-
-                // Save the item
-                $item->update();
+            foreach ($invoiceExport->InvoiceExport_product as $existingProduct) {
+                $item = Item::whereKey($existingProduct->item_id)->lockForUpdate()->firstOrFail();
+                $item->balance += $existingProduct->quantity;
+                $item->save();
             }
 
-            $invoiceExport_product->save();
-        }
+            foreach ($invoiceExport->InvoiceExport_product as $existingProduct) {
+                $existingProduct->delete();
+            }
+
+            foreach ($validatedData['product'] as $index => $itemId) {
+                $item = Item::whereKey($itemId)->lockForUpdate()->firstOrFail();
+                $quantity = $validatedData['quantity'][$index];
+
+                if ($quantity > $item->balance) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'quantity.' . $index => 'الكمية المطلوبة غير متوفرة للصنف ' . $item->item_name . '، الرصيد الحالي هو ' . $item->balance . '.',
+                    ]);
+                }
+
+                $item->balance -= $quantity;
+                $item->save();
+
+                $invoiceExport->InvoiceExport_product()->create([
+                    'item_id' => $item->id,
+                    'quantity' => $quantity,
+                ]);
+            }
+        });
 
         // رسالة نجاح العملية
         return redirect()->back()->with('success', 'تم تحديث الفاتورة بنجاح.');
