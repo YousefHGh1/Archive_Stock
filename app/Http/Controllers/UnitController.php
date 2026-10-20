@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UnitController extends Controller
 {
@@ -17,7 +18,11 @@ class UnitController extends Controller
     {
         // $unit= Unit::simplepaginate(5);
         $unit = Unit::all();
-        return view('inventory.unit.index', compact('unit'));
+        $next_num = Unit::max('unit_num') + 1;
+        if (! $next_num) {
+            $next_num = 1;
+        }
+        return view('inventory.unit.index', compact('unit', 'next_num'));
     }
 
     public function create()
@@ -41,9 +46,20 @@ class UnitController extends Controller
         }
 
         // التحقق من صحة البيانات المدخلة
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'unit_name' => 'required|string|min:2',
         ]);
+
+        if ($validator->fails()) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+            return redirect('inventory/unit/create')
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         // حفظ الوحدة في قاعدة البيانات
         $unit            = new Unit();
@@ -53,6 +69,7 @@ class UnitController extends Controller
         if ($unit->save()) {
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
+                    'success' => true,
                     'id' => $unit->id,
                     'unit_num' => $unit->unit_num,
                     'unit_name' => $unit->unit_name,
@@ -61,6 +78,12 @@ class UnitController extends Controller
 
             return redirect('inventory/unit/create')->with('success', '!تم حفظ الوحدة بنجاح');
         } else {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'تحقق من صحة البيانات!'
+                ], 400);
+            }
             return redirect('inventory/unit/create')->with('warning', '  تحقق من صحة البيانات!');
         }
 
@@ -81,28 +104,72 @@ class UnitController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'unit_name' => 'required|string|min:2',
+            'unit_num' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $unit            = Unit::find($id);
         $unit->unit_num  = $request->unit_num;
         $unit->unit_name = $request->unit_name;
         $unit->save();
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'تمت التعديل بنجاح!'
+            ], 200);
+        }
+
         return redirect('inventory/unit')->with('success', 'تمت التعديل بنجاح!');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $unit = Unit::find($id);
 
         if (! $unit) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'الوحدة غير موجود'
+                ], 404);
+            }
             session()->flash('error', 'الوحدة غير موجود');
             return redirect()->route('unit.index');
         }
 
         if ($unit->Items()->count() > 0) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'لا يمكن حذف الوحدة لأنه مرتبط بصنف.'
+                ], 400);
+            }
             session()->flash('warning', 'لا يمكن حذف الوحدة لأنه مرتبط بصنف.');
             return redirect()->route('unit.index');
         }
 
         $unit->delete();
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'تم الحذف بنجاح.'
+            ], 200);
+        }
+
         session()->flash('success', 'تم الحذف بنجاح.');
         return redirect()->route('unit.index');
     }
