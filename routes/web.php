@@ -138,16 +138,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/{id}/permissions', [RoleManagementController::class, 'assignPermissions'])->name('assignPermissions');
     });
 
-    // Permissions Management Routes
-    Route::prefix('permissions-manage')->name('permissions-manage.')->group(function () {
-        Route::get('/', [PermissionController::class, 'index'])->name('index');
-        Route::get('/create', [PermissionController::class, 'create'])->name('create');
-        Route::post('/', [PermissionController::class, 'store'])->name('store');
-        Route::get('/{id}', [PermissionController::class, 'show'])->name('show');
-        Route::get('/{id}/edit', [PermissionController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [PermissionController::class, 'update'])->name('update');
-        Route::delete('/{id}', [PermissionController::class, 'destroy'])->name('destroy');
-    });
+    // Permissions Management Routes (using PermissionsUI package)
+    // Route::prefix('permissions-manage')->name('permissions-manage.')->group(function () {
+    //     Route::get('/', [PermissionController::class, 'index'])->name('index');
+    //     Route::get('/create', [PermissionController::class, 'create'])->name('create');
+    //     Route::post('/', [PermissionController::class, 'store'])->name('store');
+    //     Route::get('/{id}', [PermissionController::class, 'show'])->name('show');
+    //     Route::get('/{id}/edit', [PermissionController::class, 'edit'])->name('edit');
+    //     Route::put('/{id}', [PermissionController::class, 'update'])->name('update');
+    //     Route::delete('/{id}', [PermissionController::class, 'destroy'])->name('destroy');
+    // });
 
     Route::resource('purchase', PurchaseController::class);
 

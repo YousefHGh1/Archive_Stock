@@ -20,7 +20,7 @@ class PermissionController extends Controller
     public function index()
     {
         $permissions = Permission::orderBy('name')->paginate(15);
-        return view('permissions.index', compact('permissions'));
+        return view('vendor.PermissionsUI.permissions.index', compact('permissions'));
     }
 
     /**
@@ -28,7 +28,7 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        return view('permissions.create');
+        return view('vendor.PermissionsUI.permissions.create');
     }
 
     /**
@@ -42,7 +42,7 @@ class PermissionController extends Controller
 
         Permission::create(['name' => $request->name, 'guard_name' => 'web']);
 
-        return redirect()->route('permissions.index')
+        return redirect()->route('permission_ui.permissions.index')
             ->with('success', 'تم إنشاء الصلاحية بنجاح!');
     }
 
@@ -52,7 +52,7 @@ class PermissionController extends Controller
     public function show($id)
     {
         $permission = Permission::with('roles')->findOrFail($id);
-        return view('permissions.show', compact('permission'));
+        return view('vendor.PermissionsUI.permissions.show', compact('permission'));
     }
 
     /**
@@ -61,7 +61,7 @@ class PermissionController extends Controller
     public function edit($id)
     {
         $permission = Permission::findOrFail($id);
-        return view('permissions.edit', compact('permission'));
+        return view('vendor.PermissionsUI.permissions.edit', compact('permission'));
     }
 
     /**
@@ -77,7 +77,7 @@ class PermissionController extends Controller
         $permission->name = $request->name;
         $permission->save();
 
-        return redirect()->route('permissions.index')
+        return redirect()->route('permission_ui.permissions.index')
             ->with('success', 'تم تحديث الصلاحية بنجاح!');
     }
 
@@ -89,7 +89,7 @@ class PermissionController extends Controller
         $permission = Permission::findOrFail($id);
         $permission->delete();
 
-        return redirect()->route('permissions.index')
+        return redirect()->route('permission_ui.permissions.index')
             ->with('success', 'تم حذف الصلاحية بنجاح!');
     }
 }

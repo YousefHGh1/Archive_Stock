@@ -230,6 +230,63 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .pagination-wrapper {
+            padding: 20px 25px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 0;
+        }
+
+        .pagination .page-item {
+            margin: 0;
+        }
+
+        .pagination .page-link {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 10px 16px;
+            transition: all 0.3s ease;
+            background: white;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .pagination .page-link:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #bdc3c7;
+            border-color: #e0e0e0;
+            background: #f8f9fa;
+            cursor: not-allowed;
+        }
+
+        .pagination .page-item.disabled .page-link:hover {
+            background: #f8f9fa;
+            color: #bdc3c7;
+            border-color: #e0e0e0;
+            transform: none;
+            box-shadow: none;
+        }
     </style>
 @endsection
 
@@ -282,6 +339,11 @@
                         </div>
                     @endforelse
                 </div>
+                @if ($users->links())
+                    <div class="pagination-wrapper mt-4 px-5 pb-4">
+                        {!! $users->appends(['search' => request('search')])->withQueryString()->links('pagination::bootstrap-5') !!}
+                    </div>
+                @endif
             </div>
         </div>
     </div>
