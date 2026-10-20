@@ -22,7 +22,7 @@ class VehicleOperationController extends Controller
 
     public function index(Request $request)
     {
-        $query = VehicleOperation::with(['vehicle', 'driver']);
+        $query = VehicleOperation::with(['vehicle', 'driver', 'dieselExport']);
 
         if ($request->filled('vehicle_id')) {
             $query->where('vehicle_id', $request->input('vehicle_id'));
@@ -55,8 +55,12 @@ class VehicleOperationController extends Controller
     {
         $vehicles = Vehicle::where('is_active', true)->orderBy('plate_number')->get();
         $drivers = Driver::where('is_active', true)->orderBy('name')->get();
+        $dieselExports = \App\Models\DieselExport::with(['section', 'subSection', 'typesfuel'])
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->get();
 
-        return view('vehicle_operations.create', compact('vehicles', 'drivers'));
+        return view('vehicle_operations.create', compact('vehicles', 'drivers', 'dieselExports'));
     }
 
     public function store(VehicleOperationRequest $request)
@@ -95,11 +99,15 @@ class VehicleOperationController extends Controller
 
     public function edit($id)
     {
-        $operation = VehicleOperation::findOrFail($id);
+        $operation = VehicleOperation::with('dieselExport')->findOrFail($id);
         $vehicles = Vehicle::where('is_active', true)->orWhere('id', $operation->vehicle_id)->orderBy('plate_number')->get();
         $drivers = Driver::where('is_active', true)->orWhere('id', $operation->driver_id)->orderBy('name')->get();
+        $dieselExports = \App\Models\DieselExport::with(['section', 'subSection', 'typesfuel'])
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->get();
 
-        return view('vehicle_operations.edit', compact('operation', 'vehicles', 'drivers'));
+        return view('vehicle_operations.edit', compact('operation', 'vehicles', 'drivers', 'dieselExports'));
     }
 
     public function update(VehicleOperationRequest $request, $id)

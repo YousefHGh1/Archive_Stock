@@ -31,20 +31,6 @@
             <!--end::Toolbar-->
         </div>
         <!--end::Brand-->
-        <div class="app-sidebar-search" role="search" aria-label="البحث في القائمة الجانبية">
-            <label class="sr-only" for="app_sidebar_search_input">ابحث في صفحات القائمة</label>
-            <div class="app-sidebar-search-field">
-                <i class="la la-search" aria-hidden="true"></i>
-                <input id="app_sidebar_search_input" type="text" dir="rtl" autocomplete="off"
-                    aria-controls="kt_aside_menu" aria-describedby="app_sidebar_search_status"
-                    placeholder="ابحث في القائمة…" />
-                <button type="button" id="app_sidebar_search_clear" aria-label="مسح البحث" hidden>
-                    <i class="la la-times" aria-hidden="true"></i>
-                </button>
-            </div>
-            <span id="app_sidebar_search_status" class="sr-only" role="status" aria-live="polite"
-                aria-atomic="true"></span>
-        </div>
         <!--begin::Aside Menu-->
         <div class="aside-menu-wrapper flex-column-fluid" id="kt_aside_menu_wrapper">
             <!--begin::Menu Container-->
@@ -53,10 +39,6 @@
 
                 <!--begin::Menu Nav-->
                 <ul class="menu-nav">
-                    <li class="app-sidebar-search-empty" hidden>
-                        <i class="la la-search-minus" aria-hidden="true"></i>
-                        <span>لا توجد نتائج تطابق البحث</span>
-                    </li>
                     <li class="menu-item" aria-haspopup="true">
                         <a href="{{ url('dashboard') }}" class="menu-link">
                             <span class="svg-icon menu-icon">
@@ -585,30 +567,6 @@
                                                             </a>
                                                         </li>
                                                         <li class="menu-item" aria-haspopup="true">
-                                                            <a href="{{ route('inventory.reports.low-stock') }}" class="menu-link">
-                                                                <span class="svg-icon menu-icon"><i class="flaticon-eye"></i></span>
-                                                                <span class="menu-text">الأصناف تحت الحد الأدنى</span>
-                                                            </a>
-                                                        </li>
-                                                        <li class="menu-item" aria-haspopup="true">
-                                                            <a href="{{ route('inventory.reports.historical-stock') }}" class="menu-link">
-                                                                <span class="svg-icon menu-icon"><i class="flaticon-eye"></i></span>
-                                                                <span class="menu-text">الأرصدة التاريخية للمخازن</span>
-                                                            </a>
-                                                        </li>
-                                                        <li class="menu-item" aria-haspopup="true">
-                                                            <a href="{{ route('inventory.reports.historical-fuel') }}" class="menu-link">
-                                                                <span class="svg-icon menu-icon"><i class="flaticon-eye"></i></span>
-                                                                <span class="menu-text">الأرصدة التاريخية للمحروقات</span>
-                                                            </a>
-                                                        </li>
-                                                        <li class="menu-item" aria-haspopup="true">
-                                                            <a href="{{ route('inventory.reports.fuel-outgoing') }}" class="menu-link">
-                                                                <span class="svg-icon menu-icon"><i class="flaticon-eye"></i></span>
-                                                                <span class="menu-text">صرف المحروقات</span>
-                                                            </a>
-                                                        </li>
-                                                        <li class="menu-item" aria-haspopup="true">
                                                             <a href="{{ route('balance') }}" class="menu-link">
                                                                 <span class="svg-icon menu-icon">
                                                                     <i class="flaticon-eye"></i>
@@ -633,42 +591,6 @@
                                                                     <!--end::Svg Icon-->
                                                                 </span>
                                                                 <span class="menu-text">تقارير فواتير الشراء </span>
-                                                            </a>
-                                                        </li>
-                                                        <li class="menu-item" aria-haspopup="true">
-                                                            <a href="{{ route('inventory.reports.monthly-stock') }}" class="menu-link">
-                                                                <span class="svg-icon menu-icon"><i class="flaticon-eye"></i></span>
-                                                                <span class="menu-text">الحركة الشهرية للمخزون</span>
-                                                            </a>
-                                                        </li>
-                                                        <li class="menu-item" aria-haspopup="true">
-                                                            <a href="{{ route('export-report.section') }}" class="menu-link">
-                                                                <span class="svg-icon menu-icon"><i class="flaticon-eye"></i></span>
-                                                                <span class="menu-text">الصرف حسب القسم</span>
-                                                            </a>
-                                                        </li>
-                                                        <li class="menu-item" aria-haspopup="true">
-                                                            <a href="{{ route('inventory.reports.top-issued-items') }}" class="menu-link">
-                                                                <span class="svg-icon menu-icon"><i class="flaticon-eye"></i></span>
-                                                                <span class="menu-text">الأصناف الأكثر صرفًا</span>
-                                                            </a>
-                                                        </li>
-                                                        <li class="menu-item" aria-haspopup="true">
-                                                            <a href="{{ route('inventory.reports.fuel-average') }}" class="menu-link">
-                                                                <span class="svg-icon menu-icon"><i class="flaticon-eye"></i></span>
-                                                                <span class="menu-text">متوسط استهلاك المحروقات</span>
-                                                            </a>
-                                                        </li>
-                                                        <li class="menu-item" aria-haspopup="true">
-                                                            <a href="{{ route('inventory.reports.inventory-cost') }}" class="menu-link">
-                                                                <span class="svg-icon menu-icon"><i class="flaticon-eye"></i></span>
-                                                                <span class="menu-text">تكلفة المخزون</span>
-                                                            </a>
-                                                        </li>
-                                                        <li class="menu-item" aria-haspopup="true">
-                                                            <a href="{{ route('inventory.reports.supplier-comparison') }}" class="menu-link">
-                                                                <span class="svg-icon menu-icon"><i class="flaticon-eye"></i></span>
-                                                                <span class="menu-text">مقارنة أسعار الموردين</span>
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -2544,45 +2466,6 @@
                                                 </div>
                                             </li>
                     @endcanany
-
-                    @canany(['vehicles-read', 'drivers-read', 'vehicle-operations-read', 'vehicle-reports-read'])
-                        <li class="menu-section">
-                            <h4 class="menu-text">المركبات والسائقون</h4>
-                            <i class="menu-icon ki ki-bold-more-hor icon-md"></i>
-                        </li>
-                        <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
-                            <a href="javascript:;" class="menu-link menu-toggle">
-                                <span class="svg-icon menu-icon"><i class="flaticon-bus"></i></span>
-                                <span class="menu-text">إدارة المركبات</span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="menu-submenu"><i class="menu-arrow"></i>
-                                <ul class="menu-subnav">
-                                    @can('vehicles-read')
-                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('vehicles.index') }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">عرض المركبات</span></a></li>
-                                    @endcan
-                                    @can('vehicles-create')
-                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('vehicles.index', ['open' => 'create']) }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">إضافة مركبة</span></a></li>
-                                    @endcan
-                                    @can('drivers-read')
-                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('drivers.index') }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">عرض السائقين</span></a></li>
-                                    @endcan
-                                    @can('drivers-create')
-                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('drivers.index', ['open' => 'create']) }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">إضافة سائق</span></a></li>
-                                    @endcan
-                                    @can('vehicle-operations-read')
-                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('vehicle-operations.index') }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">عمليات المركبات</span></a></li>
-                                    @endcan
-                                    @can('vehicle-operations-create')
-                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('vehicle-operations.index', ['open' => 'create']) }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">تسجيل عملية</span></a></li>
-                                    @endcan
-                                    @can('vehicle-reports-read')
-                                    <li class="menu-item" aria-haspopup="true"><a href="{{ route('vehicle-reports.index') }}" class="menu-link"><i class="menu-bullet menu-bullet-dot"><span></span></i><span class="menu-text">تقارير المركبات</span></a></li>
-                                    @endcan
-                                </ul>
-                            </div>
-                        </li>
-                    @endcanany
                     
                     @can('HR')
 
@@ -2764,59 +2647,38 @@
         }
     </style>
     <script>
-        function initializeSidebarNavigation() {
+        $(document).ready(function() {
             // Store the current URL (path) in a variable
             var currentUrl = window.location.href;
 
             // Check the URL for each submenu item and make it active if it matches
-            document.querySelectorAll('.menu-item a').forEach(function(link) {
-                var linkUrl = link.getAttribute('href');
+            $('.menu-item a').each(function() {
+                var linkUrl = $(this).attr('href');
 
                 // If the link's href matches the current URL, add the 'active' class to the item
                 if (currentUrl.indexOf(linkUrl) !== -1) {
                     // Add active class to this menu item
-                    var menuItem = link.closest('.menu-item');
-                    menuItem.classList.add('active');
+                    $(this).closest('.menu-item').addClass('active');
 
                     // If it's a submenu, open it (toggle)
-                    var submenuItem = link.closest('.menu-item.menu-item-submenu');
-                    if (submenuItem) {
-                        submenuItem.classList.add('open');
-                        var submenu = submenuItem.querySelector(':scope > .menu-submenu');
-                        if (submenu) {
-                            submenu.style.display = 'block';
-                        }
-                    }
+                    $(this).closest('.menu-item.menu-item-submenu').addClass('open');
+                    $(this).closest('.menu-item.menu-item-submenu').children('.menu-submenu').show();
                 }
             });
 
             // Optional: If the user clicks a link in the menu, highlight it and open the submenu
-            document.querySelectorAll('.menu-item a').forEach(function(link) {
-                link.addEventListener('click', function() {
-                    // Remove 'active' class from all menu items
-                    document.querySelectorAll('.menu-item').forEach(function(menuItem) {
-                        menuItem.classList.remove('active');
-                    });
+            $('.menu-item a').on('click', function() {
+                // Remove 'active' class from all menu items
+                $('.menu-item').removeClass('active');
 
-                    // Add 'active' to the clicked item
-                    var menuItem = link.closest('.menu-item');
-                    menuItem.classList.add('active');
+                // Add 'active' to the clicked item
+                $(this).closest('.menu-item').addClass('active');
 
-                    // Open submenu if it is a submenu link
-                    if (menuItem.classList.contains('menu-item-submenu')) {
-                        menuItem.classList.add('open');
-                        var submenu = menuItem.querySelector(':scope > .menu-submenu');
-                        if (submenu) {
-                            submenu.style.display = 'block';
-                        }
-                    }
-                });
-            });
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeSidebarNavigation);
-        } else {
-            initializeSidebarNavigation();
-        }
-    </script>
+            // Open submenu if it is a submenu link
+            if ($(this).closest('.menu-item').hasClass('menu-item-submenu')) {
+                $(this).closest('.menu-item').addClass('open');
+                $(this).closest('.menu-item').children('.menu-submenu').show();
+            }
+        });
+    });
+</script>

@@ -86,20 +86,6 @@ class HeadController extends Controller
         $counts['internalMessages'] = $counts['archiveMessages'] + $counts['legalMessages']
              + $counts['computerMessages'] + $counts['censorshipMessages'] + $counts['jibayaMessages'];
 
-        $counts['criticalItems'] = DB::table('items')->whereColumn('balance', '<=', 'low_limit')->count();
-
-        $counts['inventoryYearIncoming'] = DB::table('invoices')
-            ->where('status', 'active')
-            ->whereNull('deleted_at')
-            ->whereYear('voucher_date', now()->year)
-            ->count();
-
-        $counts['inventoryYearOutgoing'] = DB::table('invoice_exports')
-            ->where('status', 'active')
-            ->whereNull('deleted_at')
-            ->whereYear('voucher_date', now()->year)
-            ->count();
-
         $counts['totalArchiveTransactions'] = $counts['archiveIncoming'] + $counts['archiveOutgoing']
              + $counts['computerIncoming'] + $counts['computerOutgoing']
              + $counts['censorshipIncoming'] + $counts['censorshipOutgoing']
@@ -198,44 +184,7 @@ class HeadController extends Controller
                     $stats['fuelIncoming'] + $stats['fuelOutgoing'],
                 ],
             ],
-            'sectionFuelOutgoing' => $this->sectionFuelOutgoing(),
         ];
-    }
-
-    /**
-     * صرف المحروقات (لتر) حسب الدائرة، مع الرجوع لآخر سنة فيها بيانات
-     * إذا كانت السنة الجارية بلا حركة (بنفس منطق monthlyCounts).
-     */
-    private function sectionFuelOutgoing()
-    {
-        $rows = $this->sectionFuelOutgoingRows(now()->year);
-
-        if ($rows->sum('total_quantity') == 0) {
-            $latestYear = $this->latestYearFor([['diesel_exports', 'date']]);
-
-            if ($latestYear && $latestYear !== now()->year) {
-                $rows = $this->sectionFuelOutgoingRows($latestYear);
-            }
-        }
-
-        return [
-            'labels' => $rows->pluck('name_section')->all(),
-            'values' => $rows->map(fn ($row) => (float) $row->total_quantity)->all(),
-        ];
-    }
-
-    private function sectionFuelOutgoingRows(int $year)
-    {
-        return DB::table('diesel_exports')
-            ->join('sections', 'sections.id', '=', 'diesel_exports.section_id')
-            ->whereYear('diesel_exports.date', $year)
-            ->select('sections.name_section')
-            ->selectRaw('SUM(diesel_exports.quantity) as total_quantity')
-            ->groupBy('sections.name_section')
-            ->orderByDesc('total_quantity')
-            ->orderBy('sections.name_section')
-            ->limit(8)
-            ->get();
     }
 
     /**

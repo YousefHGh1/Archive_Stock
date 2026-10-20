@@ -129,7 +129,6 @@
                                 <th style="min-width: 10px">{{ 'رقم الفاتورة' }}</th>
                                 <th style="min-width: 10px">{{ 'سند التوريد' }}</th>
                                 <th style="min-width: 10px">{{ 'تاريخ التوريد ' }} </th>
-                                <th style="min-width: 10px">{{ 'ملاحظات' }}</th>
                                 <th style="min-width: 10px">{{ 'الاجراءات ' }} </th>
                             </tr>
                         </thead>
@@ -143,7 +142,6 @@
                                     <td class="py-8 pl-0">{{ $diesels->invoice_num }}</td>
                                     <td class="py-8 pl-0">{{ $diesels->voucher }}</td>
                                     <td class="py-8 pl-0">{{ $diesels->date }}</td>
-                                    <td class="py-8 pl-0">{{ $diesels->notes ?: '—' }}</td>
                                     <td data-field="Actions" data-autohide-disabled="false" aria-label="null"
                                         class="datatable-cell">
                                         <a href="#" onclick="confirmDelete('{{ $diesels->id }}', this)"
@@ -200,30 +198,37 @@
         }
 
         function performDelete(id, reference) {
-            // Blade will output the route with a placeholder we replace in JS
             let url = "{{ route('diesel.destroy', ['diesel' => ':id']) }}";
             url = url.replace(':id', id);
 
             axios.delete(url)
                 .then(function(response) {
-                    console.log(response);
                     reference.closest('tr').remove();
-                    showMessage(response.data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم الحذف بنجاح',
+                        text: (response.data && response.data.message) || 'تم حذف السجل.',
+                        confirmButtonText: 'حسناً'
+                    }).then(function() {
+                        location.reload(); // لتحديث الترقيم والمجاميع
+                    });
                 })
                 .catch(function(error) {
-                    console.log(error.response);
-                    window.ArchiveStockFeedback.error(error);
+                    var message = 'تعذر إتمام عملية الحذف، حاول مرة أخرى.';
+                    if (error.response) {
+                        if (error.response.status === 403) {
+                            message = 'ليس لديك صلاحية لحذف هذا السجل.';
+                        } else if (error.response.data && error.response.data.message) {
+                            message = error.response.data.message;
+                        }
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'لم يتم الحذف',
+                        text: message,
+                        confirmButtonText: 'حسناً'
+                    });
                 });
-        }
-
-        function showMessage(message) {
-            Swal.fire(
-                'تم الحذف بنجاح!',
-                'تم حذف ملفك.',
-                'success'
-            ).then(() => {
-            location.reload(); // Refresh the page after the success alert is dismissed
-        });
         }
     </script>
 @endsection

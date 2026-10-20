@@ -72,14 +72,6 @@
                 <a href="{{ route('dieselexport.totalreport') }}" class="btn">
                     <i class="la la-layer-group"></i> تقارير المجاميع
                 </a>
-                @can('report-read')
-                    <a href="{{ route('inventory.reports.fuel-outgoing') }}" class="btn">
-                        <i class="la la-chart-bar"></i> تقرير الصرف الشامل
-                    </a>
-                    <a href="{{ route('inventory.reports.historical-fuel') }}" class="btn">
-                        <i class="la la-history"></i> الرصيد التاريخي
-                    </a>
-                @endcan
                 <a href="{{ route('dieselexport.index') }}" class="btn">
                     <i class="la la-arrow-right"></i> رجوع للرئيسية
                 </a>

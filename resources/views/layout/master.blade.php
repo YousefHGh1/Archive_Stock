@@ -39,7 +39,6 @@
                         @includeIf('layout.error')
                     </div>
 
-                    @include('layout.transaction-feedback')
 
 
                     <div class="d-flex flex-column-fluid">
@@ -144,3 +143,4 @@
 <!--end::Body-->
 
 </html>
+

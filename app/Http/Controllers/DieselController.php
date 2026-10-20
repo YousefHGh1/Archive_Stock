@@ -47,9 +47,7 @@ class DieselController extends Controller
             'type'         => 'required',
             'invoice_num'  => 'required|numeric',
             'quantity'     => 'required|numeric',
-            'price'        => 'nullable|numeric|min:0',
             'date'         => 'required|date',
-            'notes'        => 'nullable|string|max:5000',
         ]);
 
         Diesel::create($validatedData);
@@ -99,10 +97,7 @@ class DieselController extends Controller
             'type'         => 'required',
             'invoice_num'  => 'required|numeric',
             'quantity'     => 'required|numeric',
-            'price'        => 'nullable|numeric|min:0',
-            'date'         => 'required|date',
-            'notes'        => 'nullable|string|max:5000',
-        ]);
+            'date'         => 'required|date']);
 
         $diesel->update($validatedData);
 
@@ -111,12 +106,26 @@ class DieselController extends Controller
 
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        Diesel::destroy($id);
-        return redirect()->route('diesel.index')
-            ->with('success', 'تمت حذف بيانات وارد المحروقات بنجاح.');
+        $diesel = Diesel::find($id);
 
+        if (! $diesel) {
+            $message = 'لم يتم العثور على سند التوريد، ربما تم حذفه مسبقاً.';
+
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 404)
+                : redirect()->route('diesel.index')->with('error', $message);
+        }
+
+        $diesel->delete();
+
+        $message = 'تم حذف سند التوريد رقم ' . $diesel->voucher . ' بنجاح.';
+
+        // الحذف يتم عبر AJAX: نعيد JSON بدلاً من إعادة التوجيه
+        return $request->expectsJson()
+            ? response()->json(['message' => $message])
+            : redirect()->route('diesel.index')->with('success', $message);
     }
 
     public function report(Request $request)
@@ -160,7 +169,7 @@ class DieselController extends Controller
         // تصدير جميع النتائج المفلترة إلى ملف Excel (CSV)
         if ($request->input('export') === 'excel') {
             return $this->exportReportCsv('diesel-report-' . date('Y-m-d') . '.csv', [
-                'نوع المحروقات', 'اسم المورد', 'كمية التوريد', 'جهة التوريد', 'سند التوريد', 'رقم الفاتورة', 'تاريخ التوريد', 'ملاحظات',
+                'نوع المحروقات', 'اسم المورد', 'كمية التوريد', 'جهة التوريد', 'سند التوريد', 'رقم الفاتورة', 'تاريخ التوريد',
             ], $query->get()->map(function ($entry) {
                 return [
                     $entry->typesfuel->name ?? '-',
@@ -170,7 +179,6 @@ class DieselController extends Controller
                     $entry->voucher,
                     $entry->invoice_num,
                     $entry->date,
-                    $entry->notes,
                 ];
             }));
         }
@@ -395,8 +403,6 @@ class DieselController extends Controller
                     'delivery_type' => $item->type,
                     'section' => '-',
                     'sub_section' => '-',
-                    'num_section' => '-',
-                    'recipient' => '-',
                 ];
             });
 
@@ -414,9 +420,7 @@ class DieselController extends Controller
                     'fuel_type' => $item->typesfuel->name ?? 'N/A',
                     'delivery_type' => '-',
                     'section' => $item->section->name_section ?? 'N/A',
-                    'sub_section' => $item->subSection->name ?? 'N/A',
-                    'num_section' => $item->num_note ?? '-',
-                    'recipient' => $item->num_section ?? '-',
+                    'sub_section' => $item->subSection->name_sub_section ?? 'N/A',
                 ];
             });
 

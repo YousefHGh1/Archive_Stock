@@ -49,13 +49,12 @@ class DieselExportController extends Controller
             'section_id'     => 'required',
             'sub_section_id' => 'required',
             'typesfuel_id'   => 'required',
-            'voucher'        => 'required|numeric',
+            'voucher'        => 'required|numeric|unique:diesel_exports,voucher',
             'num_section'    => 'required',
             'num_note'       => 'required|numeric',
             'quantity'       => 'required|numeric',
             'date'           => 'required|date',
-            'notes'          => 'nullable|string|max:5000',
-        ]);
+        ], $this->voucherMessages());
 
         $totalDieselQuantity       = Diesel::sum("quantity");
         $totalDieselExportQuantity = DieselExport::sum("quantity");
@@ -101,16 +100,16 @@ class DieselExportController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $validatedData = $request->validate([
-            'notes' => 'nullable|string|max:5000',
-        ]);
+        $dieselexport = DieselExport::findOrFail($id);
 
-        $dieselexport              = DieselExport::find($id);
+        $request->validate([
+            'voucher' => 'required|numeric|unique:diesel_exports,voucher,' . $dieselexport->id,
+        ], $this->voucherMessages());
+
         $dieselexport->num_section = $request->num_section;
         $dieselexport->num_note    = $request->num_note;
         $dieselexport->section_id  = $request->section_id;
         $dieselexport->voucher     = $request->voucher;
-        $dieselexport->notes       = $validatedData['notes'] ?? null;
 
         // لادخال كمية الصادر بناء على كمية الوارد
         if ((Diesel::sum("quantity") > $request->quantity)) {
@@ -127,12 +126,36 @@ class DieselExportController extends Controller
         return redirect('dieselexport')->with('info', 'تمت تعديل بيانات صادر المحروقات بنجاح!');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        DieselExport::destroy($id);
-        return redirect()->route('diesel.index')
-            ->with('success', 'تمت حذف بيانات صادر المحروقات بنجاح.');
+        $dieselexport = DieselExport::find($id);
 
+        if (! $dieselexport) {
+            $message = 'لم يتم العثور على الإيصال، ربما تم حذفه مسبقاً.';
+
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 404)
+                : redirect()->route('dieselexport.index')->with('error', $message);
+        }
+
+        $dieselexport->delete();
+
+        $message = 'تم حذف إيصال الصادر رقم ' . $dieselexport->voucher . ' بنجاح.';
+
+        // الحذف يتم عبر AJAX: نعيد JSON بدلاً من إعادة التوجيه
+        // (إعادة التوجيه كانت تُتبع كطلب DELETE فتفشل، وتبقى رسالة النجاح في الجلسة)
+        return $request->expectsJson()
+            ? response()->json(['message' => $message])
+            : redirect()->route('dieselexport.index')->with('success', $message);
+    }
+
+    private function voucherMessages(): array
+    {
+        return [
+            'voucher.required' => 'رقم الإيصال مطلوب.',
+            'voucher.numeric'  => 'رقم الإيصال يجب أن يكون رقماً.',
+            'voucher.unique'   => 'رقم الإيصال مستخدم مسبقاً، لا يمكن تكرار رقم الإيصال.',
+        ];
     }
 
     public function report(Request $request)
@@ -184,7 +207,7 @@ class DieselExportController extends Controller
         // تصدير جميع النتائج المفلترة إلى ملف Excel (CSV)
         if ($request->input('export') === 'excel') {
             return $this->exportReportCsv('diesel-export-report-' . date('Y-m-d') . '.csv', [
-                'نوع المحروقات', 'الدائرة', 'القسم الفرعي', 'رقم الإيصال', 'كمية الصادر', 'الجهة المستلمة', 'رقم الدفتر', 'تاريخ الصادر', 'ملاحظات',
+                'نوع المحروقات', 'الدائرة', 'القسم الفرعي', 'رقم الإيصال', 'كمية الصادر', 'الجهة المستلمة', 'رقم الدفتر', 'تاريخ الصادر',
             ], $query->get()->map(function ($row) {
                 return [
                     $row->typesfuel->name ?? '-',
@@ -195,7 +218,6 @@ class DieselExportController extends Controller
                     $row->num_section,
                     $row->num_note,
                     $row->date,
-                    $row->notes,
                 ];
             }));
         }

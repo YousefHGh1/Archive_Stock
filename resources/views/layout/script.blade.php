@@ -25,7 +25,6 @@
 <script src="{{ asset('js/crud.js') }}"></script>
 <script src="{{ asset('js/mobile-aside.js') }}"></script>
 <script src="{{ asset('js/app-theme.js') }}?v={{ @filemtime(public_path('js/app-theme.js')) }}"></script>
-<script src="{{ asset('js/transaction-animations.js') }}?v={{ @filemtime(public_path('js/transaction-animations.js')) }}"></script>
 <script src="{{asset('assets/js/pages/crud/file-upload/image-input.js')}}"></script>
 <!--end::Page Scripts-->
 

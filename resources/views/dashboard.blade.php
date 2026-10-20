@@ -33,8 +33,6 @@
         .db-kpi-value small { font-size: .85rem; color: var(--app-muted); font-weight: 600; }
         .db-kpi-foot { margin-top: .6rem; font-size: .86rem; color: var(--app-muted); display: flex; gap: .75rem; flex-wrap: wrap; }
         .db-kpi-foot b { color: var(--app-text); }
-        .db-kpi-value a { color: inherit; text-decoration: none; }
-        .db-kpi-value a:hover { color: var(--app-primary); text-decoration: none; }
         .db-up { color: #1BC5BD !important; }
         .db-down { color: #F64E60 !important; }
 
@@ -197,7 +195,7 @@
 
         {{-- ===== KPIs ===== --}}
         <div class="row">
-            <div class="mb-6 col-6 col-xl db-fade" style="animation-delay: .05s">
+            <div class="mb-6 col-6 col-xl-3 db-fade" style="animation-delay: .05s">
                 <div class="db-kpi">
                     <div class="db-kpi-top">
                         <span class="db-kpi-label">معاملات الأرشيف</span>
@@ -207,52 +205,32 @@
                     <div class="db-kpi-foot"><span>في 5 دوائر</span></div>
                 </div>
             </div>
-            <div class="mb-6 col-6 col-xl db-fade" style="animation-delay: .1s">
+            <div class="mb-6 col-6 col-xl-3 db-fade" style="animation-delay: .1s">
                 <div class="db-kpi">
                     <div class="db-kpi-top">
                         <span class="db-kpi-label">حركة المخازن</span>
                         <span class="db-kpi-icon bg-light-success"><i class="la la-boxes text-success"></i></span>
                     </div>
-                    <div class="db-kpi-value">
-                        <a href="{{ route('inventory.reports.monthly-stock') }}" title="عرض تقرير الحركة الشهرية للمخزون">{{ $num($s['totalInventoryTransactions'] ?? 0) }}</a>
-                    </div>
+                    <div class="db-kpi-value">{{ $num($s['totalInventoryTransactions'] ?? 0) }}</div>
                     <div class="db-kpi-foot">
                         <span><i class="la la-arrow-down db-up"></i> <b>{{ $num($s['inventoryIncoming'] ?? 0) }}</b> وارد</span>
                         <span><i class="la la-arrow-up db-down"></i> <b>{{ $num($s['inventoryOutgoing'] ?? 0) }}</b> صادر</span>
-                        <span>هذا العام: <b>{{ $num($s['inventoryYearIncoming'] ?? 0) }}</b> وارد / <b>{{ $num($s['inventoryYearOutgoing'] ?? 0) }}</b> صادر</span>
                     </div>
                 </div>
             </div>
-            <div class="mb-6 col-6 col-xl db-fade" style="animation-delay: .15s">
-                <div class="db-kpi">
-                    <div class="db-kpi-top">
-                        <span class="db-kpi-label">الأصناف الحرجة</span>
-                        <span class="db-kpi-icon bg-light-danger"><i class="la la-exclamation-triangle text-danger"></i></span>
-                    </div>
-                    <div class="db-kpi-value {{ ($s['criticalItems'] ?? 0) > 0 ? 'text-danger' : '' }}">
-                        <a href="{{ route('inventory.reports.low-stock') }}" title="عرض تقرير الأصناف تحت الحد الأدنى">{{ $num($s['criticalItems'] ?? 0) }}</a>
-                    </div>
-                    <div class="db-kpi-foot">
-                        <span>رصيدها ≤ الحد الأدنى</span>
-                        <span>من أصل <b>{{ $num($s['inventoryItems'] ?? 0) }}</b> صنف</span>
-                    </div>
-                </div>
-            </div>
-            <div class="mb-6 col-6 col-xl db-fade" style="animation-delay: .2s">
+            <div class="mb-6 col-6 col-xl-3 db-fade" style="animation-delay: .15s">
                 <div class="db-kpi">
                     <div class="db-kpi-top">
                         <span class="db-kpi-label">رصيد المحروقات</span>
                         <span class="db-kpi-icon bg-light-warning"><i class="la la-gas-pump text-warning"></i></span>
                     </div>
-                    <div class="db-kpi-value {{ ($fuel['totalRemaining'] ?? 0) < 0 ? 'text-danger' : '' }}">
-                        <a href="{{ route('inventory.reports.historical-fuel') }}" title="عرض الرصيد التاريخي للمحروقات">{{ $liters($fuel['totalRemaining'] ?? 0) }} <small>لتر</small></a>
-                    </div>
+                    <div class="db-kpi-value {{ ($fuel['totalRemaining'] ?? 0) < 0 ? 'text-danger' : '' }}">{{ $liters($fuel['totalRemaining'] ?? 0) }} <small>لتر</small></div>
                     <div class="db-kpi-foot">
                         <span><i class="la la-arrow-down db-up"></i> <b>{{ $liters($fuel['yearIn'] ?? 0) }}</b> هذا العام</span>
                     </div>
                 </div>
             </div>
-            <div class="mb-6 col-6 col-xl db-fade" style="animation-delay: .25s">
+            <div class="mb-6 col-6 col-xl-3 db-fade" style="animation-delay: .2s">
                 <div class="db-kpi">
                     <div class="db-kpi-top">
                         <span class="db-kpi-label">المراسلات الداخلية</span>
@@ -356,19 +334,6 @@
                             <div><small>إجمالي الصادر</small><b class="db-down">{{ $liters($fuel['totalOut'] ?? 0) }}</b></div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- ===== Fuel by section ===== --}}
-        <div class="row">
-            <div class="col-xl-12">
-                <div class="db-panel">
-                    <div class="db-panel-head">
-                        <h4><i class="la la-gas-pump"></i> صرف المحروقات حسب الدائرة (لتر)</h4>
-                        <a href="{{ route('inventory.reports.fuel-outgoing') }}" class="db-link">تقرير صرف المحروقات <i class="la la-angle-left"></i></a>
-                    </div>
-                    <div class="db-panel-body"><div id="section-fuel-chart" class="db-chart"></div></div>
                 </div>
             </div>
         </div>
@@ -638,20 +603,6 @@
                 { name: 'فواتير الوارد', data: inventory.incoming || [] },
                 { name: 'سندات الصرف', data: inventory.outgoing || [] }
             ], ['#3699FF', '#F64E60'], 230, 'سند'), [inventory.incoming, inventory.outgoing]);
-
-            var sectionFuel = charts.sectionFuelOutgoing || {};
-            render('#section-fuel-chart', {
-                series: [{ name: 'الصرف (لتر)', data: sectionFuel.values || [] }],
-                chart: { type: 'bar', height: 320 },
-                plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '55%' } },
-                colors: ['#FFA800'],
-                dataLabels: { enabled: false },
-                xaxis: { categories: sectionFuel.labels || [], labels: { style: { colors: muted } } },
-                yaxis: { labels: { style: { colors: '#3F4254', fontWeight: 600 } } },
-                grid: { borderColor: '#EBEDF3', strokeDashArray: 4 },
-                tooltip: { y: { formatter: function(v) { return Number(v).toLocaleString('en') + ' لتر'; } } },
-                legend: { show: false }
-            }, [sectionFuel.values]);
         });
     </script>
 @endsection

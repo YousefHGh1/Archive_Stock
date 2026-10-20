@@ -184,7 +184,6 @@
                             <th style="min-width: 10px">{{ 'كمية الصادر' }}</th>
                             <th style="min-width: 10px">{{ 'رقم الإيصال' }}</th>
                             <th style="min-width: 10px">{{ 'تاريخ الصادر ' }} </th>
-                            <th style="min-width: 10px">{{ 'ملاحظات' }}</th>
                             <th style="min-width: 10px">{{ 'الاجراءات ' }} </th>
                         </tr>
                     </thead>
@@ -199,7 +198,6 @@
                                 <td class="py-8 pl-0"> {{ $dieselexports->quantity }} </td>
                                 <td class="py-8 pl-0"> {{ $dieselexports->voucher }} </td>
                                 <td class="py-8 pl-0">{{ $dieselexports->date }}</td>
-                                <td class="py-8 pl-0">{{ $dieselexports->notes ?: '—' }}</td>
                                 <td data-field="Actions" data-autohide-disabled="false" aria-label="null"
                                     class="datatable-cell">
                                     <a href="#" onclick="confirmDelete('{{ $dieselexports->id }}', this)"
@@ -258,24 +256,32 @@
 
             axios.delete(url)
                 .then(function(response) {
-                    console.log(response);
                     reference.closest('tr').remove();
-                    showMessage(response.data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم الحذف بنجاح',
+                        text: (response.data && response.data.message) || 'تم حذف السجل.',
+                        confirmButtonText: 'حسناً'
+                    }).then(function() {
+                        location.reload(); // لتحديث الترقيم والمجاميع
+                    });
                 })
                 .catch(function(error) {
-                    console.log(error.response);
-                    window.ArchiveStockFeedback.error(error);
+                    var message = 'تعذر إتمام عملية الحذف، حاول مرة أخرى.';
+                    if (error.response) {
+                        if (error.response.status === 403) {
+                            message = 'ليس لديك صلاحية لحذف هذا السجل.';
+                        } else if (error.response.data && error.response.data.message) {
+                            message = error.response.data.message;
+                        }
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'لم يتم الحذف',
+                        text: message,
+                        confirmButtonText: 'حسناً'
+                    });
                 });
-        }
-
-        function showMessage(message) {
-            Swal.fire(
-                'تم الحذف بنجاح!',
-                'تم حذف ملفك.',
-                'success'
-            ).then(() => {
-                location.reload(); // Refresh the page after the success alert is dismissed
-            });
         }
     </script>
 

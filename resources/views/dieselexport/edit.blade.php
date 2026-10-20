@@ -115,9 +115,13 @@
                                 <label for="voucher" class="col-lg-2 col-form-label text-lg-right">رقم الإيصال:</label>
                                 <div class="col-lg-3">
                                     <div class="input-group">
-                                        <input name="voucher" type="number" min="0" class="form-control"
-                                            id="voucher" value="{{ $dieselexport->voucher }}" />
+                                        <input name="voucher" type="number" min="0"
+                                            class="@error('voucher') is-invalid @enderror form-control"
+                                            id="voucher" value="{{ old('voucher', $dieselexport->voucher) }}" />
                                     </div>
+                                    @error('voucher')
+                                        <div class="d-block invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -145,18 +149,6 @@
                                     </div>
                                 </div>
 
-                            </div>
-
-                            <div class="form-group row">
-                                <label for="notes" class="col-lg-2 col-form-label text-lg-right">ملاحظات:</label>
-                                <div class="col-lg-8">
-                                    <textarea name="notes" id="notes" rows="3"
-                                        class="@error('notes') is-invalid @enderror form-control" maxlength="5000"
-                                        placeholder="أدخل الملاحظات">{{ old('notes', $dieselexport->notes) }}</textarea>
-                                    @error('notes')
-                                        <span class="text-sm text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
                             </div>
 
 
