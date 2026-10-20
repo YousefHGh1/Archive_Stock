@@ -15,6 +15,25 @@
 @endsection
 
 @section('css')
+    <style>
+        .quick-add-modal .modal-header {
+            align-items: center;
+        }
+
+        .quick-add-modal .modal-title {
+            margin: 0;
+        }
+
+        .quick-add-modal .modal-body {
+            color: #5e6775;
+        }
+
+        .quick-add-modal .quick-add-context {
+            margin-bottom: 1rem;
+            color: #5e6775;
+            line-height: 1.6;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -163,18 +182,29 @@
                                     <h6>نوع المحروقات:</h6>
                                 </label>
                                 <div class="col-3">
-                                    <div class="dropdown bootstrap-select form-control dropup">
-                                        <select name="typesfuel_id" id="typesfuel_id"
-                                            class="@error('typesfuel_id') is-invalid @enderror form-control selectpicker"
-                                            data-size="7" data-live-search="true">
-                                            <option value="">اختر نوع المحروقات</option>
-                                            @foreach ($typesfuel as $typesfuels)
-                                                <option value="{{ $typesfuels->id }}"
-                                                    {{ old('typesfuel_id') == $typesfuels->id ? 'selected' : '' }}>
-                                                    {{ $typesfuels->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                    <div class="input-group">
+                                        <div class="flex-grow-1">
+                                            <div class="dropdown bootstrap-select form-control dropup">
+                                                <select name="typesfuel_id" id="typesfuel_id"
+                                                    class="@error('typesfuel_id') is-invalid @enderror form-control selectpicker"
+                                                    data-size="7" data-live-search="true">
+                                                    <option value="">اختر نوع المحروقات</option>
+                                                    @foreach ($typesfuel as $typesfuels)
+                                                        <option value="{{ $typesfuels->id }}"
+                                                            {{ old('typesfuel_id') == $typesfuels->id ? 'selected' : '' }}>
+                                                            {{ $typesfuels->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-primary" title="إضافة نوع محروقات"
+                                                aria-label="إضافة نوع محروقات" data-toggle="modal"
+                                                data-target="#quickAddTypesFuelModal">
+                                                <i class="ki ki-solid-plus"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                     @error('typesfuel_id')
                                         <span class="text-sm text-danger">{{ $message }}</span>
@@ -219,9 +249,14 @@
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                                         <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
                                             <ul class="nav nav-hover flex-column">
+                                                <li class="nav-item">
+                                                    <a href="#" class="nav-link" data-toggle="modal" data-target="#quickAddTypesFuelModal">
+                                                        <i class="nav-icon flaticon2-add-1"></i> إضافة نوع محروقات
+                                                    </a>
+                                                </li>
                                                 <li class="nav-item"><a href="{{ route('TypesFuel.index') }}"
                                                         class="nav-link">
-                                                        <i class="nav-icon flaticon2-add-1"></i> عرض أنواع المحروقات</a>
+                                                        <i class="nav-icon flaticon-eye"></i> عرض أنواع المحروقات</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -241,6 +276,40 @@
 
     <!-- /.content -->
 @endsection
+
+<!-- Quick-add modals -->
+
+<!-- TypesFuel quick-add modal -->
+<div class="modal fade quick-add-modal" id="quickAddTypesFuelModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title quick-add-heading">إضافة نوع محروقات</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="quick-add-context">سيتم اختيار النوع تلقائياً بعد الإضافة.</p>
+                <form action="{{ route('TypesFuel.store') }}" method="POST" data-ajax-quick-add data-entity="typesfuel">
+                    @csrf
+                    <div data-form-error class="alert alert-danger"></div>
+
+                    <div class="form-group">
+                        <label>اسم النوع</label>
+                        <input type="text" name="name" class="form-control" />
+                        <div data-field-error="name" class="text-danger"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" data-submit-label="حفظ">حفظ</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section('scripts')
     <script>
@@ -265,6 +334,106 @@
                     });
                 } else {
                     console.log('AJAX load did not work');
+                }
+            });
+        });
+
+        $(function() {
+            function resetFeedback(form) {
+                var $form = $(form);
+                $form.find('[data-form-error]').hide().text('');
+                $form.find('[data-field-error]').text('');
+                $form.find('.is-invalid').removeClass('is-invalid');
+            }
+
+            function addOption(select, id, label) {
+                var $select = $(select);
+                var value = String(id);
+                if (!$select.find('option').filter(function() {
+                        return this.value === value;
+                    }).length) {
+                    $select.append(new Option(label, value));
+                }
+                $select.val(value).trigger('change');
+                if ($select.hasClass('selectpicker')) {
+                    $select.selectpicker('refresh');
+                }
+            }
+
+            $(document).on('submit', '[data-ajax-quick-add]', function(event) {
+                event.preventDefault();
+                var form = this;
+                var $form = $(form);
+                var $submit = $form.find('[type="submit"]');
+                var label = $submit.data('submit-label') || $submit.text();
+
+                resetFeedback(form);
+                $submit.prop('disabled', true).text('جارٍ الحفظ...');
+
+                $.ajax({
+                    url: form.action,
+                    method: 'POST',
+                    data: $form.serialize(),
+                    dataType: 'json',
+                    headers: {
+                        Accept: 'application/json'
+                    }
+                }).done(function(entity) {
+                    var entityType = $form.data('entity');
+                    if (entityType === 'typesfuel') {
+                        addOption('#typesfuel_id', entity.id, entity.name || entity.label || entity);
+                    }
+                    form.reset();
+                    $form.closest('.modal').modal('hide');
+                    if (window.Swal) {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'تمت الإضافة بنجاح',
+                            showConfirmButton: false,
+                            timer: 2200
+                        });
+                    }
+
+                }).fail(function(xhr) {
+                    var errors = xhr.responseJSON && xhr.responseJSON.errors;
+                    var assignedError = false;
+                    if (errors) {
+                        $.each(errors, function(field, messages) {
+                            var $input = $form.find('[name]').filter(function() {
+                                return this.name === field;
+                            }).first();
+                            var $feedback = $form.find('[data-field-error]').filter(function() {
+                                return $(this).data('field-error') === field || $(this).attr('data-field-error') === field;
+                            }).first();
+                            if ($input.length && $feedback.length) {
+                                $input.addClass('is-invalid');
+                                $feedback.text(Array.isArray(messages) ? messages[0] : messages);
+                                assignedError = true;
+                            }
+                        });
+                    }
+                    if (!assignedError) {
+                        $form.find('[data-form-error]').text(
+                            (xhr.responseJSON && xhr.responseJSON.message) ||
+                            'تعذر الاتصال بالخادم. تحقق من الاتصال وحاول مرة أخرى.'
+                        ).show();
+                    }
+                }).always(function() {
+                    $submit.prop('disabled', false).text(label);
+                });
+            });
+
+            $(document).on('input change', '[data-ajax-quick-add] [name]', function() {
+                $(this).removeClass('is-invalid');
+                $(this).siblings('[data-field-error]').text('');
+            });
+
+            $('.quick-add-modal').on('hidden.bs.modal', function() {
+                var form = $(this).find('[data-ajax-quick-add]')[0];
+                if (form) {
+                    resetFeedback(form);
                 }
             });
         });
