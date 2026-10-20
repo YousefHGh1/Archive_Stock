@@ -197,6 +197,35 @@
             margin-top: 20px;
             padding-top: 20px;
             border-top: 2px dashed #e8e8e8;
+            max-height: 120px;
+            overflow-y: auto;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .user-roles::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .user-roles::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .user-roles::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+
+        .user-roles.scrollable::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(to bottom, transparent, white);
+            pointer-events: none;
         }
 
         .user-roles-label {
@@ -210,10 +239,10 @@
 
         .role-badge {
             display: inline-block;
-            padding: 8px 16px;
-            margin: 5px;
-            border-radius: 25px;
-            font-size: 12px;
+            padding: 6px 14px;
+            margin: 4px;
+            border-radius: 20px;
+            font-size: 11px;
             font-weight: 600;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             color: #495057;
@@ -454,8 +483,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="user-roles">
-                                <div class="user-roles-label">الأدوار</div>
+                            <div class="user-roles {{ $user->roles->count() > 4 ? 'scrollable' : '' }}">
+                                <div class="user-roles-label">الأدوار ({{ $user->roles->count() }})</div>
                                 @foreach ($user->roles as $role)
                                     <span class="role-badge">{{ $role->name }}</span>
                                 @endforeach

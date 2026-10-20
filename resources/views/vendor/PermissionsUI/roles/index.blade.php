@@ -203,6 +203,35 @@
             margin-top: 25px;
             padding-top: 25px;
             border-top: 2px dashed #e8e8e8;
+            max-height: 120px;
+            overflow-y: auto;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .role-permissions::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .role-permissions::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .role-permissions::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 10px;
+        }
+
+        .role-permissions.scrollable::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(to bottom, transparent, white);
+            pointer-events: none;
         }
 
         .role-permissions-label {
@@ -216,10 +245,10 @@
 
         .permission-badge {
             display: inline-block;
-            padding: 8px 16px;
-            margin: 5px;
-            border-radius: 25px;
-            font-size: 12px;
+            padding: 6px 14px;
+            margin: 4px;
+            border-radius: 20px;
+            font-size: 11px;
             font-weight: 600;
             background: linear-gradient(135deg, #fff5f5 0%, #ffcdd2 100%);
             color: #495057;
@@ -487,14 +516,11 @@
                                     <div class="role-name">{{ $role->name }}</div>
                                 </div>
                             </div>
-                            <div class="role-permissions">
+                            <div class="role-permissions {{ $role->permissions->count() > 5 ? 'scrollable' : '' }}">
                                 <div class="role-permissions-label">الصلاحيات ({{ $role->permissions->count() }})</div>
-                                @foreach ($role->permissions->take(5) as $permission)
+                                @foreach ($role->permissions as $permission)
                                     <span class="permission-badge">{{ $permission->name }}</span>
                                 @endforeach
-                                @if ($role->permissions->count() > 5)
-                                    <span class="permission-badge">+{{ $role->permissions->count() - 5 }} آخر</span>
-                                @endif
                             </div>
                             <div class="role-meta">
                                 <span class="role-date">
