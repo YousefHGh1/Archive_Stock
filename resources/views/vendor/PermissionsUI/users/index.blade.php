@@ -18,144 +18,217 @@
     <style>
         .card-custom {
             border: none;
-            border-radius: 16px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
+            border-radius: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             overflow: hidden;
         }
 
         .card-header {
-            background: linear-gradient(135deg, #3699ff 0%, #bc82f6 100%);
-            border-radius: 16px 16px 0 0;
-            color: white;
-            border-bottom: none;
+            background: #ffffff;
+            border-bottom: 2px solid #f0f0f0;
+            color: #2c3e50;
+            padding: 20px 25px;
         }
 
         .card-header .card-label {
-            color: white;
-            font-weight: 700;
-            font-size: 1.25rem;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .table thead th {
-            background: #f8f9fa;
-            color: #3f4254;
-            font-weight: 700;
-            font-size: 13px;
-            border-bottom: 2px solid #e4e6ef;
-            padding: 15px;
+        .card-header p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 5px;
         }
 
-        .table tbody td {
-            padding: 15px;
-            vertical-align: middle;
-            border-bottom: 1px solid #f1f1f5;
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 25px;
         }
 
-        .table tbody tr {
-            transition: all 0.2s ease;
+        .user-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .table tbody tr:hover {
-            background: rgba(54, 153, 255, 0.03);
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
 
-        .user-id {
-            display: inline-flex;
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+            border-color: #667eea;
+        }
+
+        .user-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .user-card-header {
+            display: flex;
             align-items: center;
-            justify-content: center;
-            width: 35px;
-            height: 35px;
-            border-radius: 10px;
-            background: rgba(27, 197, 189, 0.1);
-            color: #1bc5bd;
-            font-weight: 700;
-            font-size: 13px;
+            margin-bottom: 15px;
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 22px;
             font-weight: 700;
             color: white;
-            background: linear-gradient(135deg, #3699ff 0%, #bc82f6 100%);
-            margin-left: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-left: 15px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-id {
+            display: inline-block;
+            background: #f8f9fa;
+            color: #6c757d;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 5px;
         }
 
         .user-name {
-            font-weight: 600;
-            color: #3f4254;
-            font-size: 14px;
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 3px;
         }
 
         .user-email {
             font-size: 13px;
-            color: #a1a5b7;
+            color: #7f8c8d;
+            display: flex;
+            align-items: center;
         }
 
         .user-email i {
-            color: #3699ff;
+            color: #667eea;
             margin-left: 5px;
+            font-size: 12px;
+        }
+
+        .user-roles {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #e0e0e0;
+        }
+
+        .user-roles-label {
+            font-size: 12px;
+            color: #95a5a6;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
         }
 
         .role-badge {
             display: inline-block;
-            padding: 5px 12px;
-            margin: 3px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 500;
-            background: rgba(54, 153, 255, 0.1);
-            color: #3699ff;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
+            padding: 6px 14px;
+            margin: 4px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
         }
 
         .role-badge:hover {
-            background: linear-gradient(135deg, #3699ff 0%, #bc82f6 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            transform: scale(1.05);
-            border-color: #3699ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            border-color: transparent;
+        }
+
+        .user-actions {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end;
         }
 
         .action-btn {
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
-            border: 1px solid #e4e6ef;
+            transition: all 0.3s ease;
+            border: 2px solid #e0e0e0;
             background: white;
-            margin: 0 3px;
+            margin-left: 8px;
+            color: #6c757d;
         }
 
         .action-btn:hover {
-            transform: scale(1.1);
-            background: #3699ff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-color: #3699ff;
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
         }
 
         .empty-state i {
-            font-size: 50px;
-            color: #e4e6ef;
-            margin-bottom: 15px;
+            font-size: 70px;
+            color: #e0e0e0;
+            margin-bottom: 20px;
         }
 
         .empty-state h4 {
-            color: #3f4254;
+            color: #2c3e50;
             font-weight: 600;
+            font-size: 18px;
+        }
+
+        .empty-state p {
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .users-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 @endsection
@@ -163,76 +236,57 @@
 @section('content')
     <div class="container">
         <div class="card card-custom">
-            <div class="card-header border-0 py-5">
+            <div class="card-header">
                 <div class="card-title">
                     <h3 class="card-label">
                         <i class="la la-users mr-2"></i>
                         {{ __('عرض المستخدمين') }}
                     </h3>
-                    <p class="mt-2 mb-0" style="color: rgba(255,255,255,0.8);">
+                    <p class="mt-2 mb-0">
                         إدارة المستخدمين والأدوار المرتبطة بهم
                     </p>
                 </div>
             </div>
-            <div class="card-body py-5">
-                <div class="table-responsive">
-                    <table class="table table-borderless table-vertical-center">
-                        <thead>
-                            <tr>
-                                <th style="min-width: 80px">{{ __('id') }}</th>
-                                <th style="min-width: 250px">{{ __('name') }}</th>
-                                <th style="min-width: 250px">{{ __('Email') }}</th>
-                                <th style="min-width: 250px">{{ __('roles') }}</th>
-                                <th style="min-width: 120px">{{ __('action') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($users as $user)
-                                <tr>
-                                    <td>
-                                        <span class="user-id">{{ $user->id }}</span>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="user-avatar">{{ mb_substr($user->name, 0, 1) }}</div>
-                                            <span class="user-name">{{ $user->name }}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="user-email">
-                                            <i class="la la-envelope"></i> {{ $user->email }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        @foreach ($user->roles as $role)
-                                            <span class="role-badge">{{ $role->name }}</span>
-                                        @endforeach
-                                    </td>
-                                    <td class="text-right">
-                                        <a href="{{ route(config('permission_ui.route_name_prefix') . 'users.edit', $user) }}"
-                                            class="action-btn" title="{{ __('تعديل') }}">
-                                            <i class="la la-edit"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5">
-                                        <div class="empty-state">
-                                            <i class="la la-users"></i>
-                                            <h4>{{ __('no_records') }}</h4>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                    @if ($users->links())
-                        <div class="pagination-wrapper">
-                            {!! $users->appends(['search' => request('search')])->withQueryString()->links('pagination::bootstrap-5') !!}
+            <div class="card-body">
+                <div class="users-grid">
+                    @forelse($users as $user)
+                        <div class="user-card">
+                            <div class="user-card-header">
+                                <div class="user-avatar">{{ mb_substr($user->name, 0, 1) }}</div>
+                                <div class="user-info">
+                                    <span class="user-id">#{{ $user->id }}</span>
+                                    <div class="user-name">{{ $user->name }}</div>
+                                    <div class="user-email">
+                                        <i class="la la-envelope"></i> {{ $user->email }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="user-roles">
+                                <div class="user-roles-label">الأدوار</div>
+                                @foreach ($user->roles as $role)
+                                    <span class="role-badge">{{ $role->name }}</span>
+                                @endforeach
+                            </div>
+                            <div class="user-actions">
+                                <a href="{{ route(config('permission_ui.route_name_prefix') . 'users.edit', $user) }}"
+                                    class="action-btn" title="{{ __('تعديل') }}">
+                                    <i class="la la-edit"></i>
+                                </a>
+                            </div>
                         </div>
-                    @endif
+                    @empty
+                        <div class="empty-state">
+                            <i class="la la-users"></i>
+                            <h4>{{ __('no_records') }}</h4>
+                            <p>لا يوجد مستخدمين حالياً</p>
+                        </div>
+                    @endforelse
                 </div>
+                @if ($users->links())
+                    <div class="d-flex justify-content-center mt-4 px-5 pb-4">
+                        {!! $users->appends(['search' => request('search')])->withQueryString()->links('pagination::bootstrap-5') !!}
+                    </div>
+                @endif
             </div>
         </div>
     </div>
