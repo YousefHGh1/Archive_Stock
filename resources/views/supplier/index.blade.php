@@ -229,22 +229,34 @@
             .then(function(response) {
                 console.log(response);
                 reference.closest('tr').remove();
-                showMessage(response.data);
+                showMessage(response.data.message);
             })
             .catch(function(error) {
                 console.log(error.response);
-                window.ArchiveStockFeedback.error(error);
+                let errorMessage = 'حدث خطأ أثناء الحذف';
+                if (error.response && error.response.data && error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                }
+                showError(errorMessage);
             });
     }
 
     function showMessage(message) {
         Swal.fire(
             'تم الحذف بنجاح!',
-            'تم حذف ملفك.',
+            message,
             'success'
         ).then(() => {
-        location.reload(); // Refresh the page after the success alert is dismissed
-    });
+            location.reload(); // Refresh the page after the success alert is dismissed
+        });
+    }
+
+    function showError(message) {
+        Swal.fire(
+            'خطأ',
+            message,
+            'error'
+        );
     }
 </script>
 

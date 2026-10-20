@@ -80,18 +80,61 @@ class SupplierController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $supplier                = Supplier::find($id);
+        $supplier = Supplier::find($id);
+
+        if (!$supplier) {
+            $message = 'المورد غير موجود';
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 404)
+                : redirect('supplier')->with('error', $message);
+        }
+
         $supplier->num_supplier  = $request->num_supplier;
         $supplier->name_supplier = $request->name_supplier;
 
-        $supplier->save();
-        return redirect('supplier')->with('info', 'تمت التعديل بنجاح!');
+        if ($supplier->save()) {
+            $message = 'تمت التعديل بنجاح!';
+            return $request->expectsJson()
+                ? response()->json([
+                    'id' => $supplier->id,
+                    'name_supplier' => $supplier->name_supplier,
+                    'num_supplier' => $supplier->num_supplier,
+                    'message' => $message
+                ])
+                : redirect('supplier')->with('info', $message);
+        }
+
+        $message = 'فشل عملية التعديل';
+        return $request->expectsJson()
+            ? response()->json(['message' => $message], 500)
+            : redirect('supplier')->with('error', $message);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         //
-        Supplier::destroy($id);
-        return redirect('supplier');
+        $supplier = Supplier::find($id);
+
+        if (!$supplier) {
+            $message = 'المورد غير موجود';
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 404)
+                : redirect('supplier')->with('error', $message);
+        }
+
+        $supplierName = $supplier->name_supplier;
+        $supplierId = $supplier->id;
+
+        if (Supplier::destroy($id)) {
+            $message = 'تم حذف المورد "' . $supplierName . '" بنجاح';
+            return $request->expectsJson()
+                ? response()->json(['message' => $message])
+                : redirect('supplier')->with('success', $message);
+        }
+
+        $message = 'فشل عملية الحذف';
+        return $request->expectsJson()
+            ? response()->json(['message' => $message], 500)
+            : redirect('supplier')->with('error', $message);
     }
 }

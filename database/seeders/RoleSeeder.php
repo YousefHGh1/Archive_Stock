@@ -54,6 +54,12 @@ class RoleSeeder extends Seeder
             ['id' => 37, 'name' => 'stock-fuel-creator', 'guard_name' => 'web'],
             ['id' => 38, 'name' => 'stock-fuel-updater', 'guard_name' => 'web'],
             ['id' => 39, 'name' => 'stock-fuel-deleter', 'guard_name' => 'web'],
+            // ======================== Full Fuel Access Role ========================
+            ['id' => 40, 'name' => 'fuel-full-access', 'guard_name' => 'web'],
+            // ======================== Full Access Roles ========================
+            ['id' => 41, 'name' => 'stock-full-access', 'guard_name' => 'web'],
+            ['id' => 42, 'name' => 'purchase-full-access', 'guard_name' => 'web'],
+            ['id' => 43, 'name' => 'vehicle-full-access', 'guard_name' => 'web'],
         ];
 
         foreach ($roles as $role) {
