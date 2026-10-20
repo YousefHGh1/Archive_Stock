@@ -17,13 +17,13 @@
 @section('css')
     <style>
         .fuel-entry-form .card-body {
-            padding: 1.75rem 2rem;
+            padding: 1rem 1.5rem;
         }
 
         .fuel-entry-form .fuel-form-section {
             counter-increment: fuel-stage;
-            padding: 1.35rem 1.5rem 1.15rem;
-            margin-bottom: 1.25rem;
+            padding: 0.75rem 1rem 0.5rem;
+            margin-bottom: 0.75rem;
             background: #f8fafc;
             border: 1px solid #e5eaf0;
             border-right: 3px solid #3699ff;
@@ -41,10 +41,10 @@
         .fuel-entry-form .fuel-section-heading {
             display: flex;
             align-items: center;
-            padding-bottom: .8rem;
-            margin: 0 0 1.25rem;
+            padding-bottom: 0.5rem;
+            margin: 0 0 0.75rem;
             color: #344256;
-            font-size: 1.08rem;
+            font-size: 1rem;
             font-weight: 700;
             border-bottom: 1px solid #e4eaf1;
         }
@@ -85,14 +85,15 @@
         }
 
         .fuel-entry-form .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .fuel-entry-form .form-group > label {
             display: block;
-            padding: 0 0 .4rem;
+            padding: 0 0 0.25rem;
             color: #596779;
             font-weight: 500;
+            font-size: 0.9rem;
         }
 
         .fuel-entry-form .form-group > label h6 {
@@ -103,20 +104,21 @@
 
         .fuel-entry-form .form-control,
         .fuel-entry-form .bootstrap-select > .dropdown-toggle {
-            min-height: 42px;
+            min-height: 38px;
             border-color: #d9e0e8;
+            font-size: 0.9rem;
         }
 
         .fuel-entry-form textarea.form-control {
-            min-height: 100px;
+            min-height: 60px;
         }
 
         .fuel-entry-form .card-footer {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: .65rem;
-            padding: 1rem 2rem;
+            gap: .5rem;
+            padding: 0.75rem 1.5rem;
         }
 
         .fuel-entry-form .card-footer > .row {
@@ -133,20 +135,20 @@
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: .55rem;
+            gap: .5rem;
         }
 
         @media (max-width: 767.98px) {
             .fuel-entry-form .card-body {
-                padding: 1rem;
+                padding: 0.75rem;
             }
 
             .fuel-entry-form .fuel-form-section {
-                padding: 1rem;
+                padding: 0.75rem;
             }
 
             .fuel-entry-form .card-footer {
-                padding: 1rem;
+                padding: 0.75rem;
             }
         }
     </style>
@@ -310,7 +312,7 @@
                                     </div>
                                     <div class="col-12 form-group">
                                         <label for="notes">ملاحظات</label>
-                                        <textarea name="notes" id="notes" rows="3"
+                                        <textarea name="notes" id="notes" rows="2"
                                             class="@error('notes') is-invalid @enderror form-control" maxlength="5000"
                                             placeholder="أدخل الملاحظات">{{ old('notes') }}</textarea>
                                         @error('notes')
