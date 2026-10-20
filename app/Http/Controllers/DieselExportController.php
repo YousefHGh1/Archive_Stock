@@ -54,6 +54,7 @@ class DieselExportController extends Controller
             'num_note'       => 'required|numeric',
             'quantity'       => 'required|numeric',
             'date'           => 'required|date',
+            'notes'          => 'nullable|string|max:5000',
         ], $this->voucherMessages());
 
         $totalDieselQuantity       = Diesel::sum("quantity");
@@ -122,6 +123,7 @@ class DieselExportController extends Controller
         $dieselexport->date         = $request->date;
         $dieselexport->typesfuel_id = $request->typesfuel_id;
 
+        $dieselexport->notes = $request->notes;
         $dieselexport->save();
         return redirect('dieselexport')->with('info', 'تمت تعديل بيانات صادر المحروقات بنجاح!');
     }

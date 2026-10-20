@@ -151,6 +151,17 @@
 
                             </div>
 
+                            <div class="form-group row">
+                                <label for="notes" class="col-lg-2 col-form-label text-lg-right">ملاحظات:</label>
+                                <div class="col-lg-9">
+                                    <div class="input-group">
+                                        <textarea name="notes" id="notes" rows="3"
+                                            class="form-control" maxlength="5000"
+                                            placeholder="أدخل الملاحظات">{{ old('notes', $dieselexport->notes) }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
 
 
                         </div>
