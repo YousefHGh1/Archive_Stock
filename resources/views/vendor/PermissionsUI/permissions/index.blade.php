@@ -288,11 +288,6 @@
                         </div>
                     @endforelse
                 </div>
-                @if ($permissions->links())
-                    <div class="d-flex justify-content-center mt-4 px-5 pb-4">
-                        {!! $permissions->appends(['search' => request('search')])->withQueryString()->links('pagination::bootstrap-5') !!}
-                    </div>
-                @endif
             </div>
         </div>
     </div>

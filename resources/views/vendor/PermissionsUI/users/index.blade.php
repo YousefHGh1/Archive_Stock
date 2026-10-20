@@ -282,11 +282,6 @@
                         </div>
                     @endforelse
                 </div>
-                @if ($users->links())
-                    <div class="d-flex justify-content-center mt-4 px-5 pb-4">
-                        {!! $users->appends(['search' => request('search')])->withQueryString()->links('pagination::bootstrap-5') !!}
-                    </div>
-                @endif
             </div>
         </div>
     </div>
