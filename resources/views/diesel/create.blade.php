@@ -226,17 +226,28 @@
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label for="typesfuel_id">نوع المحروقات</label>
-                                        <div class="dropdown bootstrap-select form-control dropup">
-                                            <select class="form-control selectpicker @error('typesfuel_id') is-invalid @enderror"
-                                                name="typesfuel_id" id="typesfuel_id" data-size="7"
-                                                data-live-search="true" title="...">
-                                                @foreach ($typesfuel as $fuelType)
-                                                    <option value="{{ $fuelType->id }}"
-                                                        {{ old('typesfuel_id') == $fuelType->id ? 'selected' : '' }}>
-                                                        {{ $fuelType->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                        <div class="input-group">
+                                            <div class="flex-grow-1">
+                                                <div class="dropdown bootstrap-select form-control dropup">
+                                                    <select class="form-control selectpicker @error('typesfuel_id') is-invalid @enderror"
+                                                        name="typesfuel_id" id="typesfuel_id" data-size="7"
+                                                        data-live-search="true" title="...">
+                                                        @foreach ($typesfuel as $fuelType)
+                                                            <option value="{{ $fuelType->id }}"
+                                                                {{ old('typesfuel_id') == $fuelType->id ? 'selected' : '' }}>
+                                                                {{ $fuelType->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-primary" title="إضافة نوع محروقات"
+                                                    aria-label="إضافة نوع محروقات" data-toggle="modal"
+                                                    data-target="#quickAddTypesFuelModal">
+                                                    <i class="ki ki-solid-plus"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                         @error('typesfuel_id')
                                             <span class="text-sm text-danger">{{ $message }}</span>

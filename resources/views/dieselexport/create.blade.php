@@ -16,6 +16,39 @@
 
 @section('css')
     <style>
+        .fuel-entry-form .card-body {
+            padding: 1rem 1.5rem;
+        }
+
+        .fuel-entry-form .fuel-form-section {
+            counter-increment: fuel-stage;
+            padding: 0.75rem 1rem 0.5rem;
+            margin-bottom: 0.75rem;
+            background: #f8fafc;
+            border: 1px solid #e5eaf0;
+            border-right: 3px solid #3699ff;
+            border-radius: .25rem;
+        }
+
+        .fuel-entry-form .fuel-form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .fuel-entry-form .card-body {
+            counter-reset: fuel-stage;
+        }
+
+        .fuel-entry-form .fuel-section-heading {
+            display: flex;
+            align-items: center;
+            padding-bottom: 0.5rem;
+            margin: 0 0 0.75rem;
+            color: #344256;
+            font-size: 1rem;
+            font-weight: 700;
+            border-bottom: 1px solid #e4eaf1;
+        }
+
         .quick-add-modal .modal-header {
             align-items: center;
         }
@@ -33,6 +66,91 @@
             color: #5e6775;
             line-height: 1.6;
         }
+
+        .fuel-entry-form .fuel-section-heading::before {
+            display: inline-flex;
+            flex: 0 0 1.65rem;
+            align-items: center;
+            justify-content: center;
+            width: 1.65rem;
+            height: 1.65rem;
+            margin-left: .7rem;
+            content: counter(fuel-stage, decimal-leading-zero);
+            background: #3699ff;
+            border-radius: .25rem;
+            color: #fff;
+            font-size: .72rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .fuel-entry-form .form-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .fuel-entry-form .form-group > label {
+            display: block;
+            padding: 0 0 0.25rem;
+            color: #596779;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .fuel-entry-form .form-group > label h6 {
+            margin: 0;
+            font-size: inherit;
+            font-weight: inherit;
+        }
+
+        .fuel-entry-form .form-control,
+        .fuel-entry-form .bootstrap-select > .dropdown-toggle {
+            min-height: 38px;
+            border-color: #d9e0e8;
+            font-size: 0.9rem;
+        }
+
+        .fuel-entry-form textarea.form-control {
+            min-height: 60px;
+        }
+
+        .fuel-entry-form .card-footer {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: .5rem;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .fuel-entry-form .card-footer > .row {
+            width: 100%;
+            margin: 0;
+        }
+
+        .fuel-entry-form .card-footer > .row > div:first-child {
+            display: none;
+        }
+
+        .fuel-entry-form .card-footer > .row > div:last-child {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: .5rem;
+        }
+
+        @media (max-width: 767.98px) {
+            .fuel-entry-form .card-body {
+                padding: 0.75rem;
+            }
+
+            .fuel-entry-form .fuel-form-section {
+                padding: 0.75rem;
+            }
+
+            .fuel-entry-form .card-footer {
+                padding: 0.75rem;
+            }
+        }
     </style>
 @endsection
 
@@ -43,7 +161,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <!--begin::Card-->
-                <div class="card card-custom gutter-b example example-compact">
+                <div class="card card-custom gutter-b example example-compact fuel-entry-form" dir="rtl">
                     <div class="card-header">
                         <div class="card-title">
                             <h3 class="card-label"> بيانات المحروقات الصادر <i class="mr-2"></i></h3>
@@ -76,12 +194,12 @@
                         @csrf
                         {!! csrf_field() !!}
 
-                        <div class="card-body" style="margin:20px;">
-                            <!-- Section Selection -->
-                            <div class="pb-5 form-group row">
-                                <label for="section_id" class="col-lg-2 col-form-label text-lg-right">الدائرة:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
+                        <div class="card-body">
+                            <section class="fuel-form-section" aria-labelledby="export-section-heading">
+                                <h4 id="export-section-heading" class="fuel-section-heading">الدائرة والقسم</h4>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label for="section_id">الدائرة</label>
                                         <select name="section_id" id="section_id"
                                             class="@error('section_id') is-invalid @enderror form-control selectpicker"
                                             data-size="7" data-live-search="true">
@@ -94,16 +212,11 @@
                                             @endforeach
                                         </select>
                                         @error('section_id')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                            <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                </div>
-
-                                <label for="sub_section_id" class="col-lg-2 col-form-label text-lg-right">القسم:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
+                                    <div class="col-md-6 form-group">
+                                        <label for="sub_section_id">القسم</label>
                                         <select name="sub_section_id" id="sub_section_id"
                                             class="@error('sub_section_id') is-invalid @enderror form-control"
                                             data-size="7" data-live-search="true">
@@ -116,117 +229,107 @@
                                             @endforeach
                                         </select>
                                         @error('sub_section_id')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                            <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
+                            </section>
 
-                            <!-- Receipt and Note Number -->
-                            <div class="pb-5 form-group row">
-                                <label for="num_section" class="col-lg-2 col-form-label text-lg-right">الجهة المستلمة:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
-                                        <input name="num_section" id="num_section" type="text"
-                                            class="@error('num_section') is-invalid @enderror form-control"
-                                            placeholder="ادخل الجهة المستلمة" value="{{ old('num_section') }}">
-                                    </div>
-                                </div>
-                                <label for="num_note" class="col-lg-2 col-form-label text-lg-right">رقم الدفتر:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
-                                        <input name="num_note" id="num_note" type="number"
-                                            class="@error('num_note') is-invalid @enderror form-control"
-                                            placeholder="ادخل رقم الدفتر" value="{{ old('num_note') }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Quantity and Voucher -->
-                            <div class="pb-5 form-group row">
-                                <label for="quantity" class="col-lg-2 col-form-label text-lg-right">كمية الصادر:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
+                            <section class="fuel-form-section" aria-labelledby="export-details-heading">
+                                <h4 id="export-details-heading" class="fuel-section-heading">الكمية وبيانات الصادر</h4>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label for="quantity">كمية الصادر</label>
                                         <input name="quantity" id="quantity" type="number"
                                             class="@error('quantity') is-invalid @enderror form-control" min="0"
                                             placeholder="ادخل كمية الصادر" value="{{ old('quantity') }}">
+                                        @error('quantity')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
-                                </div>
-                                <label for="voucher" class="col-lg-2 col-form-label text-lg-right">رقم الإيصال:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
+                                    <div class="col-md-6 form-group">
+                                        <label for="voucher">رقم الإيصال</label>
                                         <input name="voucher" type="number" min="0"
                                             class="@error('voucher') is-invalid @enderror form-control" id="voucher"
                                             placeholder="ادخل رقم الإيصال" value="{{ old('voucher') }}" />
+                                        @error('voucher')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
-                                    @error('voucher')
-                                        <div class="d-block invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <div class="col-md-6 form-group">
+                                        <label for="num_section">الجهة المستلمة</label>
+                                        <input name="num_section" id="num_section" type="text"
+                                            class="@error('num_section') is-invalid @enderror form-control"
+                                            placeholder="ادخل الجهة المستلمة" value="{{ old('num_section') }}">
+                                        @error('num_section')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="num_note">رقم الدفتر</label>
+                                        <input name="num_note" id="num_note" type="number"
+                                            class="@error('num_note') is-invalid @enderror form-control"
+                                            placeholder="ادخل رقم الدفتر" value="{{ old('num_note') }}">
+                                        @error('num_note')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
+                            </section>
 
-                            <!-- Export Date and Fuel Type -->
-                            <div class="form-group row">
-                                <label for="date" class="col-lg-2 col-form-label text-lg-right">تاريخ التصدير:</label>
-                                <div class="col-lg-3">
-                                    <div class="input-group">
+                            <section class="fuel-form-section" aria-labelledby="export-date-heading">
+                                <h4 id="export-date-heading" class="fuel-section-heading">التاريخ ونوع المحروقات</h4>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label for="date">تاريخ التصدير</label>
                                         <input name="date" type="date"
                                             class="@error('date') is-invalid @enderror form-control" id="date"
                                             value="{{ old('date', date('Y-m-d')) }}">
+                                        @error('date')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
-                                </div>
-
-                                <label for="typesfuel_id" class="col-lg-2 col-form-label text-lg-right">
-                                    <h6>نوع المحروقات:</h6>
-                                </label>
-                                <div class="col-3">
-                                    <div class="input-group">
-                                        <div class="flex-grow-1">
-                                            <div class="dropdown bootstrap-select form-control dropup">
-                                                <select name="typesfuel_id" id="typesfuel_id"
-                                                    class="@error('typesfuel_id') is-invalid @enderror form-control selectpicker"
-                                                    data-size="7" data-live-search="true">
-                                                    <option value="">اختر نوع المحروقات</option>
-                                                    @foreach ($typesfuel as $typesfuels)
-                                                        <option value="{{ $typesfuels->id }}"
-                                                            {{ old('typesfuel_id') == $typesfuels->id ? 'selected' : '' }}>
-                                                            {{ $typesfuels->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                                    <div class="col-md-6 form-group">
+                                        <label for="typesfuel_id">نوع المحروقات</label>
+                                        <div class="input-group">
+                                            <div class="flex-grow-1">
+                                                <div class="dropdown bootstrap-select form-control dropup">
+                                                    <select name="typesfuel_id" id="typesfuel_id"
+                                                        class="@error('typesfuel_id') is-invalid @enderror form-control selectpicker"
+                                                        data-size="7" data-live-search="true">
+                                                        <option value="">اختر نوع المحروقات</option>
+                                                        @foreach ($typesfuel as $typesfuels)
+                                                            <option value="{{ $typesfuels->id }}"
+                                                                {{ old('typesfuel_id') == $typesfuels->id ? 'selected' : '' }}>
+                                                                {{ $typesfuels->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-primary" title="إضافة نوع محروقات"
+                                                    aria-label="إضافة نوع محروقات" data-toggle="modal"
+                                                    data-target="#quickAddTypesFuelModal">
+                                                    <i class="ki ki-solid-plus"></i>
+                                                </button>
                                             </div>
                                         </div>
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-outline-primary" title="إضافة نوع محروقات"
-                                                aria-label="إضافة نوع محروقات" data-toggle="modal"
-                                                data-target="#quickAddTypesFuelModal">
-                                                <i class="ki ki-solid-plus"></i>
-                                            </button>
-                                        </div>
+                                        @error('typesfuel_id')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
-                                    @error('typesfuel_id')
-                                        <span class="text-sm text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <!-- Notes -->
-                            <div class="form-group row">
-                                <label for="notes" class="col-lg-2 col-form-label text-lg-right">ملاحظات:</label>
-                                <div class="col-lg-9">
-                                    <div class="input-group">
-                                        <textarea name="notes" id="notes" rows="3"
+                                    <div class="col-12 form-group">
+                                        <label for="notes">ملاحظات</label>
+                                        <textarea name="notes" id="notes" rows="2"
                                             class="@error('notes') is-invalid @enderror form-control" maxlength="5000"
                                             placeholder="أدخل الملاحظات">{{ old('notes') }}</textarea>
+                                        @error('notes')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
-                                    @error('notes')
-                                        <span class="text-sm text-danger">{{ $message }}</span>
-                                    @enderror
                                 </div>
-                            </div>
-
+                            </section>
                         </div>
 
                         <!-- Submit & Reset Buttons -->
