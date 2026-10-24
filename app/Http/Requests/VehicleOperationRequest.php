@@ -27,7 +27,7 @@ class VehicleOperationRequest extends FormRequest
             'idempotency_key' => ['nullable', 'string', 'max:64'],
         ];
 
-        if (in_array($type, [VehicleOperation::TYPE_DIESEL, VehicleOperation::TYPE_OIL], true)) {
+        if (in_array($type, [VehicleOperation::TYPE_DIESEL, VehicleOperation::TYPE_OIL, VehicleOperation::TYPE_RECYCLED_OIL], true)) {
             $rules['liters'] = ['required', 'numeric', 'gt:0', 'max:100000'];
             $rules['maintenance_cost'] = ['prohibited'];
         } elseif ($type === VehicleOperation::TYPE_MAINTENANCE) {

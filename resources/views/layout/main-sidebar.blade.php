@@ -699,12 +699,178 @@
                                             </li>
                                         @endcanany
 
+                   
+
                                     </ul>
                                 </ul>
                             </div>
                         </li>
                     @endcan
-                    
+                    <li class="menu-section">
+                            <h4 class="menu-text">الكراج</h4>
+                            <i class="menu-icon ki ki-bold-more-hor icon-md"></i>
+                        </li>
+                                       @canany(['vehicles-read', 'drivers-read', 'vehicle-operations-read', 'vehicle-reports-read'])
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                                data-menu-toggle="hover">
+                                                <a href="javascript:;" class="menu-link menu-toggle">
+                                                    <span class="svg-icon menu-icon">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            fill="currentColor" class="bi bi-car-front" viewBox="0 0 16 16">
+                                                            <path d="M4.52 1.698a.5.5 0 0 1 .434.14L8 4.814l2.946-2.976a.5.5 0 0 1 .865.497l-2.9 5.956a.5.5 0 0 1-.054.094l-2.916 5.956a.5.5 0 0 1-.865-.497l2.9-5.956a.5.5 0 0 1 .054-.094L4.52 1.698zM6.874 8.5l-1.58-3.23 1.58 3.23zm-2.39 2.324 1.58 3.23-1.58-3.23z"/>
+                                                            <path d="M2.5 10a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm10 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z"/>
+                                                        </svg>
+                                                        <!--end::Svg Icon-->
+                                                    </span>
+                                                    <!--end::Svg Icon-->
+                                                    <span class="menu-text">الكراج</span>
+                                                    <i class="menu-arrow"></i>
+                                                </a>
+                                                <div class="menu-submenu">
+                                                    <i class="menu-arrow"></i>
+                                                    <ul class="menu-subnav">
+                                                        <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                                            <span class="menu-link">
+                                                                <span class="menu-text">الكراج</span>
+                                                            </span>
+                                                        </li>
+                                                        @canany(['vehicles-read', 'vehicles-manager'])
+                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                                                data-menu-toggle="hover">
+                                                                <a href="javascript:;" class="menu-link menu-toggle">
+                                                                    <span class="svg-icon menu-icon">
+                                                                        <i class="flaticon2-car"></i>
+                                                                    </span>
+                                                                    <span class="menu-text">المركبات</span>
+                                                                    <i class="menu-arrow"></i>
+                                                                </a>
+                                                                <div class="menu-submenu">
+                                                                    <i class="menu-arrow"></i>
+                                                                    <ul class="menu-subnav">
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('vehicles.create') }}" class="menu-link">
+                                                                                <span class="menu-text">إضافة مركبة</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('vehicles.index') }}" class="menu-link">
+                                                                                <span class="menu-text">عرض المركبات</span>
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </li>
+                                                        @endcanany
+                                                        @canany(['drivers-read', 'drivers-manager'])
+                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                                                data-menu-toggle="hover">
+                                                                <a href="javascript:;" class="menu-link menu-toggle">
+                                                                    <span class="svg-icon menu-icon">
+                                                                        <i class="flaticon-user"></i>
+                                                                    </span>
+                                                                    <span class="menu-text">السائقون</span>
+                                                                    <i class="menu-arrow"></i>
+                                                                </a>
+                                                                <div class="menu-submenu">
+                                                                    <i class="menu-arrow"></i>
+                                                                    <ul class="menu-subnav">
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('drivers.create') }}" class="menu-link">
+                                                                                <span class="menu-text">إضافة سائق</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('drivers.index') }}" class="menu-link">
+                                                                                <span class="menu-text">عرض السائقين</span>
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </li>
+                                                        @endcanany
+                                                        @canany(['vehicle-operations-read', 'vehicle-operations-manager'])
+                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                                                data-menu-toggle="hover">
+                                                                <a href="javascript:;" class="menu-link menu-toggle">
+                                                                    <span class="svg-icon menu-icon">
+                                                                        <i class="flaticon-file-2"></i>
+                                                                    </span>
+                                                                    <span class="menu-text">تسجيل العمليات</span>
+                                                                    <i class="menu-arrow"></i>
+                                                                </a>
+                                                                <div class="menu-submenu">
+                                                                    <i class="menu-arrow"></i>
+                                                                    <ul class="menu-subnav">
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('vehicle-operations.create') }}" class="menu-link">
+                                                                                <span class="menu-text">إضافة عملية</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('vehicle-operations.index') }}" class="menu-link">
+                                                                                <span class="menu-text">عرض العمليات</span>
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </li>
+                                                        @endcanany
+                                                        @canany(['vehicle-reports-read', 'vehicle-reports-manager'])
+                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                                                data-menu-toggle="hover">
+                                                                <a href="javascript:;" class="menu-link menu-toggle">
+                                                                    <span class="svg-icon menu-icon">
+                                                                        <i class="flaticon-graph"></i>
+                                                                    </span>
+                                                                    <span class="menu-text">التقارير</span>
+                                                                    <i class="menu-arrow"></i>
+                                                                </a>
+                                                                <div class="menu-submenu">
+                                                                    <i class="menu-arrow"></i>
+                                                                    <ul class="menu-subnav">
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('vehicle-reports.index') }}" class="menu-link">
+                                                                                <span class="menu-text">تقرير عام</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('vehicle-reports.diesel') }}" class="menu-link">
+                                                                                <span class="menu-text">تقرير المحروقات</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('vehicle-reports.oil') }}" class="menu-link">
+                                                                                <span class="menu-text">تقرير الزيوت</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('vehicle-reports.monthly') }}" class="menu-link">
+                                                                                <span class="menu-text">تقرير شهري</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('vehicle-reports.maintenance') }}" class="menu-link">
+                                                                                <span class="menu-text">تقرير الصيانة</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('vehicle-reports.driver') }}" class="menu-link">
+                                                                                <span class="menu-text">تقرير السائقين</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        <li class="menu-item" aria-haspopup="true">
+                                                                            <a href="{{ route('vehicle-reports.summary') }}" class="menu-link">
+                                                                                <span class="menu-text">ملخص عام</span>
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </li>
+                                                        @endcanany
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        @endcanany
                     @can('purchases-read')
                         <li class="menu-section">
                             <h4 class="menu-text">المشتريات</h4>

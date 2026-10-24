@@ -71,6 +71,12 @@ class VehicleOperationController extends Controller
         $driver = Driver::findOrFail($data['driver_id']);
 
         if (! $vehicle->is_active || ! $driver->is_active) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'المركبة والسائق يجب أن يكونا نشطين.'
+                ], 400);
+            }
             return back()->withInput()->with('warning', 'المركبة والسائق يجب أن يكونا نشطين.');
         }
 
@@ -80,12 +86,25 @@ class VehicleOperationController extends Controller
         // منع تكرار الخصم عند إعادة إرسال الطلب
         $existing = VehicleOperation::where('idempotency_key', $data['idempotency_key'])->first();
         if ($existing) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'العملية مسجلة مسبقاً، تم تجاهل التكرار.'
+                ], 400);
+            }
             return redirect()->route('vehicle-operations.index')->with('info', 'العملية مسجلة مسبقاً، تم تجاهل التكرار.');
         }
 
         DB::transaction(function () use ($data) {
             VehicleOperation::create($data);
         });
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'تم تسجيل العملية بنجاح.'
+            ], 201);
+        }
 
         return redirect()->route('vehicle-operations.index')->with('success', 'تم تسجيل العملية بنجاح.');
     }

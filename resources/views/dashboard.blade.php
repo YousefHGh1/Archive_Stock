@@ -7,6 +7,7 @@
 @section('sub_main', 'الرئيسية')
 
 @section('css')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         /* ===== Hero ===== */
         .db-hero { position: relative; overflow: hidden; border-radius: 18px; padding: 1.75rem 2rem; margin-bottom: 1.5rem; color: #fff; background: linear-gradient(135deg, #1E1E2D 0%, #2B2B40 55%, #3699FF 160%); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.25rem; }
@@ -190,6 +191,9 @@
                 <a href="{{ route('dieselexport.create') }}"><i class="la la-file-export"></i> صرف محروقات</a>
                 <a href="{{ url('inventory/invoice/create') }}"><i class="la la-file-invoice"></i> فاتورة وارد</a>
                 <a href="{{ url('inventory/invoice_export/create') }}"><i class="la la-dolly"></i> سند صرف</a>
+                <button type="button" class="btn" data-toggle="modal" data-target="#vehicleOperationModal" style="display: inline-flex; align-items: center; gap: .45rem; padding: .6rem 1rem; border-radius: 11px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12); color: #fff; font-weight: 600; transition: background .15s ease, transform .15s ease; cursor: pointer;">
+                    <i class="la la-car"></i> تسجيل عملية مركبة
+                </button>
             </div>
         </div>
 
@@ -468,6 +472,83 @@
             </div>
         </div>
     </div>
+
+    <!-- Vehicle Operation Modal -->
+    <div class="modal fade" id="vehicleOperationModal" tabindex="-1" role="dialog" aria-labelledby="vehicleOperationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vehicleOperationModalLabel">تسجيل عملية مركبة</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('vehicle-operations.store') }}" method="post" id="vehicleOperationForm">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label>نوع الحدث *</label>
+                                <select id="event_type" name="event_type" class="form-control" required>
+                                    <option value="diesel">سولار</option>
+                                    <option value="oil">زيت</option>
+                                    <option value="recycled_oil">أضف زيت مكرر</option>
+                                    <option value="maintenance">صيانة</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>المركبة *</label>
+                                <select name="vehicle_id" class="form-control" required>
+                                    <option value="">اختر</option>
+                                    @foreach($vehicles ?? [] as $v)
+                                        <option value="{{ $v->id }}">{{ $v->plate_number }} - {{ $v->vehicle_type }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>السائق *</label>
+                                <select name="driver_id" class="form-control" required>
+                                    <option value="">اختر</option>
+                                    @foreach($drivers ?? [] as $d)
+                                        <option value="{{ $d->id }}">{{ $d->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4" id="export_wrap">
+                                <label>سند الصادر (اختياري)</label>
+                                <select name="diesel_export_id" class="form-control">
+                                    <option value="">اختر سند صادر</option>
+                                    @foreach($dieselExports ?? [] as $de)
+                                        <option value="{{ $de->id }}">{{ $de->date }} - {{ $de->voucher }} - {{ $de->quantity }} لتر - {{ $de->typesfuel->name ?? '' }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6" id="liters_wrap">
+                                <label>كمية اللترات *</label>
+                                <input type="number" step="0.01" min="0.01" name="liters" class="form-control">
+                            </div>
+                            <div class="form-group col-md-6" id="cost_wrap" style="display:none">
+                                <label>تكلفة الصيانة بالشيكل *</label>
+                                <input type="number" step="0.01" min="0" name="maintenance_cost" class="form-control">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>تاريخ العملية *</label>
+                                <input type="date" name="operation_date" value="{{ date('Y-m-d') }}" class="form-control" required>
+                            </div>
+                            <div class="form-group col-12">
+                                <label>ملاحظات</label>
+                                <textarea name="notes" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-primary">حفظ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -488,6 +569,93 @@
                 document.getElementById('db_today').textContent = now.toLocaleDateString();
             }
         })();
+
+        /* ===== Vehicle Operation Modal Logic ===== */
+        document.addEventListener('DOMContentLoaded', function() {
+            var type = document.getElementById('event_type');
+            var lw = document.getElementById('liters_wrap');
+            var cw = document.getElementById('cost_wrap');
+
+            function toggle() {
+                var m = type.value === 'maintenance';
+                lw.style.display = m ? 'none' : '';
+                cw.style.display = m ? '' : 'none';
+                if (m) {
+                    var l = lw.querySelector('input');
+                    if (l) l.value = '';
+                } else {
+                    var c = cw.querySelector('input');
+                    if (c) c.value = '';
+                }
+            }
+
+            if (type) {
+                type.addEventListener('change', toggle);
+                toggle();
+            }
+
+            // Handle form submission via AJAX
+            var form = document.getElementById('vehicleOperationForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var formData = new FormData(this);
+                    var btn = this.querySelector('button[type="submit"]');
+
+                    btn.disabled = true;
+                    btn.textContent = 'جارٍ الحفظ...';
+
+                    fetch(this.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    })
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        if (data.errors) {
+                            var errorHtml = '';
+                            for (var field in data.errors) {
+                                errorHtml += data.errors[field].join('<br>');
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطأ في البيانات',
+                                html: errorHtml,
+                                confirmButtonText: 'حسناً'
+                            });
+                        } else {
+                            document.getElementById('vehicleOperationModal').style.display = 'none';
+                            document.querySelector('.modal-backdrop').remove();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'تم الحفظ بنجاح',
+                                text: 'تم تسجيل العملية بنجاح',
+                                confirmButtonText: 'حسناً'
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    })
+                    .catch(function(error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: 'حدث خطأ أثناء الحفظ',
+                            confirmButtonText: 'حسناً'
+                        });
+                    })
+                    .finally(function() {
+                        btn.disabled = false;
+                        btn.textContent = 'حفظ';
+                    });
+                });
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             var charts = @json($dashboardCharts ?? []);

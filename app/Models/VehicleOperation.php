@@ -11,11 +11,13 @@ class VehicleOperation extends Model
 
     public const TYPE_DIESEL = 'diesel';
     public const TYPE_OIL = 'oil';
+    public const TYPE_RECYCLED_OIL = 'recycled_oil';
     public const TYPE_MAINTENANCE = 'maintenance';
 
     public const TYPES = [
         self::TYPE_DIESEL => 'سولار',
         self::TYPE_OIL => 'زيت',
+        self::TYPE_RECYCLED_OIL => 'أضف زيت مكرر',
         self::TYPE_MAINTENANCE => 'صيانة',
     ];
 

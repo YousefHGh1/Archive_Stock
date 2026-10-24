@@ -2,6 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\CalculatesFuelBalances;
+use App\Models\Vehicle;
+use App\Models\Driver;
+use App\Models\DieselExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,6 +20,9 @@ class HeadController extends Controller
             'dashboardStats'  => $stats,
             'dashboardCharts' => $this->dashboardCharts($stats),
             'fuelSummary'     => $this->fuelSummary(),
+            'vehicles'        => Vehicle::all(),
+            'drivers'         => Driver::all(),
+            'dieselExports'   => DieselExport::with('typesfuel')->latest()->take(50)->get(),
         ]);
     }
 
