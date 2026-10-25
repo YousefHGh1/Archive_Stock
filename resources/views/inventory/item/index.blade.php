@@ -202,7 +202,7 @@
                     <!--end::Dropdown-->
                     <!--begin::Button-->
                     @can('items-create')
-                    <a href="{{ url('/inventory/item/create') }}" class="btn btn-success font-weight-bolder">
+                    <button type="button" class="btn btn-success font-weight-bolder" data-toggle="modal" data-target="#itemModal">
                         <span class="svg-icon svg-icon-md">
                             <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Flatten.svg-->
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -216,7 +216,7 @@
                                 </g>
                             </svg>
                             <!--end::Svg Icon-->
-                        </span>إنشاء صنف جديد</a>
+                        </span>إنشاء صنف جديد</button>
                     @endcan
 
                     <x-add-resource-button />
@@ -355,24 +355,21 @@
 
 
                                         @can('items-delete')
-                                        <form method="POST" action="{{ url('/inventory/item' . '/' . $items->id) }}"
-                                            accept-charset="UTF-8" style="display:inline">
-                                            {{ method_field('DELETE') }} {{ csrf_field() }}
-                                            <button type="submit" class="btn btn-sm btn-clean btn-icon"
-                                                title="Delete item"
-                                                onclick="return confirm('هل تريد تأكيد عملية الحذف؟؟؟')"> <svg
+                                        <button type="button" class="btn btn-sm btn-clean btn-icon"
+                                            title="Delete item"
+                                            onclick="deleteItem({{ $items->id }})"> <svg
                                                     xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
                                                     <path
                                                         d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
                                                 </svg></button>
-                                        </form>
                                         @endcan
 
                                         @can('items-update')
-                                        <a href="{{ url('/inventory/item/' . $items->id . '/edit') }}"
-                                            class="btn btn-sm btn-clean btn-icon" title="Edit details"><i
-                                                class="la la-edit"></i></a>
+                                        <button type="button" class="btn btn-sm btn-clean btn-icon"
+                                            title="Edit details"
+                                            onclick="editItem({{ $items->id }})"><i
+                                                class="la la-edit"></i></button>
                                         @endcan
 
                                     </span>
@@ -397,4 +394,448 @@
     <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script src="{{ asset('assets/js/pages/features/miscellaneous/sweetalert2.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/pages/data-json_item.js') }}" type="text/javascript"></script>
+
+    <!-- Item Modal -->
+    <div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="itemModalTitle">إضافة صنف جديد</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="itemForm">
+                        @csrf
+                        <input type="hidden" name="item_id" id="item_id" value="">
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label"><strong>العائلة:</strong></label>
+                            <div class="col-lg-8">
+                                <div class="input-group">
+                                    <select name="category_id" id="modal_category_id" class="form-control selectpicker"
+                                        data-live-search="true" title="اختر العائلة" required>
+                                        @foreach ($category as $cat)
+                                            <option value="{{ $cat->id }}">{{ $cat->category_name }} - {{ $cat->category_num }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-primary"
+                                            title="إضافة عائلة جديدة"
+                                            onclick="openCategoryModal()">
+                                            <i class="ki ki-solid-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label"><strong>الوحدة:</strong></label>
+                            <div class="col-lg-8">
+                                <div class="input-group">
+                                    <select name="unit_id" id="modal_unit_id" class="form-control selectpicker"
+                                        data-live-search="true" title="اختر الوحدة" required>
+                                        @foreach ($units as $unit)
+                                            <option value="{{ $unit->id }}">{{ $unit->unit_name }} - {{ $unit->unit_num }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-primary"
+                                            title="إضافة وحدة جديدة"
+                                            onclick="openUnitModal()">
+                                            <i class="ki ki-solid-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label"><strong>اسم الصنف:</strong></label>
+                            <div class="col-lg-8">
+                                <input type="text" name="item_name" id="modal_item_name"
+                                    class="form-control" placeholder="ادخل اسم الصنف" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label"><strong>رقم الصنف:</strong></label>
+                            <div class="col-lg-8">
+                                <input type="number" name="item_num" id="modal_item_num"
+                                    class="form-control" placeholder="ادخل رقم الصنف" required readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label"><strong>الرصيد الافتتاحي:</strong></label>
+                            <div class="col-lg-8">
+                                <input type="number" name="open_balance" id="modal_open_balance"
+                                    class="form-control" placeholder="ادخل الرصيد" required min="0">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label"><strong>الحد الأدنى:</strong></label>
+                            <div class="col-lg-8">
+                                <input type="number" name="low_limit" id="modal_low_limit"
+                                    class="form-control" placeholder="ادخل الحد الأدنى" required min="0">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    <button type="button" class="btn btn-primary" onclick="saveItem()">حفظ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">إضافة عائلة جديدة</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm">
+                        @csrf
+                        <div class="form-group">
+                            <label>اسم العائلة</label>
+                            <input type="text" name="category_name" id="category_name"
+                                class="form-control" required minlength="2" maxlength="255">
+                        </div>
+                        <div class="form-group">
+                            <label>رقم العائلة</label>
+                            <input type="number" name="category_num" id="category_num"
+                                class="form-control" required step="1">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    <button type="button" class="btn btn-primary" onclick="saveCategory()">حفظ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unit Modal -->
+    <div class="modal fade" id="unitModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">إضافة وحدة جديدة</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="unitForm">
+                        @csrf
+                        <div class="form-group">
+                            <label>اسم الوحدة</label>
+                            <input type="text" name="unit_name" id="unit_name"
+                                class="form-control" required minlength="2" maxlength="255">
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الوحدة</label>
+                            <input type="number" name="unit_num" id="unit_num"
+                                class="form-control" required step="1">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    <button type="button" class="btn btn-primary" onclick="saveUnit()">حفظ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // إضافة صنف جديد
+        $('#itemModal').on('show.bs.modal', function (e) {
+            if (!$(e.relatedTarget).data('edit-mode')) {
+                resetForm();
+                $('#itemModalTitle').text('إضافة صنف جديد');
+            }
+        });
+
+        // تحديث رقم الصنف عند اختيار العائلة
+        $('#modal_category_id').on('change', function() {
+            const categoryId = $(this).val();
+            if (categoryId) {
+                $.ajax({
+                    url: "{{ route('category.last_item', ':id') }}".replace(':id', categoryId),
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        if (data && data.last_item_num !== undefined) {
+                            const newItemNum = parseInt(data.last_item_num) + 1;
+                            $('#modal_item_num').val(newItemNum);
+                        } else {
+                            $('#modal_item_num').val(categoryId + '1');
+                        }
+                    },
+                    error: function() {
+                        $('#modal_item_num').val('');
+                    }
+                });
+            }
+        });
+
+        // إعادة تعيين النموذج
+        function resetForm() {
+            $('#itemForm')[0].reset();
+            $('#item_id').val('');
+            $('#modal_category_id').selectpicker('refresh');
+            $('#modal_unit_id').selectpicker('refresh');
+        }
+
+        // فتح Modal إضافة عائلة
+        function openCategoryModal() {
+            $('#categoryForm')[0].reset();
+            $('#categoryModal').modal('show');
+        }
+
+        // فتح Modal إضافة وحدة
+        function openUnitModal() {
+            $('#unitForm')[0].reset();
+            $('#unitModal').modal('show');
+        }
+
+        // حفظ عائلة جديدة
+        function saveCategory() {
+            const formData = {
+                category_name: $('#category_name').val(),
+                category_num: $('#category_num').val(),
+            };
+
+            if (!formData.category_name || !formData.category_num) {
+                Swal.fire('تنبيه', 'يرجى ملء جميع الحقول المطلوبة', 'warning');
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('category.store') }}",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    if (data.success || data.id) {
+                        Swal.fire('نجاح', 'تمت إضافة العائلة بنجاح', 'success');
+                        $('#categoryModal').modal('hide');
+
+                        // إضافة العائلة الجديدة للقائمة المنسدلة
+                        const newOption = new Option(
+                            data.category_name + ' - ' + data.category_num,
+                            data.id
+                        );
+                        $('#modal_category_id').append(newOption);
+                        $('#modal_category_id').val(data.id);
+                        $('#modal_category_id').selectpicker('refresh');
+
+                        // تحديث رقم الصنف تلقائياً
+                        $('#modal_category_id').trigger('change');
+                    } else {
+                        Swal.fire('خطأ', 'حدث خطأ أثناء الحفظ', 'error');
+                    }
+                },
+                error: function(xhr) {
+                    const errors = xhr.responseJSON?.errors;
+                    if (errors) {
+                        let errorMessage = '';
+                        for (const field in errors) {
+                            errorMessage += errors[field][0] + '\n';
+                        }
+                        Swal.fire('خطأ', errorMessage, 'error');
+                    } else {
+                        Swal.fire('خطأ', 'حدث خطأ أثناء الحفظ', 'error');
+                    }
+                }
+            });
+        }
+
+        // حفظ وحدة جديدة
+        function saveUnit() {
+            const formData = {
+                unit_name: $('#unit_name').val(),
+                unit_num: $('#unit_num').val(),
+            };
+
+            if (!formData.unit_name || !formData.unit_num) {
+                Swal.fire('تنبيه', 'يرجى ملء جميع الحقول المطلوبة', 'warning');
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('unit.store') }}",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    if (data.success || data.id) {
+                        Swal.fire('نجاح', 'تمت إضافة الوحدة بنجاح', 'success');
+                        $('#unitModal').modal('hide');
+
+                        // إضافة الوحدة الجديدة للقائمة المنسدلة
+                        const newOption = new Option(
+                            data.unit_name + ' - ' + data.unit_num,
+                            data.id
+                        );
+                        $('#modal_unit_id').append(newOption);
+                        $('#modal_unit_id').val(data.id);
+                        $('#modal_unit_id').selectpicker('refresh');
+                    } else {
+                        Swal.fire('خطأ', 'حدث خطأ أثناء الحفظ', 'error');
+                    }
+                },
+                error: function(xhr) {
+                    const errors = xhr.responseJSON?.errors;
+                    if (errors) {
+                        let errorMessage = '';
+                        for (const field in errors) {
+                            errorMessage += errors[field][0] + '\n';
+                        }
+                        Swal.fire('خطأ', errorMessage, 'error');
+                    } else {
+                        Swal.fire('خطأ', 'حدث خطأ أثناء الحفظ', 'error');
+                    }
+                }
+            });
+        }
+
+        // تحميل بيانات الصنف للتعديل
+        function editItem(id) {
+            $.ajax({
+                url: "{{ route('item.show', ':id') }}".replace(':id', id),
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    if (data.success) {
+                        $('#itemModalTitle').text('تعديل الصنف');
+                        $('#item_id').val(data.item.id);
+                        $('#modal_category_id').val(data.item.category_id);
+                        $('#modal_unit_id').val(data.item.unit_id);
+                        $('#modal_item_name').val(data.item.item_name);
+                        $('#modal_item_num').val(data.item.item_num);
+                        $('#modal_open_balance').val(data.item.open_balance);
+                        $('#modal_low_limit').val(data.item.low_limit);
+
+                        $('#modal_category_id').selectpicker('refresh');
+                        $('#modal_unit_id').selectpicker('refresh');
+
+                        $('#itemModal').modal('show');
+                    } else {
+                        Swal.fire('خطأ', data.message, 'error');
+                    }
+                },
+                error: function() {
+                    Swal.fire('خطأ', 'حدث خطأ أثناء تحميل البيانات', 'error');
+                }
+            });
+        }
+
+        // حفظ الصنف (إضافة أو تعديل)
+        function saveItem() {
+            const itemId = $('#item_id').val();
+            const url = itemId ? "{{ route('item.update', ':id') }}".replace(':id', itemId) : "{{ route('item.store') }}";
+            const method = itemId ? 'PUT' : 'POST';
+
+            const formData = {
+                category_id: $('#modal_category_id').val(),
+                unit_id: $('#modal_unit_id').val(),
+                item_name: $('#modal_item_name').val(),
+                item_num: $('#modal_item_num').val(),
+                open_balance: $('#modal_open_balance').val(),
+                low_limit: $('#modal_low_limit').val(),
+            };
+
+            // التحقق من الحقول المطلوبة
+            if (!formData.category_id || !formData.unit_id || !formData.item_name || !formData.item_num || !formData.open_balance || !formData.low_limit) {
+                Swal.fire('تنبيه', 'يرجى ملء جميع الحقول المطلوبة', 'warning');
+                return;
+            }
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: formData,
+                dataType: "json",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    if (data.success) {
+                        Swal.fire('نجاح', data.message, 'success');
+                        $('#itemModal').modal('hide');
+                        location.reload(); // إعادة تحميل الصفحة لعرض البيانات المحدثة
+                    } else {
+                        Swal.fire('خطأ', data.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    const errors = xhr.responseJSON?.errors;
+                    if (errors) {
+                        let errorMessage = '';
+                        for (const field in errors) {
+                            errorMessage += errors[field][0] + '\n';
+                        }
+                        Swal.fire('خطأ', errorMessage, 'error');
+                    } else {
+                        Swal.fire('خطأ', 'حدث خطأ أثناء الحفظ', 'error');
+                    }
+                }
+            });
+        }
+
+        // حذف الصنف
+        function deleteItem(id) {
+            Swal.fire({
+                title: 'تأكيد الحذف',
+                text: 'هل تريد حذف هذا الصنف؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('item.destroy', ':id') }}".replace(':id', id),
+                        type: "DELETE",
+                        dataType: "json",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(data) {
+                            if (data.success) {
+                                Swal.fire('تم الحذف', data.message, 'success');
+                                location.reload();
+                            } else {
+                                Swal.fire('خطأ', data.message, 'error');
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('خطأ', 'حدث خطأ أثناء الحذف', 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
 @endsection

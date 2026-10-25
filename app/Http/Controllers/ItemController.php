@@ -50,10 +50,11 @@ public function index(Request $request)
     // Pagination
     $item = $query->paginate(10);
 
-    // جلب التصنيفات
+    // جلب التصنيفات والوحدات
     $category = Category::get(['id', 'category_name', 'category_num']);
+    $units = Unit::get(['id', 'unit_name', 'unit_num']);
 
-    return view('inventory.item.index', compact('item', 'category'));
+    return view('inventory.item.index', compact('item', 'category', 'units'));
 }
 
     // public function index(Request $request)
@@ -122,12 +123,20 @@ public function index(Request $request)
         if ($item->save()) {
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
-                    'id' => $item->id,
-                    'item_num' => $item->item_num,
-                    'item_name' => $item->item_name,
-                    'balance' => $item->balance,
-                    'category_id' => $item->category_id,
-                    'unit_id' => $item->unit_id,
+                    'success' => true,
+                    'message' => 'تمت الإضافة بنجاح!',
+                    'item' => [
+                        'id' => $item->id,
+                        'item_num' => $item->item_num,
+                        'item_name' => $item->item_name,
+                        'balance' => $item->balance,
+                        'category_id' => $item->category_id,
+                        'unit_id' => $item->unit_id,
+                        'open_balance' => $item->open_balance,
+                        'low_limit' => $item->low_limit,
+                        'category_name' => $item->category->category_name ?? '',
+                        'unit_name' => $item->unit->unit_name ?? '',
+                    ]
                 ], 201);
             }
 
@@ -139,8 +148,39 @@ public function index(Request $request)
 
     public function show($id)
     {
-        //
-        $item = item::find($id);
+        $item = Item::with(['category', 'unit'])->find($id);
+
+        if (!$item) {
+            if (request()->expectsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'الصنف غير موجود'
+                ], 404);
+            }
+            $unit = Unit::all();
+            $category = Category::all();
+
+            return view('inventory.item.show', compact('item', 'unit', 'category'));
+        }
+
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'item' => [
+                    'id' => $item->id,
+                    'item_num' => $item->item_num,
+                    'item_name' => $item->item_name,
+                    'balance' => $item->balance,
+                    'open_balance' => $item->open_balance,
+                    'low_limit' => $item->low_limit,
+                    'category_id' => $item->category_id,
+                    'unit_id' => $item->unit_id,
+                    'category_name' => $item->category->category_name ?? '',
+                    'unit_name' => $item->unit->unit_name ?? '',
+                ]
+            ]);
+        }
+
         $unit = Unit::all();
         $category = Category::all();
 
@@ -174,8 +214,33 @@ public function index(Request $request)
         $item->balance += ($validated['open_balance'] - $old_open_balance);
 
         if ($item->save()) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'تمت التعديل بنجاح!',
+                    'item' => [
+                        'id' => $item->id,
+                        'item_num' => $item->item_num,
+                        'item_name' => $item->item_name,
+                        'balance' => $item->balance,
+                        'category_id' => $item->category_id,
+                        'unit_id' => $item->unit_id,
+                        'open_balance' => $item->open_balance,
+                        'low_limit' => $item->low_limit,
+                        'category_name' => $item->category->category_name ?? '',
+                        'unit_name' => $item->unit->unit_name ?? '',
+                    ]
+                ]);
+            }
+
             return redirect()->route('item.index')->with('info', 'تمت التعديل بنجاح!');
         } else {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'تحقق من صحة البيانات!'
+                ], 400);
+            }
             return redirect()->back()->with('warning', 'تحقق من صحة البيانات!');
         }
     }
@@ -185,24 +250,50 @@ public function index(Request $request)
         $item = Item::find($id);
 
         if (! $item) {
+            if (request()->expectsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'الصنف غير موجود'
+                ], 404);
+            }
             session()->flash('error', 'الصنف غير موجود');
 
             return redirect()->route('item.index');
         }
 
         if ($item->InvoiceProduct()->count() > 0) {
+            if (request()->expectsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'لا يمكن حذف الصنف لأنه مرتبط بوارد.'
+                ], 400);
+            }
             session()->flash('warning', 'لا يمكن حذف الصنف لأنه مرتبط بوارد.');
 
             return redirect()->route('item.index');
         }
 
         if ($item->InvoiceExport_product()->count() > 0) {
+            if (request()->expectsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'لا يمكن حذف الصنف لأنه مرتبط بصادر.'
+                ], 400);
+            }
             session()->flash('warning', 'لا يمكن حذف الصنف لأنه مرتبط  بصادر.');
 
             return redirect()->route('item.index');
         }
 
         $item->delete();
+
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'تم الحذف بنجاح.'
+            ]);
+        }
+
         session()->flash('success', 'تم الحذف بنجاح.');
 
         return redirect()->route('item.index');
@@ -210,13 +301,10 @@ public function index(Request $request)
 
     public function getLastItem($id)
     {
-        // البحث عن آخر صنف مرتبط بالعائلة وترتيبهم تنازليًا حسب رقم الصنف
+        // البحث عن آخر صنف مرتبط بالعائلة المحددة
         $lastItem = Item::where('category_id', $id)
-            ->where('item_num', 'like', $id.'%') // نبحث عن كل الأصناف التي تبدأ برقم العائلة
             ->orderByDesc('item_num') // ترتيبهم تنازليًا حسب item_num
             ->first();
-
-            // dd($lastItem);
 
         // إذا كان هناك صنف سابق
         if ($lastItem) {
@@ -225,6 +313,13 @@ public function index(Request $request)
         }
 
         // إذا لم يكن هناك صنف سابق، نعيد الرقم الأول بناءً على رقم العائلة
-        return response()->json(['last_item_num' => $id.'0']); // في البداية سيكون 1010 ثم يتم زيادته إلى 1011، 1012، إلخ
+        $category = Category::find($id);
+        if ($category) {
+            // استخدام رقم العائلة كأساس
+            return response()->json(['last_item_num' => $category->category_num . '0']);
+        }
+
+        // في حالة عدم وجود العائلة
+        return response()->json(['last_item_num' => $id . '0']);
     }
 }

@@ -32,14 +32,28 @@ class DieselExportController extends Controller
 
     }
 
+    /**
+     * الجهات المستلمة المستخدمة سابقاً (قيم مميزة) لعرضها في القائمة المنسدلة.
+     */
+    private function recipients()
+    {
+        return DieselExport::query()
+            ->whereNotNull('num_section')
+            ->where('num_section', '!=', '')
+            ->distinct()
+            ->orderBy('num_section')
+            ->pluck('num_section');
+    }
+
     public function create()
     {
         //
         $section    = Section::get(['id', 'name_section']);
         $subSection = SubSection::get(['id', 'name']);
         $typesfuel  = TypesFuel::get(['id', 'name']);
+        $recipients = $this->recipients();
 
-        return view('dieselexport.create', compact('section', 'subSection', 'typesfuel'));
+        return view('dieselexport.create', compact('section', 'subSection', 'typesfuel', 'recipients'));
 
     }
 
@@ -94,8 +108,9 @@ class DieselExportController extends Controller
         $section      = Section::get(['id', 'name_section']);
         $subSection   = SubSection::get(['id', 'name']);
         $typesfuel    = TypesFuel::get(['id', 'name']);
+        $recipients   = $this->recipients();
 
-        return view('dieselexport.edit', compact('dieselexport', 'typesfuel', 'section', 'subSection'))->with('dieselexport', $dieselexport);
+        return view('dieselexport.edit', compact('dieselexport', 'typesfuel', 'section', 'subSection', 'recipients'))->with('dieselexport', $dieselexport);
     }
 
     public function update(Request $request, $id)

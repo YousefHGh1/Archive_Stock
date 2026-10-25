@@ -64,7 +64,16 @@ class InvoiceExportController extends Controller
         $units      = Unit::all();
         $user       = User::all();
 
+        // المستلمون المستخدمون سابقاً (قيم مميزة) لعرضهم في القائمة المنسدلة
+        $beneficiaries = InvoiceExport::query()
+            ->whereNotNull('beneficiary')
+            ->where('beneficiary', '!=', '')
+            ->distinct()
+            ->orderBy('beneficiary')
+            ->pluck('beneficiary');
+
         return view('inventory.invoice_export.create', compact(
+            'beneficiaries',
             'products',
             'subSection',
             'sections',

@@ -246,8 +246,20 @@
 
                                 <div class="col-lg-3">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="beneficiary" name="beneficiary"
-                                            required>
+                                        <select class="form-control recipient-select" id="beneficiary"
+                                            name="beneficiary" required
+                                            data-placeholder="اختر المستلم أو اكتب اسماً جديداً">
+                                            <option value=""></option>
+                                            @foreach ($beneficiaries as $beneficiary)
+                                                <option value="{{ $beneficiary }}"
+                                                    {{ old('beneficiary') == $beneficiary ? 'selected' : '' }}>
+                                                    {{ $beneficiary }}</option>
+                                            @endforeach
+                                            @if (old('beneficiary') && !$beneficiaries->contains(old('beneficiary')))
+                                                <option value="{{ old('beneficiary') }}" selected>
+                                                    {{ old('beneficiary') }}</option>
+                                            @endif
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -492,6 +504,7 @@
 @endsection
 
 @section('scripts')
+    <script src="{{ asset('js/recipient-select.js') }}"></script>
     <script>
         function myFunction() {
             var quantity = parseFloat(document.getElementById("quantity").value);

@@ -169,7 +169,7 @@
                                 <label class="col-lg-2 col-form-label"><strong>رقم الصنف:</strong></label>
                                 <div class="col-lg-3">
                                     <input type="number" name="item_num" id="item_num"  class="form-control @error('item_num') is-invalid @enderror"
-                                        placeholder="ادخل رقم الصنف" value="{{ old('item_num') }}">
+                                        placeholder="ادخل رقم الصنف" value="{{ old('item_num') }}" readonly>
                                     @error('item_num')
                                         <div class="mt-1 text-danger">{{ $message }}</div>
                                     @enderror
@@ -296,14 +296,14 @@
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
-{{-- 
+
     <script>
         $(document).ready(function() {
             $('#category_id').on('change', function() {
                 const categoryId = $(this).val();
                 if (categoryId) {
                     $.ajax({
-                        url: "{{ route('last_item', ':id') }}".replace(':id', categoryId),
+                        url: "{{ route('category.last_item', ':id') }}".replace(':id', categoryId),
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -323,7 +323,8 @@
                 }
             });
         });
-    </script> --}}
+    </script>
+
     <script>
         $(function() {
             function resetFeedback(form) {

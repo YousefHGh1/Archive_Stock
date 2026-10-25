@@ -258,9 +258,19 @@
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label for="num_section">الجهة المستلمة</label>
-                                        <input name="num_section" id="num_section" type="text"
-                                            class="@error('num_section') is-invalid @enderror form-control"
-                                            placeholder="ادخل الجهة المستلمة" value="{{ old('num_section') }}">
+                                        <select name="num_section" id="num_section" class="form-control recipient-select"
+                                            data-placeholder="اختر الجهة المستلمة أو اكتب جهة جديدة">
+                                            <option value=""></option>
+                                            @foreach ($recipients as $recipient)
+                                                <option value="{{ $recipient }}"
+                                                    {{ old('num_section') == $recipient ? 'selected' : '' }}>
+                                                    {{ $recipient }}</option>
+                                            @endforeach
+                                            @if (old('num_section') && !$recipients->contains(old('num_section')))
+                                                <option value="{{ old('num_section') }}" selected>
+                                                    {{ old('num_section') }}</option>
+                                            @endif
+                                        </select>
                                         @error('num_section')
                                             <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
@@ -430,6 +440,7 @@
 </div>
 
 @section('scripts')
+    <script src="{{ asset('js/recipient-select.js') }}"></script>
     <script>
         $(document).ready(function() {
             $('select[name="section_id"]').on('change', function() {

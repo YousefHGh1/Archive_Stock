@@ -91,8 +91,20 @@
                                 <label for="num_section" class="col-lg-2 col-form-label text-lg-right">الجهة المستلمة:</label>
                                 <div class="col-lg-3">
                                     <div class="input-group">
-                                        <input name="num_section" id="num_section" type="string" class="form-control"
-                                            value="{{ $dieselexport->num_section }}">
+                                        <select name="num_section" id="num_section" class="form-control recipient-select"
+                                            data-placeholder="اختر الجهة المستلمة أو اكتب جهة جديدة">
+                                            <option value=""></option>
+                                            @foreach ($recipients as $recipient)
+                                                <option value="{{ $recipient }}"
+                                                    {{ old('num_section', $dieselexport->num_section) == $recipient ? 'selected' : '' }}>
+                                                    {{ $recipient }}</option>
+                                            @endforeach
+                                            @if (old('num_section', $dieselexport->num_section) &&
+                                                    !$recipients->contains(old('num_section', $dieselexport->num_section)))
+                                                <option value="{{ old('num_section', $dieselexport->num_section) }}" selected>
+                                                    {{ old('num_section', $dieselexport->num_section) }}</option>
+                                            @endif
+                                        </select>
                                     </div>
                                 </div>
                                 <label for="num_note" class="col-lg-2 col-form-label text-lg-right">رقم الدفتر:</label>
@@ -188,4 +200,5 @@
 @endsection
 
 @section('scripts')
+    <script src="{{ asset('js/recipient-select.js') }}"></script>
 @endsection
