@@ -201,9 +201,9 @@
 
                         <div class="card-body">
                             <section class="fuel-form-section" aria-labelledby="export-section-heading">
-                                <h4 id="export-section-heading" class="fuel-section-heading">الدائرة والقسم</h4>
+                                <h4 id="export-section-heading" class="fuel-section-heading">الدائرة والقسم و ونوع المحروقات</h4>
                                 <div class="row">
-                                    <div class="col-md-6 form-group">
+                                    <div class="col-md-4 form-group">
                                         <label for="section_id">الدائرة</label>
                                         <select name="section_id" id="section_id"
                                             class="@error('section_id') is-invalid @enderror form-control selectpicker"
@@ -220,7 +220,7 @@
                                             <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-6 form-group">
+                                    <div class="col-md-4 form-group">
                                         <label for="sub_section_id">القسم</label>
                                         <select name="sub_section_id" id="sub_section_id"
                                             class="@error('sub_section_id') is-invalid @enderror form-control"
@@ -237,80 +237,7 @@
                                             <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                </div>
-                            </section>
-
-                            <section class="fuel-form-section" aria-labelledby="export-details-heading">
-                                <h4 id="export-details-heading" class="fuel-section-heading">الكمية وبيانات الصادر</h4>
-                                <div class="row">
-                                    <div class="col-md-6 form-group">
-                                        <label for="quantity">كمية الصادر</label>
-                                        <input name="quantity" id="quantity" type="number"
-                                            class="@error('quantity') is-invalid @enderror form-control" min="0"
-                                            placeholder="ادخل كمية الصادر" value="{{ old('quantity') }}">
-                                        @error('quantity')
-                                            <span class="text-sm text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 form-group">
-                                        <label for="voucher">رقم الإيصال</label>
-                                        <input name="voucher" type="number" min="0"
-                                            class="@error('voucher') is-invalid @enderror form-control" id="voucher"
-                                            placeholder="ادخل رقم الإيصال" value="{{ old('voucher') }}" />
-                                        @error('voucher')
-                                            <span class="text-sm text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 form-group">
-                                        <label for="num_section">الجهة المستلمة</label>
-                                        <div class="input-group">
-                                            <select name="num_section" id="num_section" class="form-control selectpicker"
-                                                data-live-search="true" title="اختر الجهة المستلمة">
-                                                <option value="">اختر الجهة المستلمة</option>
-                                                @foreach ($recipients as $id => $name)
-                                                    <option value="{{ $id }}"
-                                                        {{ old('num_section') == $id ? 'selected' : '' }}>
-                                                        {{ $name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <div class="input-group-append">
-                                                <button type="button" class="btn btn-outline-primary"
-                                                    title="إضافة جهة جديدة"
-                                                    data-toggle="modal" data-target="#quickAddDieselRecipientModal">
-                                                    <i class="ki ki-solid-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        @error('num_section')
-                                            <span class="text-sm text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 form-group">
-                                        <label for="num_note">رقم الدفتر</label>
-                                        <input name="num_note" id="num_note" type="number"
-                                            class="@error('num_note') is-invalid @enderror form-control"
-                                            placeholder="ادخل رقم الدفتر" value="{{ old('num_note') }}">
-                                        @error('num_note')
-                                            <span class="text-sm text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </section>
-
-                            <section class="fuel-form-section" aria-labelledby="export-date-heading">
-                                <h4 id="export-date-heading" class="fuel-section-heading">التاريخ ونوع المحروقات</h4>
-                                <div class="row">
-                                    <div class="col-md-6 form-group">
-                                        <label for="date">تاريخ التصدير</label>
-                                        <input name="date" type="date"
-                                            class="@error('date') is-invalid @enderror form-control" id="date"
-                                            value="{{ old('date', date('Y-m-d')) }}">
-                                        @error('date')
-                                            <span class="text-sm text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 form-group">
+                                                                        <div class="col-md-4 form-group">
                                         <label for="typesfuel_id">نوع المحروقات</label>
                                         <div class="input-group">
                                             <div class="flex-grow-1">
@@ -340,7 +267,77 @@
                                             <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-12 form-group">
+                                </div>
+                                
+                            </section>
+
+                            <section class="fuel-form-section" aria-labelledby="export-details-heading">
+                                <h4 id="export-details-heading" class="fuel-section-heading">الكمية وبيانات الصادر و الجهة المستلمة والملاحظات</h4>
+                                <div class="row">
+                                    <div class="col-md-3 form-group">
+                                        <label for="quantity">كمية الصادر</label>
+                                        <input name="quantity" id="quantity" type="number"
+                                            class="@error('quantity') is-invalid @enderror form-control" min="0"
+                                            placeholder="ادخل كمية الصادر" value="{{ old('quantity') }}">
+                                        @error('quantity')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-3 form-group">
+                                        <label for="voucher">رقم الإيصال</label>
+                                        <input name="voucher" type="number" min="0"
+                                            class="@error('voucher') is-invalid @enderror form-control" id="voucher"
+                                            placeholder="ادخل رقم الإيصال" value="{{ old('voucher') }}" />
+                                        @error('voucher')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-3 form-group">
+                                        <label for="num_note">رقم الدفتر</label>
+                                        <input name="num_note" id="num_note" type="number"
+                                            class="@error('num_note') is-invalid @enderror form-control"
+                                            placeholder="ادخل رقم الدفتر" value="{{ old('num_note') }}">
+                                        @error('num_note')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-3 form-group">
+                                        <label for="date">تاريخ التصدير</label>
+                                        <input name="date" type="date"
+                                            class="@error('date') is-invalid @enderror form-control" id="date"
+                                            value="{{ old('date', date('Y-m-d')) }}">
+                                        @error('date')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                              <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label for="num_section">الجهة المستلمة</label>
+                                        <div class="input-group">
+                                            <select name="num_section" id="num_section" class="form-control selectpicker"
+                                                data-live-search="true" title="اختر الجهة المستلمة">
+                                                <option value="">اختر الجهة المستلمة</option>
+                                                @foreach ($recipients as $id => $name)
+                                                    <option value="{{ $id }}"
+                                                        {{ old('num_section') == $id ? 'selected' : '' }}>
+                                                        {{ $name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-primary"
+                                                    title="إضافة جهة جديدة"
+                                                    data-toggle="modal" data-target="#quickAddDieselRecipientModal">
+                                                    <i class="ki ki-solid-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        @error('num_section')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 form-group">
                                         <label for="notes">ملاحظات</label>
                                         <textarea name="notes" id="notes" rows="2"
                                             class="@error('notes') is-invalid @enderror form-control" maxlength="5000"

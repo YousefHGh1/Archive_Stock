@@ -195,7 +195,7 @@
                         {!! csrf_field() !!}
                         <div class="card-body">
                             <section class="fuel-form-section" aria-labelledby="incoming-supplier-heading">
-                                <h4 id="incoming-supplier-heading" class="fuel-section-heading">بيانات المورد والمحروقات</h4>
+                                <h4 id="incoming-supplier-heading" class="fuel-section-heading">بيانات التوريد والمحروقات</h4>
                                 <div class="row">
                                     <div class="col-md-6 form-group">
                                         <label for="supplier_id">اسم المورد</label>
@@ -254,12 +254,8 @@
                                         @enderror
                                     </div>
                                 </div>
-                            </section>
-
-                            <section class="fuel-form-section" aria-labelledby="incoming-details-heading">
-                                <h4 id="incoming-details-heading" class="fuel-section-heading">الكمية وبيانات التوريد</h4>
                                 <div class="row">
-                                    <div class="col-md-6 form-group">
+                                    <div class="col-md-4 form-group">
                                         <label for="quantity">كمية التوريد</label>
                                         <input name="quantity" id="quantity" type="number" value="{{ old('quantity') }}"
                                             class="@error('quantity') is-invalid @enderror form-control" min="0"
@@ -268,7 +264,7 @@
                                             <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-6 form-group">
+                                    <div class="col-md-4 form-group">
                                         <label for="type">جهة التوريد</label>
                                         <input name="type" id="type" type="text" value="{{ old('type') }}"
                                             class="@error('type') is-invalid @enderror form-control"
@@ -277,7 +273,23 @@
                                             <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-6 form-group">
+                                    <div class="col-md-4 form-group">
+                                        <label for="date">تاريخ التوريد</label>
+                                        <input name="date" type="date"
+                                            class="@error('date') is-invalid @enderror form-control" id="date"
+                                            placeholder="ادخل تاريخ التوريد" value="{{ old('date', date('Y-m-d')) }}">
+                                        @error('date')
+                                            <span class="text-sm text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </section>
+
+
+                            <section class="fuel-form-section" aria-labelledby="incoming-details-heading">
+                                <h4 id="incoming-details-heading" class="fuel-section-heading">  رقم الفاتورة و سند التوريد  و الملاحظات</h4>
+                                <div class="row">
+                                    <div class="col-md-4 form-group">
                                         <label for="price">سعر اللتر</label>
                                         <input name="price" id="price" type="number" step="0.01"
                                             value="{{ old('price') }}"
@@ -287,7 +299,7 @@
                                             <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-6 form-group">
+                                    <div class="col-md-4 form-group">
                                         <label for="invoice_num">رقم الفاتورة</label>
                                         <input name="invoice_num" type="number" min="0"
                                             value="{{ old('invoice_num') }}"
@@ -297,7 +309,7 @@
                                             <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-6 form-group">
+                                    <div class="col-md-4 form-group">
                                         <label for="voucher">سند التوريد</label>
                                         <input name="voucher" type="text" value="{{ old('voucher') }}"
                                             class="@error('voucher') is-invalid @enderror form-control" id="voucher"
@@ -307,20 +319,8 @@
                                         @enderror
                                     </div>
                                 </div>
-                            </section>
+                             <div class="row">
 
-                            <section class="fuel-form-section" aria-labelledby="incoming-date-heading">
-                                <h4 id="incoming-date-heading" class="fuel-section-heading">التاريخ والملاحظات</h4>
-                                <div class="row">
-                                    <div class="col-md-6 form-group">
-                                        <label for="date">تاريخ التوريد</label>
-                                        <input name="date" type="date"
-                                            class="@error('date') is-invalid @enderror form-control" id="date"
-                                            placeholder="ادخل تاريخ التوريد" value="{{ old('date', date('Y-m-d')) }}">
-                                        @error('date')
-                                            <span class="text-sm text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
                                     <div class="col-12 form-group">
                                         <label for="notes">ملاحظات</label>
                                         <textarea name="notes" id="notes" rows="2"
@@ -332,6 +332,7 @@
                                     </div>
                                 </div>
                             </section>
+
                         </div>
                         <div class="card-footer">
                             <div class="row">

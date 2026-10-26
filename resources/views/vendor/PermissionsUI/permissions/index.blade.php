@@ -16,69 +16,35 @@
 
 @section('css')
     <style>
-        body {
-            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
-            min-height: 100vh;
-        }
-
+        /* ====== Card Custom ====== */
         .card-custom {
             border: none;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
             overflow: hidden;
-            background: white;
-            margin: 30px 0;
         }
 
         .card-header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #3699ff 0%, #bc82f6 100%);
+            border-radius: 16px 16px 0 0;
             color: white;
-            padding: 30px 35px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-
-        .card-header::after {
-            content: '';
-            position: absolute;
-            bottom: -30%;
-            left: 5%;
-            width: 150px;
-            height: 150px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
+            border-bottom: none;
         }
 
         .card-header .card-label {
             color: white;
             font-weight: 700;
-            font-size: 1.3rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            z-index: 1;
+            font-size: 1.25rem;
+        }
+
+        .card-header .text-muted {
+            color: rgba(255, 255, 255, 0.8) !important;
         }
 
         .card-header p {
             color: rgba(255, 255, 255, 0.9);
             font-size: 0.95rem;
             margin-top: 8px;
-            position: relative;
-            z-index: 1;
         }
 
         .card-header i {
@@ -86,24 +52,24 @@
             margin-right: 10px;
         }
 
+        /* ====== Create Button ====== */
         .btn-create {
             background: white;
-            color: #00f2fe;
+            color: #3699ff;
             border: none;
             border-radius: 25px;
             padding: 12px 30px;
             font-weight: 700;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            position: relative;
-            z-index: 1;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .btn-create:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
+        /* ====== Permissions Grid ====== */
         .permissions-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -114,12 +80,13 @@
         .permission-card {
             background: white;
             border: none;
-            border-radius: 20px;
-            padding: 30px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e4e6ef;
         }
 
         .permission-card::before {
@@ -128,15 +95,16 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 50%, #00f2fe 100%);
+            height: 4px;
+            background: linear-gradient(90deg, #3699ff, #bc82f6);
             transform: scaleX(0);
-            transition: transform 0.4s ease;
+            transition: transform 0.3s ease;
         }
 
         .permission-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(79, 172, 254, 0.25);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(54, 153, 255, 0.15);
+            border-color: #3699ff;
         }
 
         .permission-card:hover::before {
@@ -146,35 +114,21 @@
         .permission-card-header {
             display: flex;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .permission-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 22px;
             color: white;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            margin-left: 18px;
-            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
-            position: relative;
-            z-index: 1;
-        }
-
-        .permission-icon::after {
-            content: '';
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 15px;
-            height: 15px;
-            background: #00f2fe;
-            border: 3px solid white;
-            border-radius: 50%;
+            background: linear-gradient(135deg, #3699ff 0%, #bc82f6 100%);
+            margin-left: 15px;
+            box-shadow: 0 5px 15px rgba(54, 153, 255, 0.3);
         }
 
         .permission-info {
@@ -183,38 +137,37 @@
 
         .permission-id {
             display: inline-block;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
+            background: rgba(54, 153, 255, 0.1);
+            color: #3699ff;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 700;
             margin-bottom: 8px;
-            box-shadow: 0 4px 10px rgba(79, 172, 254, 0.3);
         }
 
         .permission-name {
             font-weight: 700;
-            color: #2c3e50;
-            font-size: 18px;
+            color: #3f4254;
+            font-size: 16px;
         }
 
         .permission-meta {
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 2px dashed #e8e8e8;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e4e6ef;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .permission-date {
-            font-size: 14px;
-            color: #7f8c8d;
+            font-size: 13px;
+            color: #a1a5b7;
         }
 
         .permission-date i {
-            color: #4facfe;
+            color: #3699ff;
             margin-left: 8px;
         }
 
@@ -223,77 +176,53 @@
         }
 
         .action-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #e4e6ef;
             background: white;
             margin-left: 10px;
             color: #6c757d;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .action-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(79, 172, 254, 0.2);
-            transform: translate(-50%, -50%);
-            transition: all 0.3s ease;
         }
 
         .action-btn:hover {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: #3699ff;
             color: white;
-            border-color: #4facfe;
-            transform: translateY(-5px) rotate(10deg);
-            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
-        }
-
-        .action-btn:hover::before {
-            width: 100%;
-            height: 100%;
+            border-color: #3699ff;
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 5px 15px rgba(54, 153, 255, 0.3);
         }
 
         .action-btn.delete:hover {
-            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-            border-color: #00f2fe;
+            background: #f64e60;
+            border-color: #f64e60;
+            box-shadow: 0 5px 15px rgba(246, 78, 96, 0.3);
         }
 
         .empty-state {
             text-align: center;
-            padding: 80px 20px;
+            padding: 60px 20px;
             grid-column: 1 / -1;
         }
 
         .empty-state i {
-            font-size: 80px;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 25px;
+            font-size: 60px;
+            color: #e4e6ef;
+            margin-bottom: 20px;
         }
 
         .empty-state h4 {
-            color: #2c3e50;
-            font-weight: 700;
-            font-size: 20px;
+            color: #3f4254;
+            font-weight: 600;
         }
 
         .empty-state p {
-            color: #7f8c8d;
-            margin-top: 15px;
-            font-size: 15px;
+            color: #a1a5b7;
+            margin-top: 10px;
         }
 
         @media (max-width: 1200px) {
@@ -317,100 +246,19 @@
         .pagination-wrapper {
             padding: 25px 35px;
         }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin: 0;
-        }
-
-        .pagination .page-item {
-            margin: 0;
-        }
-
-        .pagination .page-link {
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            color: #2c3e50;
-            font-weight: 700;
-            padding: 12px 18px;
-            transition: all 0.3s ease;
-            background: white;
-            min-width: 50px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pagination .page-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 0;
-        }
-
-        .pagination .page-link span {
-            position: relative;
-            z-index: 1;
-        }
-
-        .pagination .page-link:hover {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border-color: #4facfe;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
-        }
-
-        .pagination .page-link:hover::before {
-            opacity: 1;
-        }
-
-        .pagination .page-item.active .page-link {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border-color: #4facfe;
-            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
-        }
-
-        .pagination .page-item.disabled .page-link {
-            color: #bdc3c7;
-            border-color: #e0e0e0;
-            background: #f8f9fa;
-            cursor: not-allowed;
-        }
-
-        .pagination .page-item.disabled .page-link:hover {
-            background: #f8f9fa;
-            color: #bdc3c7;
-            border-color: #e0e0e0;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .pagination .page-item.disabled .page-link::before {
-            opacity: 0;
-        }
     </style>
 @endsection
 
 @section('content')
     <div class="container">
         <div class="card card-custom">
-            <div class="card-header">
+            <div class="card-header border-0 py-5">
                 <div class="card-title">
                     <h3 class="card-label">
                         <i class="la la-key mr-2"></i>
                         {{ __('عرض المسؤوليات') }}
                     </h3>
-                    <p class="mt-2 mb-0">
+                    <p class="mt-2 mb-0" style="color: rgba(255,255,255,0.8);">
                         إدارة المسؤوليات والصلاحيات في النظام
                     </p>
                 </div>

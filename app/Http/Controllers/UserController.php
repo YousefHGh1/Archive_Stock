@@ -30,6 +30,8 @@ class UserController extends Controller
             $users      = User::with('section', 'subSection')->orderBy('id', 'desc')->paginate(10);
             $section    = Section::all();
             $subSection = SubSection::all();
+            $sectionCount = Section::count();
+            $subSectionCount = SubSection::count();
         } elseif ($user->can('view-own-section') && $user->section_id) {
             $users = User::with('section', 'subSection')
                 ->where('section_id', $user->section_id)
@@ -37,13 +39,17 @@ class UserController extends Controller
                 ->paginate(10);
             $section    = Section::where('id', $user->section_id)->get();
             $subSection = SubSection::where('section_id', $user->section_id)->get();
+            $sectionCount = Section::where('id', $user->section_id)->count();
+            $subSectionCount = SubSection::where('section_id', $user->section_id)->count();
         } else {
             $users      = User::where('id', $user->id)->orderBy('id', 'desc')->paginate(10);
             $section    = Section::where('id', $user->section_id)->get();
             $subSection = SubSection::where('id', $user->sub_section_id)->get();
+            $sectionCount = Section::where('id', $user->section_id)->count();
+            $subSectionCount = SubSection::where('id', $user->sub_section_id)->count();
         }
 
-        return view('user.index', compact('users', 'section', 'subSection'));
+        return view('user.index', compact('users', 'section', 'subSection', 'sectionCount', 'subSectionCount'));
     }
 
     public function create()

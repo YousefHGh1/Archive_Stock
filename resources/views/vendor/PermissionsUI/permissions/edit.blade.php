@@ -16,6 +16,7 @@
 
 @section('css')
     <style>
+        /* ====== Card Custom ====== */
         .card-custom {
             border: none;
             border-radius: 16px;
@@ -40,6 +41,13 @@
             color: rgba(255, 255, 255, 0.8) !important;
         }
 
+        .card-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+
+        /* ====== Form Controls ====== */
         .form-control {
             border-radius: 10px;
             border: 2px solid #e4e6ef;
@@ -62,6 +70,7 @@
             border-radius: 0 10px 10px 0;
         }
 
+        /* ====== Form Label ====== */
         .form-label {
             font-weight: 600;
             color: #3f4254;
@@ -74,6 +83,7 @@
             margin-left: 5px;
         }
 
+        /* ====== Role Checkbox Items ====== */
         .role-checkbox-item {
             display: inline-flex;
             align-items: center;
@@ -109,6 +119,7 @@
             accent-color: #3699ff;
         }
 
+        /* ====== Buttons ====== */
         .btn-primary {
             background: linear-gradient(135deg, #3699ff 0%, #bc82f6 100%);
             border: none;
@@ -154,6 +165,11 @@
             border-top: 1px solid #e4e6ef;
             border-radius: 0 0 16px 16px;
             padding: 20px;
+        }
+
+        /* ====== Form Group ====== */
+        .form-group {
+            margin-bottom: 25px;
         }
     </style>
 @endsection
