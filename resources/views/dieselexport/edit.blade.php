@@ -14,6 +14,41 @@
     صفحة التعديل
 @endsection
 @section('css')
+    <style>
+        .quick-add-modal .modal-header {
+            align-items: center;
+        }
+
+        .quick-add-modal .modal-title {
+            margin: 0;
+        }
+
+        .quick-add-modal .modal-body {
+            color: #5e6775;
+        }
+
+        .quick-add-modal .quick-add-context {
+            margin-bottom: 1rem;
+            color: #5e6775;
+            line-height: 1.6;
+        }
+
+        .quick-add-modal [data-field-error]:empty {
+            display: none !important;
+        }
+
+        @media (max-width: 575.98px) {
+            .quick-add-modal .modal-dialog {
+                width: calc(100% - 1rem);
+                margin: .5rem;
+            }
+        }
+
+        /* إصلاح z-index للمودل الجهة المستلمة */
+        #quickAddDieselRecipientModal {
+            z-index: 1100 !important;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -91,20 +126,23 @@
                                 <label for="num_section" class="col-lg-2 col-form-label text-lg-right">الجهة المستلمة:</label>
                                 <div class="col-lg-3">
                                     <div class="input-group">
-                                        <select name="num_section" id="num_section" class="form-control recipient-select"
-                                            data-placeholder="اختر الجهة المستلمة أو اكتب جهة جديدة">
-                                            <option value=""></option>
-                                            @foreach ($recipients as $recipient)
-                                                <option value="{{ $recipient }}"
-                                                    {{ old('num_section', $dieselexport->num_section) == $recipient ? 'selected' : '' }}>
-                                                    {{ $recipient }}</option>
+                                        <select name="num_section" id="num_section" class="form-control selectpicker"
+                                            data-live-search="true" title="اختر الجهة المستلمة">
+                                            <option value="">اختر الجهة المستلمة</option>
+                                            @foreach ($recipients as $id => $name)
+                                                <option value="{{ $id }}"
+                                                    {{ old('num_section', $dieselexport->num_section) == $id ? 'selected' : '' }}>
+                                                    {{ $name }}
+                                                </option>
                                             @endforeach
-                                            @if (old('num_section', $dieselexport->num_section) &&
-                                                    !$recipients->contains(old('num_section', $dieselexport->num_section)))
-                                                <option value="{{ old('num_section', $dieselexport->num_section) }}" selected>
-                                                    {{ old('num_section', $dieselexport->num_section) }}</option>
-                                            @endif
                                         </select>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-primary"
+                                                title="إضافة جهة جديدة"
+                                                data-toggle="modal" data-target="#quickAddDieselRecipientModal">
+                                                <i class="ki ki-solid-plus"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <label for="num_note" class="col-lg-2 col-form-label text-lg-right">رقم الدفتر:</label>
@@ -199,6 +237,164 @@
     </div>
 @endsection
 
+<!-- Quick-add modals -->
+
+<!-- DieselRecipient quick-add modal -->
+<div class="modal fade quick-add-modal" id="quickAddDieselRecipientModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title quick-add-heading">إضافة جهة مستلمة جديدة</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="quick-add-context">سيتم اختيار الجهة تلقائياً بعد الإضافة.</p>
+                <form action="{{ route('diesel_recipient.store') }}" method="POST" data-ajax-quick-add data-entity="diesel_recipient">
+                    @csrf
+                    <div data-form-error class="alert alert-danger"></div>
+
+                    <div class="form-group">
+                        <label>اسم الجهة المستلمة</label>
+                        <input type="text" name="name" class="form-control" required minlength="2" maxlength="255" />
+                        <div data-field-error="name" class="text-danger"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" data-submit-label="حفظ">حفظ</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section('css')
+    <style>
+        .quick-add-modal .modal-header {
+            align-items: center;
+        }
+
+        .quick-add-modal .modal-title {
+            margin: 0;
+        }
+
+        .quick-add-modal .modal-body {
+            color: #5e6775;
+        }
+
+        .quick-add-modal .quick-add-context {
+            margin-bottom: 1rem;
+            color: #5e6775;
+            line-height: 1.6;
+        }
+
+        .quick-add-modal [data-field-error]:empty {
+            display: none !important;
+        }
+
+        @media (max-width: 575.98px) {
+            .quick-add-modal .modal-dialog {
+                width: calc(100% - 1rem);
+                margin: .5rem;
+            }
+        }
+
+        /* إصلاح z-index للمودل الجهة المستلمة */
+        #quickAddDieselRecipientModal {
+            z-index: 1100 !important;
+        }
+    </style>
+@endsection
+
 @section('scripts')
-    <script src="{{ asset('js/recipient-select.js') }}"></script>
+    <script>
+        function addOption(select, id, label) {
+            const $select = $(select);
+            const value = String(id);
+            if (!$select.find('option').filter(function() {
+                    return this.value === value;
+                }).length) {
+                $select.append(new Option(label, value));
+            }
+            $select.val(value).trigger('change');
+            if ($select.hasClass('selectpicker')) {
+                $select.selectpicker('refresh');
+            }
+        }
+
+        function resetFeedback(form) {
+            const $form = $(form);
+            $form.find('[data-form-error]').hide().text('');
+            $form.find('[data-field-error]').text('');
+            $form.find('.is-invalid').removeClass('is-invalid');
+        }
+
+        $(document).on('submit', '[data-ajax-quick-add]', function(event) {
+            event.preventDefault();
+            var form = this;
+            var $form = $(form);
+            var $submit = $form.find('[type="submit"]');
+            var label = $submit.data('submit-label') || $submit.text();
+
+            resetFeedback(form);
+            $submit.prop('disabled', true).text('جارٍ الحفظ...');
+
+            $.ajax({
+                url: form.action,
+                method: 'POST',
+                data: $form.serialize(),
+                dataType: 'json',
+                headers: {
+                    Accept: 'application/json'
+                }
+            }).done(function(entity) {
+                var entityType = $form.data('entity');
+                if (entityType === 'diesel_recipient') {
+                    addOption('#num_section', entity.id, entity.name);
+                }
+                form.reset();
+                $form.closest('.modal').modal('hide');
+                if (window.Swal) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'تمت الإضافة بنجاح',
+                        showConfirmButton: false,
+                        timer: 2200
+                    });
+                }
+
+            }).fail(function(xhr) {
+                var errors = xhr.responseJSON && xhr.responseJSON.errors;
+                var assignedError = false;
+                if (errors) {
+                    $.each(errors, function(field, messages) {
+                        var $input = $form.find('[name]').filter(function() {
+                            return this.name === field;
+                        }).first();
+                        var $feedback = $form.find('[data-field-error]').filter(function() {
+                            return $(this).data('field-error') === field;
+                        }).first();
+                        if ($input.length && $feedback.length) {
+                            $input.addClass('is-invalid');
+                            $feedback.text(Array.isArray(messages) ? messages[0] : messages);
+                            assignedError = true;
+                        }
+                    });
+                }
+                if (!assignedError) {
+                    $form.find('[data-form-error]').text(
+                        (xhr.responseJSON && xhr.responseJSON.message) ||
+                        'تعذر الاتصال بالخادم. تحقق من الاتصال وحاول مرة أخرى.'
+                    ).show();
+                }
+            }).always(function() {
+                $submit.prop('disabled', false).text(label);
+            });
+        });
+    </script>
 @endsection

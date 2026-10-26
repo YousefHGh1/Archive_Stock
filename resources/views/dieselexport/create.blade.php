@@ -151,6 +151,11 @@
                 padding: 0.75rem;
             }
         }
+
+        /* إصلاح z-index للمودل الجهة المستلمة */
+        #quickAddDieselRecipientModal {
+            z-index: 1100 !important;
+        }
     </style>
 @endsection
 
@@ -258,19 +263,25 @@
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label for="num_section">الجهة المستلمة</label>
-                                        <select name="num_section" id="num_section" class="form-control recipient-select"
-                                            data-placeholder="اختر الجهة المستلمة أو اكتب جهة جديدة">
-                                            <option value=""></option>
-                                            @foreach ($recipients as $recipient)
-                                                <option value="{{ $recipient }}"
-                                                    {{ old('num_section') == $recipient ? 'selected' : '' }}>
-                                                    {{ $recipient }}</option>
-                                            @endforeach
-                                            @if (old('num_section') && !$recipients->contains(old('num_section')))
-                                                <option value="{{ old('num_section') }}" selected>
-                                                    {{ old('num_section') }}</option>
-                                            @endif
-                                        </select>
+                                        <div class="input-group">
+                                            <select name="num_section" id="num_section" class="form-control selectpicker"
+                                                data-live-search="true" title="اختر الجهة المستلمة">
+                                                <option value="">اختر الجهة المستلمة</option>
+                                                @foreach ($recipients as $id => $name)
+                                                    <option value="{{ $id }}"
+                                                        {{ old('num_section') == $id ? 'selected' : '' }}>
+                                                        {{ $name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-primary"
+                                                    title="إضافة جهة جديدة"
+                                                    data-toggle="modal" data-target="#quickAddDieselRecipientModal">
+                                                    <i class="ki ki-solid-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                         @error('num_section')
                                             <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
@@ -439,6 +450,38 @@
     </div>
 </div>
 
+<!-- DieselRecipient quick-add modal -->
+<div class="modal fade quick-add-modal" id="quickAddDieselRecipientModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title quick-add-heading">إضافة جهة مستلمة جديدة</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="quick-add-context">سيتم اختيار الجهة تلقائياً بعد الإضافة.</p>
+                <form action="{{ route('diesel_recipient.store') }}" method="POST" data-ajax-quick-add data-entity="diesel_recipient">
+                    @csrf
+                    <div data-form-error class="alert alert-danger"></div>
+
+                    <div class="form-group">
+                        <label>اسم الجهة المستلمة</label>
+                        <input type="text" name="name" class="form-control" required minlength="2" maxlength="255" />
+                        <div data-field-error="name" class="text-danger"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" data-submit-label="حفظ">حفظ</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section('scripts')
     <script src="{{ asset('js/recipient-select.js') }}"></script>
     <script>
@@ -511,6 +554,9 @@
                     var entityType = $form.data('entity');
                     if (entityType === 'typesfuel') {
                         addOption('#typesfuel_id', entity.id, entity.name || entity.label || entity);
+                    }
+                    if (entityType === 'diesel_recipient') {
+                        addOption('#num_section', entity.id, entity.name);
                     }
                     form.reset();
                     $form.closest('.modal').modal('hide');

@@ -61,7 +61,11 @@ class InvoiceController extends Controller
                 'currencies.name'
             )
             ->get();
-        return view('inventory.invoice.index', compact('invoices'));
+
+        $supplier_item = SupplierItem::all();
+        $currency = Currency::all();
+
+        return view('inventory.invoice.index', compact('invoices', 'supplier_item', 'currency'));
     }
 
     public function create()
@@ -232,12 +236,47 @@ class InvoiceController extends Controller
             ]
         );
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'تم حفظ الفاتورة بنجاح.',
+                'redirect' => route('invoice.index'),
+            ]);
+        }
+
         return redirect()->back()->with('success', 'تم حفظ الفاتورة بنجاح.');
     }
 
     public function show($id)
     {
-        $invoice         = Invoice::findOrFail($id);
+        $invoice = Invoice::with(['supplierItem', 'currency', 'invoiceproduct.item'])->findOrFail($id);
+
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'invoice' => [
+                    'id' => $invoice->id,
+                    'voucher_no' => $invoice->voucher_no,
+                    'voucher_date' => $invoice->voucher_date,
+                    'invoice_no' => $invoice->invoice_no,
+                    'supplier_item_id' => $invoice->supplier_item_id,
+                    'currency_id' => $invoice->currency_id,
+                    'notes' => $invoice->notes,
+                    'supplier_item_name' => $invoice->supplierItem->supplier_item_name ?? '',
+                    'currency_name' => $invoice->currency->name ?? '',
+                    'products' => $invoice->invoiceproduct->map(function($product) {
+                        return [
+                            'item_id' => $product->item_id,
+                            'item_name' => $product->item->item_name ?? '',
+                            'item_num' => $product->item->item_num ?? '',
+                            'quantity' => $product->quantity,
+                            'price' => $product->price,
+                        ];
+                    })->toArray(),
+                ]
+            ]);
+        }
+
         $invoiceProducts = InvoiceProduct::where('invoice_id', $id)->get();
 
         return view('inventory.invoice.show', compact('invoice', 'invoiceProducts'));
@@ -324,6 +363,13 @@ class InvoiceController extends Controller
             }
         });
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'تم تحديث الفاتورة بنجاح.',
+            ]);
+        }
+
         return redirect()->back()->with('success', 'تم تحديث الفاتورة بنجاح.');
     }
 
@@ -340,6 +386,12 @@ class InvoiceController extends Controller
             $invoice = Invoice::findOrFail($id);
 
             if ($invoice->deleted_at) {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'هذه الفاتورة محذوفة بالفعل'
+                    ], 400);
+                }
                 return redirect()->back()->with('error', 'هذه الفاتورة محذوفة بالفعل');
             }
 
@@ -371,11 +423,26 @@ class InvoiceController extends Controller
 
             DB::commit();
 
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'تم حذف الفاتورة بنجاح ونقلها إلى الأرشيف'
+                ]);
+            }
+
             return redirect()->back()->with('success', 'تم حذف الفاتورة بنجاح ونقلها إلى الأرشيف');
 
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error deleting invoice: ' . $e->getMessage());
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'حدث خطأ أثناء حذف الفاتورة: ' . $e->getMessage()
+                ], 500);
+            }
+            
             return redirect()->back()->with('error', 'حدث خطأ أثناء حذف الفاتورة: ' . $e->getMessage());
         }
     }

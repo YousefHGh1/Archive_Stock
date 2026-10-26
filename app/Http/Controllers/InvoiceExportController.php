@@ -10,6 +10,7 @@ use App\Models\Section;
 use App\Models\SubSection;
 use App\Models\Unit;
 use App\Models\User;
+use App\Models\Beneficiary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -36,19 +37,21 @@ class InvoiceExportController extends Controller
 
     public function index()
     {
-
         $invoice_exports = DB::table('invoice_exports')
             ->join('sub_sections', 'invoice_exports.subSection_id', '=', 'sub_sections.id')
             ->join('invoice_export_products', 'invoice_exports.id', '=', 'invoice_export_products.invoice_export_id')
             ->join('items', 'invoice_export_products.item_id', '=', 'items.id')
-            ->whereNull('invoice_exports.deleted_at') // Exclude soft deleted records
+            ->whereNull('invoice_exports.deleted_at')
             ->select('invoice_exports.id', 'invoice_exports.voucher_no', 'invoice_exports.voucher_date', 'invoice_exports.invoice_no', 'invoice_exports.beneficiary', 'invoice_exports.notes', 'sub_sections.name', DB::raw('GROUP_CONCAT(items.item_name," (", invoice_export_products.quantity, ") &nbsp;") AS products'))
             ->groupBy('invoice_exports.id', 'invoice_exports.voucher_no', 'invoice_exports.voucher_date', 'invoice_exports.invoice_no', 'invoice_exports.beneficiary', 'invoice_exports.notes', 'sub_sections.name')
             ->get();
-        // $invoice_exports= InvoiceExport::all();
-        // $subSection = subSection::all();
-        // $user = User::all();
-        return view('inventory.invoice_export.index', compact('invoice_exports'));
+
+        $subSection = SubSection::all();
+
+        // المستلمون من جدول beneficiaries
+        $beneficiaries = Beneficiary::where('is_active', true)->orderBy('name')->pluck('name', 'id');
+
+        return view('inventory.invoice_export.index', compact('invoice_exports', 'subSection', 'beneficiaries'));
     }
 
     public function create()
@@ -64,13 +67,8 @@ class InvoiceExportController extends Controller
         $units      = Unit::all();
         $user       = User::all();
 
-        // المستلمون المستخدمون سابقاً (قيم مميزة) لعرضهم في القائمة المنسدلة
-        $beneficiaries = InvoiceExport::query()
-            ->whereNotNull('beneficiary')
-            ->where('beneficiary', '!=', '')
-            ->distinct()
-            ->orderBy('beneficiary')
-            ->pluck('beneficiary');
+        // المستلمون من جدول beneficiaries
+        $beneficiaries = Beneficiary::where('is_active', true)->orderBy('name')->pluck('name', 'id');
 
         return view('inventory.invoice_export.create', compact(
             'beneficiaries',
@@ -202,16 +200,46 @@ class InvoiceExportController extends Controller
             ]
         );
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'تم حفظ الفاتورة بنجاح.',
+                'redirect' => route('invoice_export.index'),
+            ]);
+        }
+
         // رسالة نجاح العملية
         return redirect()->back()->with('success', 'تم حفظ الفاتورة بنجاح.');
     }
 
     public function show($id)
     {
-        // البحث عن الفاتورة باستخدام الرقم المعرف
-        $invoiceExport = InvoiceExport::findOrFail($id);
+        $invoiceExport = InvoiceExport::with(['subSection', 'InvoiceExport_product.item'])->findOrFail($id);
 
-        // الحصول على الأصناف الموجودة داخل الفاتورة
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'invoice_export' => [
+                    'id' => $invoiceExport->id,
+                    'voucher_no' => $invoiceExport->voucher_no,
+                    'voucher_date' => $invoiceExport->voucher_date,
+                    'invoice_no' => $invoiceExport->invoice_no,
+                    'subSection_id' => $invoiceExport->subSection_id,
+                    'beneficiary' => $invoiceExport->beneficiary,
+                    'notes' => $invoiceExport->notes,
+                    'subSection_name' => $invoiceExport->subSection->name ?? '',
+                    'products' => $invoiceExport->InvoiceExport_product->map(function($product) {
+                        return [
+                            'item_id' => $product->item_id,
+                            'item_name' => $product->item->item_name ?? '',
+                            'item_num' => $product->item->item_num ?? '',
+                            'quantity' => $product->quantity,
+                        ];
+                    })->toArray(),
+                ]
+            ]);
+        }
+
         $invoiceExport_products = invoiceExport_product::where('invoice_export_id', $id)->get();
 
         return view('inventory.invoice_export.show', compact('invoiceExport', 'invoiceExport_products'));
@@ -290,6 +318,13 @@ class InvoiceExportController extends Controller
             }
         });
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'تم تحديث الفاتورة بنجاح.',
+            ]);
+        }
+
         // رسالة نجاح العملية
         return redirect()->back()->with('success', 'تم تحديث الفاتورة بنجاح.');
     }
@@ -312,6 +347,12 @@ class InvoiceExportController extends Controller
 
             // التحقق من أن الفاتورة ليست محذوفة بالفعل
             if ($invoiceExport->deleted_at) {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'هذا السند محذوف بالفعل'
+                    ], 400);
+                }
                 return redirect()->back()->with('error', 'هذا السند محذوف بالفعل');
             }
 
@@ -342,16 +383,31 @@ class InvoiceExportController extends Controller
             $invoiceExport->status        = 'deleted';
             $invoiceExport->deleted_by    = Auth::id();
             $invoiceExport->delete_reason = $request->input('reason', 'حذف يدوي');
-            $invoiceExport->save();   // Save status changes before soft delete
-            $invoiceExport->delete(); // Soft delete
+            $invoiceExport->save();
+            $invoiceExport->delete();
 
             DB::commit();
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'تم حذف السند بنجاح ونقله إلى الأرشيف'
+                ]);
+            }
 
             return redirect()->back()->with('success', 'تم حذف السند بنجاح ونقله إلى الأرشيف');
 
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error deleting invoice export: ' . $e->getMessage());
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'حدث خطأ أثناء حذف السند: ' . $e->getMessage()
+                ], 500);
+            }
+            
             return redirect()->back()->with('error', 'حدث خطأ أثناء حذف السند: ' . $e->getMessage());
         }
     }

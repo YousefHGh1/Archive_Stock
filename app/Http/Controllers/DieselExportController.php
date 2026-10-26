@@ -5,6 +5,7 @@ use App\Http\Controllers\Concerns\CalculatesFuelBalances;
 use App\Http\Controllers\Concerns\ExportsCsv;
 use App\Models\Diesel;
 use App\Models\DieselExport;
+use App\Models\DieselRecipient;
 use App\Models\Section;
 use App\Models\SubSection;
 use App\Models\TypesFuel;
@@ -33,16 +34,13 @@ class DieselExportController extends Controller
     }
 
     /**
-     * الجهات المستلمة المستخدمة سابقاً (قيم مميزة) لعرضها في القائمة المنسدلة.
+     * الجهات المستلمة من جدول diesel_recipients.
      */
     private function recipients()
     {
-        return DieselExport::query()
-            ->whereNotNull('num_section')
-            ->where('num_section', '!=', '')
-            ->distinct()
-            ->orderBy('num_section')
-            ->pluck('num_section');
+        return DieselRecipient::where('is_active', true)
+            ->orderBy('name')
+            ->pluck('name', 'id');
     }
 
     public function create()
@@ -70,6 +68,14 @@ class DieselExportController extends Controller
             'date'           => 'required|date',
             'notes'          => 'nullable|string|max:5000',
         ], $this->voucherMessages());
+
+        // تحويل ID المستلم إلى اسم
+        if (is_numeric($validatedData['num_section'])) {
+            $recipient = DieselRecipient::find($validatedData['num_section']);
+            if ($recipient) {
+                $validatedData['num_section'] = $recipient->name;
+            }
+        }
 
         $totalDieselQuantity       = Diesel::sum("quantity");
         $totalDieselExportQuantity = DieselExport::sum("quantity");
@@ -110,6 +116,14 @@ class DieselExportController extends Controller
         $typesfuel    = TypesFuel::get(['id', 'name']);
         $recipients   = $this->recipients();
 
+        // إذا كانت القيمة المحفوظة نصية، ابحث عن ID المطابق
+        if ($dieselexport->num_section && !is_numeric($dieselexport->num_section)) {
+            $recipient = DieselRecipient::where('name', $dieselexport->num_section)->first();
+            if ($recipient) {
+                $dieselexport->num_section = $recipient->id;
+            }
+        }
+
         return view('dieselexport.edit', compact('dieselexport', 'typesfuel', 'section', 'subSection', 'recipients'))->with('dieselexport', $dieselexport);
     }
 
@@ -122,7 +136,16 @@ class DieselExportController extends Controller
             'voucher' => 'required|numeric|unique:diesel_exports,voucher,' . $dieselexport->id,
         ], $this->voucherMessages());
 
-        $dieselexport->num_section = $request->num_section;
+        // تحويل ID المستلم إلى اسم
+        $numSection = $request->num_section;
+        if (is_numeric($numSection)) {
+            $recipient = DieselRecipient::find($numSection);
+            if ($recipient) {
+                $numSection = $recipient->name;
+            }
+        }
+
+        $dieselexport->num_section = $numSection;
         $dieselexport->num_note    = $request->num_note;
         $dieselexport->section_id  = $request->section_id;
         $dieselexport->voucher     = $request->voucher;

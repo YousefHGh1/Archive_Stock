@@ -22,6 +22,11 @@ class UnitController extends Controller
         if (! $next_num) {
             $next_num = 1;
         }
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json($unit);
+        }
+
         return view('inventory.unit.index', compact('unit', 'next_num'));
     }
 

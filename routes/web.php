@@ -16,6 +16,7 @@ use App\Http\Controllers\CustodyController;
 use App\Http\Controllers\CustodyItemController;
 use App\Http\Controllers\DieselController;
 use App\Http\Controllers\DieselExportController;
+use App\Http\Controllers\DieselRecipientController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ExportReportController;
@@ -47,7 +48,7 @@ use App\Http\Controllers\TypeController;
 use App\Http\Controllers\TypesFuelController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\RoleManagementController;
+use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\PermissionController;
 use Illuminate\Support\Facades\Route;
 
@@ -90,6 +91,7 @@ Route::prefix('/')->middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::resource('diesel', DieselController::class);
     Route::resource('dieselexport', DieselExportController::class);
+    Route::resource('diesel_recipient', DieselRecipientController::class);
     Route::resource('user', UserController::class);
     Route::resource('section', SectionController::class);
     Route::resource('supplier', SupplierController::class);
@@ -216,6 +218,7 @@ Route::prefix('inventory/')->middleware('auth')->group(function () {
     Route::resource('invoice', InvoiceController::class);
     Route::get('invoice_export/skipped-vouchers', [InvoiceExportController::class, 'skippedVouchers'])->name('invoice_export.skipped-vouchers');
     Route::resource('invoice_export', InvoiceExportController::class);
+    Route::resource('beneficiary', BeneficiaryController::class);
     Route::resource('custody', CustodyController::class);
     Route::resource('currency', CurrencyController::class);
     Route::resource('custody_Item', CustodyItemController::class);

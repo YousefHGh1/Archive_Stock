@@ -19,6 +19,11 @@ class CategoryController extends Controller
     {
         // $units= Unit::simplepaginate(5);
         $category = Category::all();
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json($category);
+        }
+
         return view('inventory.category.index', compact('category'));
     }
 
@@ -44,10 +49,20 @@ class CategoryController extends Controller
         //     $next_num = 1;
         // }
 
-        $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'category_num' => 'required',
             'category_name' => 'required|string|min:2',
         ]);
+
+        if ($validator->fails()) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         // Save In Database
         $category = new Category();
@@ -59,6 +74,7 @@ class CategoryController extends Controller
         if ($saved === TRUE) {
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
+                    'success' => true,
                     'id' => $category->id,
                     'category_num' => $category->category_num,
                     'category_name' => $category->category_name,
@@ -67,6 +83,12 @@ class CategoryController extends Controller
 
             return redirect('inventory/category')->with('success', 'تم حفظ العائلة بنجاح *');
         } else {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'تحقق من الأخطاء الموجودة هنالك خلل ما !!'
+                ], 400);
+            }
             return redirect()->back()->with('warning', 'تحقق من الأخطاء الموجودة هنالك خلل ما !!');
         }
     }

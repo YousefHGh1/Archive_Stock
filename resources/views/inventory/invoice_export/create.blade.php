@@ -118,6 +118,11 @@
                 margin: .5rem;
             }
         }
+
+        /* إصلاح z-index للمودل المستلم */
+        #quickAddBeneficiaryModal {
+            z-index: 1100 !important;
+        }
     </style>
 @endsection
 
@@ -246,20 +251,24 @@
 
                                 <div class="col-lg-3">
                                     <div class="input-group">
-                                        <select class="form-control recipient-select" id="beneficiary"
+                                        <select class="form-control selectpicker" id="beneficiary"
                                             name="beneficiary" required
-                                            data-placeholder="اختر المستلم أو اكتب اسماً جديداً">
-                                            <option value=""></option>
-                                            @foreach ($beneficiaries as $beneficiary)
-                                                <option value="{{ $beneficiary }}"
-                                                    {{ old('beneficiary') == $beneficiary ? 'selected' : '' }}>
-                                                    {{ $beneficiary }}</option>
+                                            data-live-search="true" title="اختر المستلم">
+                                            <option value="">اختر المستلم</option>
+                                            @foreach ($beneficiaries as $id => $name)
+                                                <option value="{{ $id }}"
+                                                    {{ old('beneficiary') == $id ? 'selected' : '' }}>
+                                                    {{ $name }}
+                                                </option>
                                             @endforeach
-                                            @if (old('beneficiary') && !$beneficiaries->contains(old('beneficiary')))
-                                                <option value="{{ old('beneficiary') }}" selected>
-                                                    {{ old('beneficiary') }}</option>
-                                            @endif
                                         </select>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-primary"
+                                                title="إضافة مستلم جديد"
+                                                data-toggle="modal" data-target="#quickAddBeneficiaryModal">
+                                                <i class="ki ki-solid-plus"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -501,7 +510,126 @@
             </div>
         </div>
     </div>
+
+    <!-- Quick Add Beneficiary Modal -->
+    <div class="modal fade quick-add-modal" id="quickAddBeneficiaryModal" tabindex="-1" role="dialog"
+        aria-labelledby="quickAddBeneficiaryTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form action="{{ route('beneficiary.store') }}" method="post" data-ajax-quick-add data-entity="beneficiary">
+                    @csrf
+                    <div class="modal-header">
+                        <div class="quick-add-heading">
+                            <h5 class="modal-title" id="quickAddBeneficiaryTitle">إضافة مستلم جديد</h5>
+                            <p class="quick-add-context">سيتم اختيار المستلم الجديد تلقائياً.</p>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger mb-4" role="alert" data-form-error></div>
+                        <div class="form-group mb-0">
+                            <label for="quick_beneficiary_name">اسم المستلم</label>
+                            <input id="quick_beneficiary_name" class="form-control" type="text" name="name"
+                                minlength="2" maxlength="255" required>
+                            <div class="invalid-feedback" data-field-error="name"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">إغلاق</button>
+                        <button type="submit" class="btn btn-primary" data-submit-label="حفظ المستلم">حفظ المستلم</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 @endsection
+
+@section('scripts')
+    <script src="{{ asset('assets/js/pages/features/miscellaneous/sweetalert2.js') }}" type="text/javascript"></script>
+
+    <script>
+        function addOption(select, id, label) {
+            const $select = $(select);
+            const value = String(id);
+            if (!$select.find('option').filter(function() {
+                    return this.value === value;
+                }).length) {
+                $select.append(new Option(label, value));
+            }
+            $select.val(value).trigger('change');
+            if ($select.hasClass('selectpicker')) {
+                $select.selectpicker('refresh');
+            }
+        }
+
+        $(document).on('submit', '[data-ajax-quick-add]', function(event) {
+            event.preventDefault();
+            const form = this;
+            const $form = $(form);
+            const $submit = $form.find('[type="submit"]');
+            const label = $submit.data('submit-label');
+
+            $form.find('[data-form-error]').hide().text('');
+            $form.find('[data-field-error]').text('');
+            $form.find('.is-invalid').removeClass('is-invalid');
+            $submit.prop('disabled', true).text('جارٍ الحفظ...');
+
+            $.ajax({
+                url: form.action,
+                method: 'POST',
+                data: $form.serialize(),
+                dataType: 'json',
+                headers: {
+                    Accept: 'application/json'
+                }
+            }).done(function(entity) {
+                if ($form.data('entity') === 'beneficiary') {
+                    addOption('#beneficiary', entity.id, entity.name);
+                }
+                form.reset();
+                $form.closest('.modal').modal('hide');
+                if (window.Swal) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'تمت الإضافة بنجاح',
+                        showConfirmButton: false,
+                        timer: 2200
+                    });
+                }
+            }).fail(function(xhr) {
+                const errors = xhr.responseJSON && xhr.responseJSON.errors;
+                let assignedError = false;
+                if (errors) {
+                    $.each(errors, function(field, messages) {
+                        const $input = $form.find('[name]').filter(function() {
+                            return this.name === field;
+                        }).first();
+                        const $feedback = $form.find('[data-field-error]').filter(function() {
+                            return $(this).data('field-error') === field;
+                        }).first();
+                        if ($input.length && $feedback.length) {
+                            $input.addClass('is-invalid');
+                            $feedback.text(Array.isArray(messages) ? messages[0] : messages);
+                            assignedError = true;
+                        }
+                    });
+                }
+                if (!assignedError) {
+                    $form.find('[data-form-error]').text(
+                        (xhr.responseJSON && xhr.responseJSON.message) ||
+                        'تعذر الاتصال بالخادم. تحقق من الاتصال وحاول مرة أخرى.'
+                    ).show();
+                }
+            }).always(function() {
+                $submit.prop('disabled', false).text(label);
+            });
+        });
+    </script>
 
 @section('scripts')
     <script src="{{ asset('js/recipient-select.js') }}"></script>
