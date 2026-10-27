@@ -113,7 +113,7 @@ public function index(Request $request)
             'item_num' => 'required|integer|unique:items,item_num',
             'item_name' => 'required|string|max:255|unique:items,item_name',
             'open_balance' => 'required|numeric|min:0',
-            'low_limit' => 'required|numeric|min:0',
+            'low_limit' => 'nullable|numeric|min:0',
         ]);
 
         $item = new Item;
@@ -123,20 +123,16 @@ public function index(Request $request)
         if ($item->save()) {
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
-                    'success' => true,
-                    'message' => 'تمت الإضافة بنجاح!',
-                    'item' => [
-                        'id' => $item->id,
-                        'item_num' => $item->item_num,
-                        'item_name' => $item->item_name,
-                        'balance' => $item->balance,
-                        'category_id' => $item->category_id,
-                        'unit_id' => $item->unit_id,
-                        'open_balance' => $item->open_balance,
-                        'low_limit' => $item->low_limit,
-                        'category_name' => $item->category->category_name ?? '',
-                        'unit_name' => $item->unit->unit_name ?? '',
-                    ]
+                    'id' => $item->id,
+                    'item_num' => $item->item_num,
+                    'item_name' => $item->item_name,
+                    'balance' => $item->balance,
+                    'category_id' => $item->category_id,
+                    'unit_id' => $item->unit_id,
+                    'open_balance' => $item->open_balance,
+                    'low_limit' => $item->low_limit,
+                    'category_name' => $item->category->category_name ?? '',
+                    'unit_name' => $item->unit->unit_name ?? '',
                 ], 201);
             }
 
@@ -205,7 +201,7 @@ public function index(Request $request)
             'item_num' => 'required|integer|unique:items,item_num,'.$id,
             'item_name' => 'required|string|max:255|unique:items,item_name,'.$id,
             'open_balance' => 'required|numeric|min:0',
-            'low_limit' => 'required|numeric|min:0',
+            'low_limit' => 'nullable|numeric|min:0',
         ]);
 
         $item = Item::find($id);

@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Archive-Stock">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="manifest" href="{{ asset('manifest/manifest.json') }}">
 <link rel="apple-touch-icon" href="{{ asset('icons/icon-192x192.png') }}">
 <link rel="canonical" href="{{ url('/dashboard') }}">

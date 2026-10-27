@@ -74,7 +74,6 @@ class CategoryController extends Controller
         if ($saved === TRUE) {
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
-                    'success' => true,
                     'id' => $category->id,
                     'category_num' => $category->category_num,
                     'category_name' => $category->category_name,

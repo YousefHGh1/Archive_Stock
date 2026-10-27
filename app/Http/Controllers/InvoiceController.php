@@ -66,8 +66,9 @@ class InvoiceController extends Controller
         $currency = Currency::all();
         $categories = Category::all();
         $units = Unit::all();
+        $products = Item::all();
 
-        return view('inventory.invoice.index', compact('invoices', 'supplier_item', 'currency', 'categories', 'units'));
+        return view('inventory.invoice.index', compact('invoices', 'supplier_item', 'currency', 'categories', 'units', 'products'));
     }
 
     public function create()
@@ -208,8 +209,8 @@ class InvoiceController extends Controller
             }
 
             $product  = Item::findOrFail($products[$i]);
-            $quantity = $request->input("quantity.$i", 0);
-            $price    = $request->input("price.$i", 0);
+            $quantity = $request->input(quantity[$i], 0);
+            $price    = $request->input("price[$i]", 0);
 
             $invoiceProduct             = new InvoiceProduct();
             $invoiceProduct->invoice_id = $invoice->id;

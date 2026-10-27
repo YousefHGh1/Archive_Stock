@@ -408,9 +408,12 @@
                                 <thead>
                                     <tr>
                                         <th width="50%">الصنف
-                                            <button type="button" class="btn btn-link p-0" onclick="openItemModal()">
+                                            <button type="button" class="btn btn-link p-0" data-toggle="modal" data-target="#itemModal">
                                                 <i class="p-3 ki ki-solid-plus icon-md"></i>
                                             </button>
+                                            <a href="{{ url('inventory/item') }}" title="عرض الأصناف" target="_blank">
+                                                <i class="p-3 far fa-eye icon-md"></i>
+                                            </a>
                                         </th>
                                         <th>الكمية</th>
                                         <th>السعر</th>
@@ -423,6 +426,13 @@
                                         <td>
                                             <select class="form-control selectpicker product-select" data-live-search="true" title="اختر الصنف">
                                                 <option value="">اختر الصنف</option>
+                                                @foreach ($products as $product)
+                                                    <option value="{{ $product->id }}">
+                                                        {{ $product->item_num }}
+                                                        {{ $product->item_name }}
+                                                        {{ ' الرصيد: ' . $product->balance }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </td>
                                         <td>
@@ -466,29 +476,30 @@
 
     <!-- Item Modal (إضافة صنف كامل) -->
     <div class="modal fade quick-add-modal" id="itemModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <div class="quick-add-heading">
-                        <h5 class="modal-title">إضافة صنف جديد</h5>
-                        <p class="quick-add-context">سيتم إضافة الصنف مباشرة إلى الجدول.</p>
+                <form action="{{ route('item.store') }}" method="post" data-ajax-quick-add data-entity="item">
+                    @csrf
+                    <div class="modal-header">
+                        <div class="quick-add-heading">
+                            <h5 class="modal-title">إضافة صنف جديد</h5>
+                            <p class="quick-add-context">أكمل بيانات الصنف لإضافته إلى المخزون.</p>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="itemForm">
-                        @csrf
+                    <div class="modal-body">
                         <div class="alert alert-danger mb-4" role="alert" data-form-error></div>
-
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label><strong>العائلة:</strong></label>
+                                <label for="quick_item_category">العائلة</label>
                                 <div class="input-group">
-                                    <select name="category_id" id="item_category_id" class="form-control selectpicker"
-                                        data-live-search="true" title="اختر العائلة" required>
+                                    <select id="quick_item_category" class="form-control selectpicker" name="category_id" data-live-search="true" required>
                                         <option value="">اختر العائلة</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                        @endforeach
                                     </select>
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-outline-primary"
@@ -501,11 +512,13 @@
                                 <div class="invalid-feedback" data-field-error="category_id"></div>
                             </div>
                             <div class="col-md-6">
-                                <label><strong>الوحدة:</strong></label>
+                                <label for="quick_item_unit">الوحدة</label>
                                 <div class="input-group">
-                                    <select name="unit_id" id="item_unit_id" class="form-control selectpicker"
-                                        data-live-search="true" title="اختر الوحدة" required>
+                                    <select id="quick_item_unit" class="form-control" name="unit_id" required>
                                         <option value="">اختر الوحدة</option>
+                                        @foreach ($units as $unit)
+                                            <option value="{{ $unit->id }}">{{ $unit->unit_name }}</option>
+                                        @endforeach
                                     </select>
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-outline-primary"
@@ -518,45 +531,414 @@
                                 <div class="invalid-feedback" data-field-error="unit_id"></div>
                             </div>
                         </div>
-
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label><strong>اسم الصنف:</strong></label>
-                                <input type="text" name="item_name" id="item_name"
-                                    class="form-control" placeholder="ادخل اسم الصنف" required>
+                                <label for="quick_item_name">اسم الصنف</label>
+                                <input id="quick_item_name" class="form-control" type="text" name="item_name"
+                                    maxlength="255" required>
                                 <div class="invalid-feedback" data-field-error="item_name"></div>
                             </div>
                             <div class="col-md-6">
-                                <label><strong>رقم الصنف:</strong></label>
-                                <input type="number" name="item_num" id="item_num"
-                                    class="form-control" placeholder="ادخل رقم الصنف" readonly>
+                                <label for="quick_item_num">رقم الصنف</label>
+                                <input id="quick_item_num" class="form-control" type="number" name="item_num"
+                                    step="1" required readonly>
                                 <div class="invalid-feedback" data-field-error="item_num"></div>
                             </div>
                         </div>
-
-                        <div class="form-group row">
+                        <div class="form-group row mb-0">
                             <div class="col-md-6">
-                                <label><strong>الرصيد الافتتاحي:</strong></label>
-                                <input type="number" name="open_balance" id="open_balance"
-                                    class="form-control" placeholder="ادخل الرصيد" required min="0">
+                                <label for="quick_item_balance">الرصيد الافتتاحي</label>
+                                <input id="quick_item_balance" class="form-control" type="number" name="open_balance"
+                                    min="0" step="any" value="0" required>
                                 <div class="invalid-feedback" data-field-error="open_balance"></div>
                             </div>
                             <div class="col-md-6">
-                                <label><strong>الحد الأدنى:</strong></label>
-                                <input type="number" name="low_limit" id="low_limit"
-                                    class="form-control" placeholder="ادخل الحد الأدنى" required min="0">
+                                <label for="quick_item_low_limit">حد التنبيه</label>
+                                <input id="quick_item_low_limit" class="form-control" type="number" name="low_limit"
+                                    min="0" step="any" value="0">
                                 <div class="invalid-feedback" data-field-error="low_limit"></div>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-dismiss="modal">إغلاق</button>
-                    <button type="button" class="btn btn-primary" onclick="saveNewItem()">إضافة للفاتورة</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-primary" data-submit-label="حفظ الصنف">حفظ الصنف</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+
+
+
+    <script>
+        // حساب إجمالي الصف
+        function calculateRowTotal(input) {
+            const row = $(input).closest('tr');
+            const quantity = parseFloat(row.find('.quantity-input').val()) || 0;
+            const price = parseFloat(row.find('.price-input').val()) || 0;
+            const total = quantity * price;
+            row.find('.row-total').val(total.toFixed(2));
+            calculateGrandTotal();
+        }
+
+        // حساب الإجمالي الكلي
+        function calculateGrandTotal() {
+            let grandTotal = 0;
+            $('.row-total').each(function() {
+                grandTotal += parseFloat($(this).val()) || 0;
+            });
+            $('.grand-total').val(grandTotal.toFixed(2));
+        }
+
+        // تحديث رقم الصنف عند اختيار العائلة
+        $('#quick_item_category').on('change', function() {
+            const categoryId = $(this).val();
+            if (categoryId) {
+                $.ajax({
+                    url: "{{ route('category.last_item', ':id') }}".replace(':id', categoryId),
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        if (data && data.last_item_num !== undefined) {
+                            const newItemNum = parseInt(data.last_item_num) + 1;
+                            $('#quick_item_num').val(newItemNum);
+                        } else {
+                            $('#quick_item_num').val(categoryId + '1');
+                        }
+                    },
+                    error: function() {
+                        $('#quick_item_num').val('');
+                    }
+                });
+            }
+        });
+
+        // إضافة صف جديد للجدول
+        function addProductRow(itemId = null, quantity = '', price = '') {
+            // الحصول على خيارات الصنف من الصف الأول
+            const firstSelect = $('#modal-products-table tbody select.product-select').first();
+            let optionsHtml = '';
+
+            // نسخ جميع الخيارات مع التأكد من النسخ الصحيح
+            firstSelect.find('option').each(function() {
+                const value = $(this).attr('value');
+                const text = $(this).text();
+                optionsHtml += '<option value="' + value + '">' + text + '</option>';
+            });
+
+            const newRow = `
+                <tr class="product-row">
+                    <td>
+                        <select class="form-control selectpicker product-select" data-live-search="true" title="اختر الصنف">
+                            ${optionsHtml}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" min="0.1" class="form-control quantity-input" oninput="calculateRowTotal(this)" value="${quantity}">
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" min="0" class="form-control price-input" oninput="calculateRowTotal(this)" value="${price}">
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" class="form-control row-total" readonly value="${(quantity * price).toFixed(2)}">
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button type="button" class="btn-icon-sm btn-add-custom add-row" title="إضافة صف">
+                                <i class="ki ki-plus"></i>
+                            </button>
+                            <button type="button" class="btn-icon-sm btn-delete-custom delete-row" title="حذف الصف">
+                                <i class="ki ki-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            $('#modal-products-table tbody').append(newRow);
+
+            // تحديث الـ selectpicker للعنصر الجديد فقط
+            const newSelect = $('.product-select').last();
+            newSelect.selectpicker('refresh');
+
+            if (itemId) {
+                newSelect.val(itemId);
+                newSelect.selectpicker('refresh');
+            }
+
+            calculateGrandTotal();
+        }
+
+        // إضافة صف جديد عند النقر على زر +
+        $(document).on('click', '.add-row', function(e) {
+            e.preventDefault();
+            addProductRow();
+        });
+
+        // حذف صف
+        $(document).on('click', '.delete-row', function(e) {
+            e.preventDefault();
+            $(this).closest('tr').remove();
+            calculateGrandTotal();
+        });
+
+        // تحميل بيانات الفاتورة للتعديل
+        function editInvoice(id) {
+            $.ajax({
+                url: "{{ route('invoice.show', ':id') }}".replace(':id', id),
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    if (data.success) {
+                        $('#invoiceModalTitle').text('تعديل فاتورة شراء');
+                        $('#invoice_id').val(data.invoice.id);
+                        $('#modal_voucher_no').val(data.invoice.voucher_no);
+                        $('#modal_voucher_date').val(data.invoice.voucher_date);
+                        $('#modal_invoice_no').val(data.invoice.invoice_no);
+                        $('#modal_supplier_item_id').val(data.invoice.supplier_item_id);
+                        $('#modal_currency_id').val(data.invoice.currency_id);
+                        $('#modal_notes').val(data.invoice.notes);
+
+                        $('#modal_supplier_item_id').selectpicker('refresh');
+
+                        // تحميل الأصناف
+                        $('#modal-products-table tbody').empty();
+                        data.invoice.products.forEach(function(product, index) {
+                            addProductRow(product.item_id, product.quantity, product.price);
+                        });
+
+                        $('#invoiceModal').modal('show');
+                    } else {
+                        Swal.fire('خطأ', data.message, 'error');
+                    }
+                },
+                error: function() {
+                    Swal.fire('خطأ', 'حدث خطأ أثناء تحميل البيانات', 'error');
+                }
+            });
+        }
+
+        // حفظ الفاتورة
+        function saveInvoice() {
+            const invoiceId = $('#invoice_id').val();
+            const url = invoiceId ? "{{ route('invoice.update', ':id') }}".replace(':id', invoiceId) : "{{ route('invoice.store') }}";
+
+            // جمع بيانات الأصناف
+            const products = [];
+            const quantities = [];
+            const prices = [];
+
+            $('#modal-products-table tbody tr').each(function() {
+                const productId = $(this).find('.product-select').val();
+                const quantity = $(this).find('.quantity-input').val();
+                const price = $(this).find('.price-input').val();
+
+                if (productId && quantity && price) {
+                    products.push(productId);
+                    quantities.push(quantity);
+                    prices.push(price);
+                }
+            });
+
+            if (products.length === 0) {
+                Swal.fire('تنبيه', 'يجب إضافة صنف واحد على الأقل', 'warning');
+                return;
+            }
+
+            const formData = {
+                voucher_date: $('#modal_voucher_date').val(),
+                invoice_no: $('#modal_invoice_no').val(),
+                supplier_item_id: $('#modal_supplier_item_id').val(),
+                currency_id: $('#modal_currency_id').val(),
+                notes: $('#modal_notes').val(),
+                product: products,
+                quantity: quantities,
+                price: prices,
+            };
+
+            if (invoiceId) {
+                formData._method = 'PUT';
+                formData.voucher_no = $('#modal_voucher_no').val();
+            }
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function(data) {
+                    if (data.success) {
+                        Swal.fire('نجاح', data.message, 'success');
+                        $('#invoiceModal').modal('hide');
+                        location.reload();
+                    } else {
+                        Swal.fire('خطأ', data.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    const errors = xhr.responseJSON?.errors;
+                    if (errors) {
+                        let errorMessage = '';
+                        for (const field in errors) {
+                            errorMessage += errors[field][0] + '\n';
+                        }
+                        Swal.fire('خطأ', errorMessage, 'error');
+                    } else {
+                        Swal.fire('خطأ', 'حدث خطأ أثناء الحفظ', 'error');
+                    }
+                }
+            });
+        }
+
+        // حذف الفاتورة
+        function deleteInvoice(id) {
+            Swal.fire({
+                title: 'تأكيد الحذف',
+                text: 'هل تريد حذف هذه الفاتورة؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('invoice.destroy', ':id') }}".replace(':id', id),
+                        type: "POST",
+                        data: { _method: 'DELETE' },
+                        dataType: "json",
+                        success: function(data) {
+                            if (data.success) {
+                                Swal.fire('تم الحذف', data.message, 'success');
+                                location.reload();
+                            } else {
+                                Swal.fire('خطأ', data.message, 'error');
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('خطأ', 'حدث خطأ أثناء الحذف', 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+        // إعادة تعيين النموذج عند فتح Modal للإضافة
+        $('#invoiceModal').on('show.bs.modal', function(e) {
+            if (!$(e.relatedTarget).data('edit-mode')) {
+                $('#invoiceForm')[0].reset();
+                $('#invoice_id').val('');
+                $('#invoiceModalTitle').text('إضافة فاتورة شراء');
+                $('#modal-products-table tbody').empty();
+                addProductRow();
+                $('.grand-total').val('0.00');
+            }
+        });
+
+        // دالة عامة لإضافة خيار للقائمة المنسدلة
+        function addOption(select, id, label) {
+            const $select = $(select);
+            const value = String(id);
+            if (!$select.find('option').filter(function() {
+                    return this.value === value;
+                }).length) {
+                $select.append(new Option(label, value));
+            }
+            $select.val(value).trigger('change');
+            if ($select.hasClass('selectpicker')) {
+                $select.selectpicker('refresh');
+            }
+        }
+
+        // معالجة الإضافة السريعة للعائلة والوحدة والصنف
+        $(document).on('submit', '[data-ajax-quick-add]', function(event) {
+            event.preventDefault();
+            const form = this;
+            const $form = $(form);
+            const $submit = $form.find('[type="submit"]');
+            const label = $submit.data('submit-label');
+
+            $form.find('[data-form-error]').hide().text('');
+            $form.find('[data-field-error]').text('');
+            $form.find('.is-invalid').removeClass('is-invalid');
+            $submit.prop('disabled', true).text('جارٍ الحفظ...');
+
+            $.ajax({
+                url: form.action,
+                method: 'POST',
+                data: $form.serialize(),
+                dataType: 'json',
+                headers: {
+                    Accept: 'application/json'
+                }
+            }).done(function(entity) {
+                if ($form.data('entity') === 'category') {
+                    addOption('#quick_item_category', entity.id,
+                        entity.category_name + ' - ' + entity.category_num);
+                } else if ($form.data('entity') === 'unit') {
+                    addOption('#quick_item_unit', entity.id, entity.unit_name + ' - ' + entity.unit_num);
+                } else if ($form.data('entity') === 'item') {
+                    // إضافة الصنف الجديد لقوائم الاختيار
+                    const label = entity.item_num + ' ' + entity.item_name + ' الرصيد: ' + entity.balance;
+                    const productSelects = $('.product-select');
+
+                    productSelects.each(function() {
+                        const value = String(entity.id);
+                        if (!$(this).find('option').filter(function() {
+                                return this.value === value;
+                            }).length) {
+                            $(this).append(new Option(label, value));
+                        }
+                        if ($(this).hasClass('selectpicker')) {
+                            $(this).selectpicker('refresh');
+                        }
+                    });
+
+                    // إضافة صف جديد وتحديد الصنف
+                    addProductRow(entity.id, '', '');
+                }
+                form.reset();
+                $form.closest('.modal').modal('hide');
+                if (window.Swal) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'تمت الإضافة بنجاح',
+                        showConfirmButton: false,
+                        timer: 2200
+                    });
+                }
+            }).fail(function(xhr) {
+                const errors = xhr.responseJSON && xhr.responseJSON.errors;
+                let assignedError = false;
+                if (errors) {
+                    $.each(errors, function(field, messages) {
+                        const $input = $form.find('[name]').filter(function() {
+                            return this.name === field;
+                        }).first();
+                        const $feedback = $form.find('[data-field-error]').filter(function() {
+                            return $(this).data('field-error') === field;
+                        }).first();
+                        if ($input.length && $feedback.length) {
+                            $input.addClass('is-invalid');
+                            $feedback.text(Array.isArray(messages) ? messages[0] : messages);
+                            assignedError = true;
+                        }
+                    });
+                }
+                if (!assignedError) {
+                    $form.find('[data-form-error]').text(
+                        (xhr.responseJSON && xhr.responseJSON.message) ||
+                        'تعذر الاتصال بالخادم. تحقق من الاتصال وحاول مرة أخرى.'
+                    ).show();
+                }
+            }).always(function() {
+                $submit.prop('disabled', false).text(label);
+            });
+        });
+    </script>
 
     <!-- Quick Add Category Modal -->
     <div class="modal fade quick-add-modal" id="quickAddCategoryModal" tabindex="-1" role="dialog"
@@ -633,482 +1015,4 @@
             </div>
         </div>
     </div>
-
-    <script>
-        // تحميل الأصناف عند فتح Modal الفاتورة
-        $('#invoiceModal').on('show.bs.modal', function() {
-            loadProducts();
-        });
-
-        // تحميل الأصناف من السيرفر
-        function loadProducts() {
-            $.ajax({
-                url: "{{ route('item.index') }}",
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    // تحديث قوائم الأصناف في Modal الفاتورة
-                    $('.product-select').each(function() {
-                        const currentValue = $(this).val();
-                        $(this).empty().append('<option value="">اختر الصنف</option>');
-                        data.data.forEach(function(item) {
-                            $(this).append('<option value="' + item.id + '">' + item.item_num + ' ' + item.item_name + ' (الرصيد: ' + item.balance + ')</option>');
-                        });
-                        $(this).val(currentValue);
-                        $(this).selectpicker('refresh');
-                    });
-                }
-            });
-        }
-
-        // تحميل العائلات
-        function loadCategories() {
-            $.ajax({
-                url: "{{ route('category.index') }}",
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    $('#item_category_id').empty().append('<option value="">اختر العائلة</option>');
-                    data.forEach(function(cat) {
-                        $('#item_category_id').append('<option value="' + cat.id + '">' + cat.category_name + ' - ' + cat.category_num + '</option>');
-                    });
-                    $('#item_category_id').selectpicker('refresh');
-                }
-            });
-        }
-
-        // تحميل الوحدات
-        function loadUnits() {
-            $.ajax({
-                url: "{{ route('unit.index') }}",
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    $('#item_unit_id').empty().append('<option value="">اختر الوحدة</option>');
-                    data.forEach(function(unit) {
-                        $('#item_unit_id').append('<option value="' + unit.id + '">' + unit.unit_name + ' - ' + unit.unit_num + '</option>');
-                    });
-                    $('#item_unit_id').selectpicker('refresh');
-                }
-            });
-        }
-
-        // حساب إجمالي الصف
-        function calculateRowTotal(input) {
-            const row = $(input).closest('tr');
-            const quantity = parseFloat(row.find('.quantity-input').val()) || 0;
-            const price = parseFloat(row.find('.price-input').val()) || 0;
-            const total = quantity * price;
-            row.find('.row-total').val(total.toFixed(2));
-            calculateGrandTotal();
-        }
-
-        // حساب الإجمالي الكلي
-        function calculateGrandTotal() {
-            let grandTotal = 0;
-            $('.row-total').each(function() {
-                grandTotal += parseFloat($(this).val()) || 0;
-            });
-            $('.grand-total').val(grandTotal.toFixed(2));
-        }
-
-        // فتح Modal إضافة صنف جديد
-        function openItemModal() {
-            $('#itemForm')[0].reset();
-            $('#item_num').val('');
-            $('#itemModal').modal('show');
-            loadCategories();
-            loadUnits();
-        }
-
-        // تهيئة selectpicker عند فتح مودال إضافة الصنف
-        $('#itemModal').on('shown.bs.modal', function() {
-            $(this).find('.selectpicker').selectpicker('refresh');
-        });
-
-        // تحديث رقم الصنف عند اختيار العائلة
-        $('#item_category_id').on('change', function() {
-            const categoryId = $(this).val();
-            if (categoryId) {
-                $.ajax({
-                    url: "{{ route('category.last_item', ':id') }}".replace(':id', categoryId),
-                    type: "GET",
-                    dataType: "json",
-                    success: function(data) {
-                        if (data && data.last_item_num !== undefined) {
-                            const newItemNum = parseInt(data.last_item_num) + 1;
-                            $('#item_num').val(newItemNum);
-                        } else {
-                            $('#item_num').val(categoryId + '1');
-                        }
-                    },
-                    error: function() {
-                        $('#item_num').val('');
-                    }
-                });
-            }
-        });
-
-        // حفظ صنف جديد وإضافته للفاتورة
-        function saveNewItem() {
-            const formData = {
-                category_id: $('#item_category_id').val(),
-                unit_id: $('#item_unit_id').val(),
-                item_name: $('#item_name').val(),
-                item_num: $('#item_num').val(),
-                open_balance: $('#open_balance').val(),
-                low_limit: $('#low_limit').val(),
-            };
-
-            // التحقق من الحقول المطلوبة
-            if (!formData.category_id || !formData.unit_id || !formData.item_name || !formData.item_num || !formData.open_balance || !formData.low_limit) {
-                Swal.fire('تنبيه', 'يرجى ملء جميع الحقول المطلوبة', 'warning');
-                return;
-            }
-
-            $.ajax({
-                url: "{{ route('item.store') }}",
-                type: "POST",
-                data: formData,
-                dataType: "json",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(data) {
-                    if (data.success) {
-                        Swal.fire('نجاح', 'تمت إضافة الصنف بنجاح', 'success');
-                        $('#itemModal').modal('hide');
-
-                        // إضافة الصنف الجديد لقوائم الاختيار
-                        const newOption = new Option(
-                            data.item.item_num + ' ' + data.item.item_name + ' (الرصيد: ' + data.item.balance + ')',
-                            data.item.id
-                        );
-                        $('.product-select').each(function() {
-                            $(this).append(newOption.cloneNode(true));
-                            $(this).selectpicker('refresh');
-                        });
-
-                        // إضافة صف جديد وتحديد الصنف والكمية والسعر
-                        addProductRow(data.item.id, $('#item_quantity').val(), $('#item_price').val());
-
-                    } else {
-                        Swal.fire('خطأ', 'حدث خطأ أثناء الحفظ', 'error');
-                    }
-                },
-                error: function(xhr) {
-                    const errors = xhr.responseJSON?.errors;
-                    if (errors) {
-                        let errorMessage = '';
-                        for (const field in errors) {
-                            errorMessage += errors[field][0] + '\n';
-                        }
-                        Swal.fire('خطأ', errorMessage, 'error');
-                    } else {
-                        Swal.fire('خطأ', 'حدث خطأ أثناء الحفظ', 'error');
-                    }
-                }
-            });
-        }
-
-        // إضافة صف جديد للجدول
-        function addProductRow(itemId = null, quantity = '', price = '') {
-            const newRow = `
-                <tr class="product-row">
-                    <td>
-                        <select class="form-control selectpicker product-select" data-live-search="true" title="اختر الصنف">
-                            <option value="">اختر الصنف</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input type="number" step="0.01" min="0.1" class="form-control quantity-input" oninput="calculateRowTotal(this)" value="${quantity}">
-                    </td>
-                    <td>
-                        <input type="number" step="0.01" min="0" class="form-control price-input" oninput="calculateRowTotal(this)" value="${price}">
-                    </td>
-                    <td>
-                        <input type="number" step="0.01" class="form-control row-total" readonly value="${(quantity * price).toFixed(2)}">
-                    </td>
-                    <td>
-                        <div class="action-buttons">
-                            <button type="button" class="btn-icon-sm btn-add-custom add-row" title="إضافة صف">
-                                <i class="ki ki-plus"></i>
-                            </button>
-                            <button type="button" class="btn-icon-sm btn-delete-custom delete-row" title="حذف الصف">
-                                <i class="ki ki-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            $('#modal-products-table tbody').append(newRow);
-            $('.product-select').selectpicker('refresh');
-
-            if (itemId) {
-                $('.product-select').last().val(itemId);
-                $('.product-select').last().selectpicker('refresh');
-            }
-
-            calculateGrandTotal();
-        }
-
-        // إضافة صف جديد عند النقر على زر +
-        $(document).on('click', '.add-row', function(e) {
-            e.preventDefault();
-            addProductRow();
-        });
-
-        // حذف صف
-        $(document).on('click', '.delete-row', function(e) {
-            e.preventDefault();
-            $(this).closest('tr').remove();
-            calculateGrandTotal();
-        });
-
-        // تحميل بيانات الفاتورة للتعديل
-        function editInvoice(id) {
-            $.ajax({
-                url: "{{ route('invoice.show', ':id') }}".replace(':id', id),
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    if (data.success) {
-                        $('#invoiceModalTitle').text('تعديل فاتورة شراء');
-                        $('#invoice_id').val(data.invoice.id);
-                        $('#modal_voucher_no').val(data.invoice.voucher_no);
-                        $('#modal_voucher_date').val(data.invoice.voucher_date);
-                        $('#modal_invoice_no').val(data.invoice.invoice_no);
-                        $('#modal_supplier_item_id').val(data.invoice.supplier_item_id);
-                        $('#modal_currency_id').val(data.invoice.currency_id);
-                        $('#modal_notes').val(data.invoice.notes);
-
-                        $('#modal_supplier_item_id').selectpicker('refresh');
-
-                        // تحميل الأصناف
-                        $('#modal-products-table tbody').empty();
-                        data.invoice.products.forEach(function(product, index) {
-                            addProductRow(product.item_id, product.quantity, product.price);
-                        });
-
-                        loadProducts();
-
-                        $('#invoiceModal').modal('show');
-                    } else {
-                        Swal.fire('خطأ', data.message, 'error');
-                    }
-                },
-                error: function() {
-                    Swal.fire('خطأ', 'حدث خطأ أثناء تحميل البيانات', 'error');
-                }
-            });
-        }
-
-        // حفظ الفاتورة
-        function saveInvoice() {
-            const invoiceId = $('#invoice_id').val();
-            const url = invoiceId ? "{{ route('invoice.update', ':id') }}".replace(':id', invoiceId) : "{{ route('invoice.store') }}";
-
-            // جمع بيانات الأصناف
-            const products = [];
-            const quantities = [];
-            const prices = [];
-
-            $('#modal-products-table tbody tr').each(function() {
-                const productId = $(this).find('.product-select').val();
-                const quantity = $(this).find('.quantity-input').val();
-                const price = $(this).find('.price-input').val();
-
-                if (productId && quantity && price) {
-                    products.push(productId);
-                    quantities.push(quantity);
-                    prices.push(price);
-                }
-            });
-
-            if (products.length === 0) {
-                Swal.fire('تنبيه', 'يجب إضافة صنف واحد على الأقل', 'warning');
-                return;
-            }
-
-            const formData = {
-                voucher_date: $('#modal_voucher_date').val(),
-                invoice_no: $('#modal_invoice_no').val(),
-                supplier_item_id: $('#modal_supplier_item_id').val(),
-                currency_id: $('#modal_currency_id').val(),
-                notes: $('#modal_notes').val(),
-                product: products,
-                quantity: quantities,
-                price: prices,
-            };
-
-            if (invoiceId) {
-                formData._method = 'PUT';
-                formData.voucher_no = $('#modal_voucher_no').val();
-            }
-
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: formData,
-                dataType: "json",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(data) {
-                    if (data.success) {
-                        Swal.fire('نجاح', data.message, 'success');
-                        $('#invoiceModal').modal('hide');
-                        location.reload();
-                    } else {
-                        Swal.fire('خطأ', data.message, 'error');
-                    }
-                },
-                error: function(xhr) {
-                    const errors = xhr.responseJSON?.errors;
-                    if (errors) {
-                        let errorMessage = '';
-                        for (const field in errors) {
-                            errorMessage += errors[field][0] + '\n';
-                        }
-                        Swal.fire('خطأ', errorMessage, 'error');
-                    } else {
-                        Swal.fire('خطأ', 'حدث خطأ أثناء الحفظ', 'error');
-                    }
-                }
-            });
-        }
-
-        // حذف الفاتورة
-        function deleteInvoice(id) {
-            Swal.fire({
-                title: 'تأكيد الحذف',
-                text: 'هل تريد حذف هذه الفاتورة؟',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'نعم، احذف',
-                cancelButtonText: 'إلغاء'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ route('invoice.destroy', ':id') }}".replace(':id', id),
-                        type: "POST",
-                        data: { _method: 'DELETE' },
-                        dataType: "json",
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(data) {
-                            if (data.success) {
-                                Swal.fire('تم الحذف', data.message, 'success');
-                                location.reload();
-                            } else {
-                                Swal.fire('خطأ', data.message, 'error');
-                            }
-                        },
-                        error: function() {
-                            Swal.fire('خطأ', 'حدث خطأ أثناء الحذف', 'error');
-                        }
-                    });
-                }
-            });
-        }
-
-        // إعادة تعيين النموذج عند فتح Modal للإضافة
-        $('#invoiceModal').on('show.bs.modal', function(e) {
-            if (!$(e.relatedTarget).data('edit-mode')) {
-                $('#invoiceForm')[0].reset();
-                $('#invoice_id').val('');
-                $('#invoiceModalTitle').text('إضافة فاتورة شراء');
-                $('#modal-products-table tbody').empty();
-                addProductRow();
-                $('.grand-total').val('0.00');
-            }
-        });
-
-        // دالة عامة لإضافة خيار للقائمة المنسدلة
-        function addOption(select, id, label) {
-            const $select = $(select);
-            const value = String(id);
-            if (!$select.find('option').filter(function() {
-                    return this.value === value;
-                }).length) {
-                $select.append(new Option(label, value));
-            }
-            $select.val(value).trigger('change');
-            if ($select.hasClass('selectpicker')) {
-                $select.selectpicker('refresh');
-            }
-        }
-
-        // معالجة الإضافة السريعة للعائلة والوحدة
-        $(document).on('submit', '[data-ajax-quick-add]', function(event) {
-            event.preventDefault();
-            const form = this;
-            const $form = $(form);
-            const $submit = $form.find('[type="submit"]');
-            const label = $submit.data('submit-label');
-
-            $form.find('[data-form-error]').hide().text('');
-            $form.find('[data-field-error]').text('');
-            $form.find('.is-invalid').removeClass('is-invalid');
-            $submit.prop('disabled', true).text('جارٍ الحفظ...');
-
-            $.ajax({
-                url: form.action,
-                method: 'POST',
-                data: $form.serialize(),
-                dataType: 'json',
-                headers: {
-                    Accept: 'application/json'
-                }
-            }).done(function(entity) {
-                if ($form.data('entity') === 'category') {
-                    addOption('#item_category_id', entity.id,
-                        entity.category_name + ' - ' + entity.category_num);
-                } else if ($form.data('entity') === 'unit') {
-                    addOption('#item_unit_id', entity.id, entity.unit_name + ' - ' + entity.unit_num);
-                }
-                form.reset();
-                $form.closest('.modal').modal('hide');
-                if (window.Swal) {
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'تمت الإضافة بنجاح',
-                        showConfirmButton: false,
-                        timer: 2200
-                    });
-                }
-            }).fail(function(xhr) {
-                const errors = xhr.responseJSON && xhr.responseJSON.errors;
-                let assignedError = false;
-                if (errors) {
-                    $.each(errors, function(field, messages) {
-                        const $input = $form.find('[name]').filter(function() {
-                            return this.name === field;
-                        }).first();
-                        const $feedback = $form.find('[data-field-error]').filter(function() {
-                            return $(this).data('field-error') === field;
-                        }).first();
-                        if ($input.length && $feedback.length) {
-                            $input.addClass('is-invalid');
-                            $feedback.text(Array.isArray(messages) ? messages[0] : messages);
-                            assignedError = true;
-                        }
-                    });
-                }
-                if (!assignedError) {
-                    $form.find('[data-form-error]').text(
-                        (xhr.responseJSON && xhr.responseJSON.message) ||
-                        'تعذر الاتصال بالخادم. تحقق من الاتصال وحاول مرة أخرى.'
-                    ).show();
-                }
-            }).always(function() {
-                $submit.prop('disabled', false).text(label);
-            });
-        });
-    </script>
 @endsection

@@ -74,7 +74,6 @@ class UnitController extends Controller
         if ($unit->save()) {
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
-                    'success' => true,
                     'id' => $unit->id,
                     'unit_num' => $unit->unit_num,
                     'unit_name' => $unit->unit_name,
