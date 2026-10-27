@@ -64,8 +64,10 @@ class InvoiceController extends Controller
 
         $supplier_item = SupplierItem::all();
         $currency = Currency::all();
+        $categories = Category::all();
+        $units = Unit::all();
 
-        return view('inventory.invoice.index', compact('invoices', 'supplier_item', 'currency'));
+        return view('inventory.invoice.index', compact('invoices', 'supplier_item', 'currency', 'categories', 'units'));
     }
 
     public function create()

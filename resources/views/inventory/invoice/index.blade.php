@@ -483,8 +483,8 @@
                         <div class="alert alert-danger mb-4" role="alert" data-form-error></div>
 
                         <div class="form-group row">
-                            <label class="col-lg-3 col-form-label"><strong>العائلة:</strong></label>
-                            <div class="col-lg-8">
+                            <div class="col-md-6">
+                                <label><strong>العائلة:</strong></label>
                                 <div class="input-group">
                                     <select name="category_id" id="item_category_id" class="form-control selectpicker"
                                         data-live-search="true" title="اختر العائلة" required>
@@ -500,11 +500,8 @@
                                 </div>
                                 <div class="invalid-feedback" data-field-error="category_id"></div>
                             </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label"><strong>الوحدة:</strong></label>
-                            <div class="col-lg-8">
+                            <div class="col-md-6">
+                                <label><strong>الوحدة:</strong></label>
                                 <div class="input-group">
                                     <select name="unit_id" id="item_unit_id" class="form-control selectpicker"
                                         data-live-search="true" title="اختر الوحدة" required>
@@ -523,17 +520,14 @@
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-lg-3 col-form-label"><strong>اسم الصنف:</strong></label>
-                            <div class="col-lg-8">
+                            <div class="col-md-6">
+                                <label><strong>اسم الصنف:</strong></label>
                                 <input type="text" name="item_name" id="item_name"
                                     class="form-control" placeholder="ادخل اسم الصنف" required>
                                 <div class="invalid-feedback" data-field-error="item_name"></div>
                             </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label"><strong>رقم الصنف:</strong></label>
-                            <div class="col-lg-8">
+                            <div class="col-md-6">
+                                <label><strong>رقم الصنف:</strong></label>
                                 <input type="number" name="item_num" id="item_num"
                                     class="form-control" placeholder="ادخل رقم الصنف" readonly>
                                 <div class="invalid-feedback" data-field-error="item_num"></div>
@@ -541,34 +535,17 @@
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-lg-3 col-form-label"><strong>الرصيد الافتتاحي:</strong></label>
-                            <div class="col-lg-8">
+                            <div class="col-md-6">
+                                <label><strong>الرصيد الافتتاحي:</strong></label>
                                 <input type="number" name="open_balance" id="open_balance"
                                     class="form-control" placeholder="ادخل الرصيد" required min="0">
                                 <div class="invalid-feedback" data-field-error="open_balance"></div>
                             </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label"><strong>الحد الأدنى:</strong></label>
-                            <div class="col-lg-8">
+                            <div class="col-md-6">
+                                <label><strong>الحد الأدنى:</strong></label>
                                 <input type="number" name="low_limit" id="low_limit"
                                     class="form-control" placeholder="ادخل الحد الأدنى" required min="0">
                                 <div class="invalid-feedback" data-field-error="low_limit"></div>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label"><strong>الكمية:</strong></label>
-                            <div class="col-lg-8">
-                                <input type="number" step="0.01" min="0.1" class="form-control" id="item_quantity" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label"><strong>السعر:</strong></label>
-                            <div class="col-lg-8">
-                                <input type="number" step="0.01" min="0" class="form-control" id="item_price" required>
                             </div>
                         </div>
                     </form>
@@ -599,17 +576,19 @@
                     </div>
                     <div class="modal-body">
                         <div class="alert alert-danger mb-4" role="alert" data-form-error></div>
-                        <div class="form-group">
-                            <label for="quick_category_name">اسم العائلة</label>
-                            <input id="quick_category_name" class="form-control" type="text" name="category_name"
-                                minlength="2" maxlength="255" required>
-                            <div class="invalid-feedback" data-field-error="category_name"></div>
-                        </div>
-                        <div class="form-group mb-0">
-                            <label for="quick_category_num">رقم العائلة</label>
-                            <input id="quick_category_num" class="form-control" type="number" name="category_num"
-                                step="1" required>
-                            <div class="invalid-feedback" data-field-error="category_num"></div>
+                        <div class="form-group row mb-0">
+                            <div class="col-md-6">
+                                <label for="quick_category_name">اسم العائلة</label>
+                                <input id="quick_category_name" class="form-control" type="text" name="category_name"
+                                    minlength="2" maxlength="255" required>
+                                <div class="invalid-feedback" data-field-error="category_name"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="quick_category_num">رقم العائلة</label>
+                                <input id="quick_category_num" class="form-control" type="number" name="category_num"
+                                    step="1" required>
+                                <div class="invalid-feedback" data-field-error="category_num"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -741,6 +720,11 @@
             loadCategories();
             loadUnits();
         }
+
+        // تهيئة selectpicker عند فتح مودال إضافة الصنف
+        $('#itemModal').on('shown.bs.modal', function() {
+            $(this).find('.selectpicker').selectpicker('refresh');
+        });
 
         // تحديث رقم الصنف عند اختيار العائلة
         $('#item_category_id').on('change', function() {

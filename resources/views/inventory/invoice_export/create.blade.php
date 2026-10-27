@@ -457,49 +457,55 @@
                     </div>
                     <div class="modal-body">
                         <div class="alert alert-danger mb-4" role="alert" data-form-error></div>
-                        <div class="form-group">
-                            <label for="quick_export_item_category">العائلة</label>
-                            <select id="quick_export_item_category" class="form-control" name="category_id" required>
-                                <option value="">اختر العائلة</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->category_name }}</option>
-                                @endforeach
-                            </select>
-                            <div class="invalid-feedback" data-field-error="category_id"></div>
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="quick_export_item_category">العائلة</label>
+                                <select id="quick_export_item_category" class="form-control selectpicker" name="category_id" data-live-search="true" required>
+                                    <option value="">اختر العائلة</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback" data-field-error="category_id"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="quick_export_item_unit">الوحدة</label>
+                                <select id="quick_export_item_unit" class="form-control" name="unit_id" required>
+                                    <option value="">اختر الوحدة</option>
+                                    @foreach ($units as $unit)
+                                        <option value="{{ $unit->id }}">{{ $unit->unit_name }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback" data-field-error="unit_id"></div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="quick_export_item_unit">الوحدة</label>
-                            <select id="quick_export_item_unit" class="form-control" name="unit_id" required>
-                                <option value="">اختر الوحدة</option>
-                                @foreach ($units as $unit)
-                                    <option value="{{ $unit->id }}">{{ $unit->unit_name }}</option>
-                                @endforeach
-                            </select>
-                            <div class="invalid-feedback" data-field-error="unit_id"></div>
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="quick_export_item_name">اسم الصنف</label>
+                                <input id="quick_export_item_name" class="form-control" type="text" name="item_name"
+                                    maxlength="255" required>
+                                <div class="invalid-feedback" data-field-error="item_name"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="quick_export_item_num">رقم الصنف</label>
+                                <input id="quick_export_item_num" class="form-control" type="number" name="item_num"
+                                    step="1" required readonly>
+                                <div class="invalid-feedback" data-field-error="item_num"></div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="quick_export_item_name">اسم الصنف</label>
-                            <input id="quick_export_item_name" class="form-control" type="text" name="item_name"
-                                maxlength="255" required>
-                            <div class="invalid-feedback" data-field-error="item_name"></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="quick_export_item_num">رقم الصنف</label>
-                            <input id="quick_export_item_num" class="form-control" type="number" name="item_num"
-                                step="1" required>
-                            <div class="invalid-feedback" data-field-error="item_num"></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="quick_export_item_balance">الرصيد الافتتاحي</label>
-                            <input id="quick_export_item_balance" class="form-control" type="number" name="open_balance"
-                                min="0" step="any" value="0" required>
-                            <div class="invalid-feedback" data-field-error="open_balance"></div>
-                        </div>
-                        <div class="form-group mb-0">
-                            <label for="quick_export_item_low_limit">حد التنبيه</label>
-                            <input id="quick_export_item_low_limit" class="form-control" type="number" name="low_limit"
-                                min="0" step="any" value="0" required>
-                            <div class="invalid-feedback" data-field-error="low_limit"></div>
+                        <div class="form-group row mb-0">
+                            <div class="col-md-6">
+                                <label for="quick_export_item_balance">الرصيد الافتتاحي</label>
+                                <input id="quick_export_item_balance" class="form-control" type="number" name="open_balance"
+                                    min="0" step="any" value="0" required>
+                                <div class="invalid-feedback" data-field-error="open_balance"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="quick_export_item_low_limit">حد التنبيه</label>
+                                <input id="quick_export_item_low_limit" class="form-control" type="number" name="low_limit"
+                                    min="0" step="any" value="0" required>
+                                <div class="invalid-feedback" data-field-error="low_limit"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -714,25 +720,30 @@
             });
 
             $("#add-row").click(function() {
-                var html = "<tr class='product-row'>";
-                html +=
-                    "<td><select name='product[]' class='form-control selectpicker' data-live-search='true' title='أدخل الصنف'><option value=''>اختر الصنف</option>";
-                @foreach ($products as $product)
-                    html +=
-                        "<option value='{{ $product->id }}'>{{ $product->item_num }} {{ $product->item_name }} {{ $product->balance }}</option>";
-                @endforeach
-                html += "</select></td>";
-                html +=
-                    "<td><input type='number' step='0.01' min='0.1' name='quantity[]' class='form-control' onchange='calculateTotal(this); calculateTotalAll();'></td>";
-                // html +=
-                //     "<td><input type='number' name='price[]' class='form-control' onchange='calculateTotal(this); calculateTotalAll();'></td>";
-                html += "<td><button type='button' class='btn btn-danger delete-row'>حذف</button></td>";
-                html += "</tr>";
+                var firstProductSelect = $('#products-table tbody select[name="product[]"]').first();
+                var newProductSelect = firstProductSelect.clone().val('');
+                newProductSelect.find('option').prop('selected', false);
+                newProductSelect.removeClass('is-invalid');
 
-                $("#products-table tbody").append(html);
+                var newRow = $('<tr class="product-row">');
+                newRow.append($('<td>').append(newProductSelect));
+                newRow.append($('<td>').append($('<input>', {
+                    type: 'number',
+                    step: '0.01',
+                    min: '0.1',
+                    name: 'quantity[]',
+                    class: 'form-control'
+                })));
+                newRow.append($('<td>').append(
+                    $('<button>', {
+                        type: 'button',
+                        class: 'btn btn-danger delete-row',
+                        text: 'حذف'
+                    })
+                ));
+                $("#products-table tbody").append(newRow);
 
-                // Initialize Bootstrap Select for newly added select elements
-                $("#products-table tbody .selectpicker").selectpicker('refresh');
+                newProductSelect.selectpicker();
             });
 
 
@@ -910,6 +921,31 @@
             $(document).on('input change', '[data-ajax-quick-add] [name]', function() {
                 $(this).removeClass('is-invalid');
                 $(this).siblings('[data-field-error]').text('');
+            });
+
+            // تحميل رقم الصنف تلقائياً عند اختيار العائلة في نموذج الإضافة السريعة
+            $('#quick_export_item_category').on('change', function() {
+                const categoryId = $(this).val();
+                if (categoryId) {
+                    $.ajax({
+                        url: "{{ route('category.last_item', ':id') }}".replace(':id', categoryId),
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            if (data && data.last_item_num !== undefined) {
+                                // زيادة الرقم كـ string للحفاظ على القيمة الصحيحة
+                                const lastNumStr = String(data.last_item_num);
+                                const newNumStr = String(parseInt(lastNumStr) + 1);
+                                $('#quick_export_item_num').val(newNumStr);
+                            } else {
+                                $('#quick_export_item_num').val(categoryId + '01');
+                            }
+                        },
+                        error: function() {
+                            $('#quick_export_item_num').val('');
+                        }
+                    });
+                }
             });
 
             $('.quick-add-modal').on('hidden.bs.modal', function() {

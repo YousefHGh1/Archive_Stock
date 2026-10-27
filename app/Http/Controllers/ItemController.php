@@ -303,7 +303,7 @@ public function index(Request $request)
     {
         // البحث عن آخر صنف مرتبط بالعائلة المحددة
         $lastItem = Item::where('category_id', $id)
-            ->orderByDesc('item_num') // ترتيبهم تنازليًا حسب item_num
+            ->orderByRaw('CAST(item_num AS UNSIGNED) DESC') // ترتيب رقمي صحيح تنازليًا
             ->first();
 
         // إذا كان هناك صنف سابق
@@ -315,11 +315,11 @@ public function index(Request $request)
         // إذا لم يكن هناك صنف سابق، نعيد الرقم الأول بناءً على رقم العائلة
         $category = Category::find($id);
         if ($category) {
-            // استخدام رقم العائلة كأساس
-            return response()->json(['last_item_num' => $category->category_num . '0']);
+            // استخدام رقم العائلة + 01 كأول صنف
+            return response()->json(['last_item_num' => $category->category_num . '01']);
         }
 
         // في حالة عدم وجود العائلة
-        return response()->json(['last_item_num' => $id . '0']);
+        return response()->json(['last_item_num' => $id . '01']);
     }
 }

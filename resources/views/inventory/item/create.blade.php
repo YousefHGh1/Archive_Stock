@@ -308,12 +308,13 @@
                         dataType: "json",
                         success: function(data) {
                             if (data && data.last_item_num !== undefined) {
-                                // زيادة الرقم بمقدار 1 على الرقم الأخير
-                                const newItemNum = parseInt(data.last_item_num) + 1;
-                                $('#item_num').val(newItemNum);
+                                // زيادة الرقم كـ string للحفاظ على القيمة الصحيحة
+                                const lastNumStr = String(data.last_item_num);
+                                const newNumStr = String(parseInt(lastNumStr) + 1);
+                                $('#item_num').val(newNumStr);
                             } else {
-                                // إذا لم يكن هناك صنف سابق، تعيين الرقم الافتراضي بناءً على رقم العائلة
-                                $('#item_num').val(categoryId + '1');
+                                // إذا لم يكن هناك صنف سابق، تعيين الرقم الافتراضي بناءً على رقم العائلة + 01
+                                $('#item_num').val(categoryId + '01');
                             }
                         },
                         error: function() {

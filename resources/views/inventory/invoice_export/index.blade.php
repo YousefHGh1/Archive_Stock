@@ -117,6 +117,67 @@
         #invoiceExportModal {
             z-index: 1050 !important;
         }
+
+        #quickAddExportItemModal {
+            z-index: 1150 !important;
+        }
+
+        .quick-add-modal {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .quick-add-modal .modal-content {
+            border: 1px solid #e5e0ef;
+            box-shadow: 0 12px 36px rgba(25, 30, 45, .18);
+        }
+
+        .quick-add-modal .modal-header,
+        .quick-add-modal .modal-footer {
+            justify-content: flex-start;
+        }
+
+        .quick-add-modal .modal-header .close {
+            margin: -1rem auto -1rem -1rem;
+        }
+
+        .quick-add-heading {
+            border-right: 3px solid #496aa8;
+            padding-right: .75rem;
+        }
+
+        .quick-add-context {
+            margin: .2rem 0 0;
+            color: #596579;
+            font-size: .8rem;
+            line-height: 1.4;
+        }
+
+        .quick-add-modal label {
+            font-weight: 600;
+        }
+
+        .quick-add-modal .modal-body {
+            max-height: calc(100vh - 220px);
+            overflow-y: auto;
+        }
+
+        .quick-add-modal input,
+        .quick-add-modal select {
+            border: 1px solid #d5c1ff !important;
+        }
+
+        .quick-add-modal [data-form-error] {
+            display: none;
+        }
+
+        .quick-add-modal [data-field-error] {
+            display: block;
+        }
+
+        .quick-add-modal [data-field-error]:empty {
+            display: none !important;
+        }
     </style>
 @endsection
 
@@ -320,6 +381,85 @@
             </div>
         </div>
     </div>
+
+    <!-- Quick Add Item Modal -->
+    <div class="modal fade quick-add-modal" id="quickAddExportItemModal" tabindex="-1" role="dialog"
+        aria-labelledby="quickAddExportItemTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form action="{{ route('item.store') }}" method="post" data-ajax-quick-add data-entity="item">
+                    @csrf
+                    <div class="modal-header">
+                        <div class="quick-add-heading">
+                            <h5 class="modal-title" id="quickAddExportItemTitle">إضافة صنف جديد</h5>
+                            <p class="quick-add-context">أكمل بيانات الصنف قبل إضافته إلى سند الإخراج.</p>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger mb-4" role="alert" data-form-error></div>
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="quick_export_item_category">العائلة</label>
+                                <select id="quick_export_item_category" class="form-control selectpicker" name="category_id" data-live-search="true" required>
+                                    <option value="">اختر العائلة</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback" data-field-error="category_id"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="quick_export_item_unit">الوحدة</label>
+                                <select id="quick_export_item_unit" class="form-control" name="unit_id" required>
+                                    <option value="">اختر الوحدة</option>
+                                    @foreach ($units as $unit)
+                                        <option value="{{ $unit->id }}">{{ $unit->unit_name }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback" data-field-error="unit_id"></div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="quick_export_item_name">اسم الصنف</label>
+                                <input id="quick_export_item_name" class="form-control" type="text" name="item_name"
+                                    maxlength="255" required>
+                                <div class="invalid-feedback" data-field-error="item_name"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="quick_export_item_num">رقم الصنف</label>
+                                <input id="quick_export_item_num" class="form-control" type="number" name="item_num"
+                                    step="1" required readonly>
+                                <div class="invalid-feedback" data-field-error="item_num"></div>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-0">
+                            <div class="col-md-6">
+                                <label for="quick_export_item_balance">الرصيد الافتتاحي</label>
+                                <input id="quick_export_item_balance" class="form-control" type="number" name="open_balance"
+                                    min="0" step="any" value="0" required>
+                                <div class="invalid-feedback" data-field-error="open_balance"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="quick_export_item_low_limit">حد التنبيه</label>
+                                <input id="quick_export_item_low_limit" class="form-control" type="number" name="low_limit"
+                                    min="0" step="any" value="0" required>
+                                <div class="invalid-feedback" data-field-error="low_limit"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-primary" data-submit-label="حفظ الصنف">حفظ الصنف</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ asset('js/recipient-select.js') }}"></script>
 
     <!-- Invoice Export Modal -->
@@ -401,7 +541,7 @@
                                 <thead>
                                     <tr>
                                         <th width="50%">الصنف
-                                            <button type="button" class="btn btn-link p-0" onclick="openItemModal()">
+                                            <button type="button" class="btn btn-link p-0" data-toggle="modal" data-target="#quickAddExportItemModal">
                                                 <i class="p-3 ki ki-solid-plus icon-md"></i>
                                             </button>
                                         </th>
@@ -497,6 +637,20 @@
             }).done(function(entity) {
                 if ($form.data('entity') === 'beneficiary') {
                     addOption('#modal_beneficiary', entity.id, entity.name);
+                } else if ($form.data('entity') === 'item') {
+                    // إضافة الصنف الجديد إلى جميع حقول select للمنتجات
+                    const label = entity.item_num + ' ' + entity.item_name + ' (الرصيد: ' + entity.balance + ')';
+                    $('.product-select').each(function() {
+                        const $select = $(this);
+                        if (!$select.find('option').filter(function() {
+                            return this.value === String(entity.id);
+                        }).length) {
+                            $select.append(new Option(label, entity.id));
+                        }
+                        $select.selectpicker('refresh');
+                    });
+                    // تحميل المنتجات مرة أخرى للتأكد من تحديثها
+                    loadProducts();
                 }
                 form.reset();
                 $form.closest('.modal').modal('hide');
@@ -748,6 +902,36 @@
                 addProductRow();
             }
             loadProducts();
+        });
+
+        // تحميل رقم الصنف تلقائياً عند اختيار العائلة في مودال إضافة الصنف
+        $('#quick_export_item_category').on('change', function() {
+            const categoryId = $(this).val();
+            if (categoryId) {
+                $.ajax({
+                    url: "{{ route('category.last_item', ':id') }}".replace(':id', categoryId),
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        if (data && data.last_item_num !== undefined) {
+                            // زيادة الرقم كـ string للحفاظ على القيمة الصحيحة
+                            const lastNumStr = String(data.last_item_num);
+                            const newNumStr = String(parseInt(lastNumStr) + 1);
+                            $('#quick_export_item_num').val(newNumStr);
+                        } else {
+                            $('#quick_export_item_num').val(categoryId + '01');
+                        }
+                    },
+                    error: function() {
+                        $('#quick_export_item_num').val('');
+                    }
+                });
+            }
+        });
+
+        // تهيئة selectpicker عند فتح مودال إضافة الصنف
+        $('#quickAddExportItemModal').on('shown.bs.modal', function() {
+            $(this).find('.selectpicker').selectpicker('refresh');
         });
     </script>
 @endsection
