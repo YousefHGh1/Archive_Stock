@@ -47,13 +47,14 @@ class InvoiceExportController extends Controller
             ->get();
 
         $subSection = SubSection::all();
+        $products = Item::where('balance', '>', 0)->get();
         $categories = Category::all();
         $units = Unit::all();
 
         // المستلمون من جدول beneficiaries
         $beneficiaries = Beneficiary::where('is_active', true)->orderBy('name')->pluck('name', 'id');
 
-        return view('inventory.invoice_export.index', compact('invoice_exports', 'subSection', 'beneficiaries', 'categories', 'units'));
+        return view('inventory.invoice_export.index', compact('invoice_exports', 'subSection', 'beneficiaries', 'categories', 'units', 'products'));
     }
 
     public function create()

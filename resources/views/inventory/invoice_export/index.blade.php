@@ -308,19 +308,15 @@
                                                         d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
                                                 </svg></button>
                                         </a>
-                                        <form method="POST"
-                                            action="{{ url('/inventory/invoice_export' . '/' . $invoice_export->id) }}"
-                                            accept-charset="UTF-8" style="display:inline">
-                                            {{ method_field('DELETE') }} {{ csrf_field() }}
-                                            <button type="submit" class="btn btn-sm btn-clean btn-icon"
-                                                title="Delete invoice_export"
-                                                onclick="deleteInvoiceExport({{ $invoice_export->id }})"> <svg
-                                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-                                                </svg></button>
-                                        </form>
+                                        {{-- زر الحذف type=button حتى لا يُرسل النموذج قبل تأكيد SweetAlert --}}
+                                        <button type="button" class="btn btn-sm btn-clean btn-icon"
+                                            title="Delete invoice_export"
+                                            onclick="deleteInvoiceExport({{ $invoice_export->id }})"> <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
+                                            </svg></button>
                                         @canany(['invoice_exports-update', 'admin', 'stock', 'Super-User'])
                                             <button type="button" class="btn btn-sm btn-clean btn-icon"
                                                 title="Edit details"
@@ -552,8 +548,14 @@
                                 <tbody>
                                     <tr class="product-row">
                                         <td>
-                                            <select class="form-control selectpicker product-select" data-live-search="true" title="اختر الصنف">
+                                            <select class="form-control selectpicker product-select" data-live-search="true" data-size="7" data-width="100%" title="اختر الصنف">
                                                 <option value="">اختر الصنف</option>
+                                                @foreach ($products as $product)
+                                                    <option value="{{ $product->id }}">
+                                                        {{ $product->item_num }} {{ $product->item_name }}
+                                                        (الرصيد: {{ $product->balance }})
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </td>
                                         <td>
@@ -574,30 +576,24 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
-                    <button type="button" class="btn btn-primary" onclick="saveInvoiceExport()">حفظ</button>
+                    <button type="button" class="btn btn-primary" id="saveInvoiceExportButton" onclick="saveInvoiceExport()">حفظ</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        function loadProducts() {
-            $.ajax({
-                url: "{{ route('item.index') }}",
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    $('.product-select').each(function() {
-                        const currentValue = $(this).val();
-                        $(this).empty().append('<option value="">اختر الصنف</option>');
-                        data.data.forEach(function(item) {
-                            $(this).append('<option value="' + item.id + '">' + item.item_num + ' ' + item.item_name + ' (الرصيد: ' + item.balance + ')</option>');
-                        });
-                        $(this).val(currentValue);
-                        $(this).selectpicker('refresh');
-                    });
-                }
-            });
+        // نسخة ثابتة من خيارات الأصناف (لا تعتمد على وجود صف في الجدول)
+        let PRODUCT_OPTIONS_HTML = $('#modal-products-table select.product-select').first().html() || '';
+
+        function createProductSelect() {
+            return $('<select>', {
+                class: 'form-control selectpicker product-select',
+                'data-live-search': 'true',
+                'data-size': '7',
+                'data-width': '100%',
+                title: 'اختر الصنف'
+            }).html(PRODUCT_OPTIONS_HTML);
         }
 
         function addOption(select, id, label) {
@@ -640,7 +636,10 @@
                 } else if ($form.data('entity') === 'item') {
                     // إضافة الصنف الجديد إلى جميع حقول select للمنتجات
                     const label = entity.item_num + ' ' + entity.item_name + ' (الرصيد: ' + entity.balance + ')';
-                    $('.product-select').each(function() {
+                    if (PRODUCT_OPTIONS_HTML.indexOf('value="' + entity.id + '"') === -1) {
+                        PRODUCT_OPTIONS_HTML += $('<option>').val(String(entity.id)).text(label).prop('outerHTML');
+                    }
+                    $('#modal-products-table tbody select.product-select').each(function() {
                         const $select = $(this);
                         if (!$select.find('option').filter(function() {
                             return this.value === String(entity.id);
@@ -649,8 +648,13 @@
                         }
                         $select.selectpicker('refresh');
                     });
-                    // تحميل المنتجات مرة أخرى للتأكد من تحديثها
-                    loadProducts();
+                    let $target = $('#modal-products-table tbody select.product-select').filter(function() {
+                        return !this.value;
+                    }).first();
+                    if (!$target.length) {
+                        $target = addProductRow();
+                    }
+                    $target.val(String(entity.id)).trigger('change').selectpicker('refresh');
                 }
                 form.reset();
                 $form.closest('.modal').modal('hide');
@@ -692,55 +696,43 @@
                 $submit.prop('disabled', false).text(label);
             });
         });
-        function loadProducts() {
-            $.ajax({
-                url: "{{ route('item.index') }}",
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    $('.product-select').each(function() {
-                        const currentValue = $(this).val();
-                        $(this).empty().append('<option value="">اختر الصنف</option>');
-                        data.data.forEach(function(item) {
-                            $(this).append('<option value="' + item.id + '">' + item.item_num + ' ' + item.item_name + ' (الرصيد: ' + item.balance + ')</option>');
-                        });
-                        $(this).val(currentValue);
-                        $(this).selectpicker('refresh');
-                    });
-                }
-            });
-        }
 
         function addProductRow(itemId = null, quantity = '') {
-            const newRow = `
-                <tr class="product-row">
-                    <td>
-                        <select class="form-control selectpicker product-select" data-live-search="true" title="اختر الصنف">
-                            <option value="">اختر الصنف</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input type="number" step="0.01" min="0.1" class="form-control quantity-input" value="${quantity}">
-                    </td>
-                    <td>
-                        <div class="action-buttons">
-                            <button type="button" class="btn-icon-sm btn-add-custom add-row" title="إضافة صف">
-                                <i class="ki ki-plus"></i>
-                            </button>
-                            <button type="button" class="btn-icon-sm btn-delete-custom delete-row" title="حذف الصف">
-                                <i class="ki ki-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            $('#modal-products-table tbody').append(newRow);
-            $('.product-select').selectpicker('refresh');
+            const $newSelect = createProductSelect();
+            $newSelect.find('option').prop('selected', false);
+            $newSelect.val('');
 
+            const $newRow = $('<tr class="product-row">');
+            $newRow.append($('<td>').append($newSelect));
+            $newRow.append($('<td>').append($('<input>', {
+                type: 'number', step: '0.01', min: '0.1',
+                class: 'form-control quantity-input', value: quantity
+            })));
+            $newRow.append($('<td>').append($('<div class="action-buttons">')
+                .append($('<button type="button" class="btn-icon-sm btn-add-custom add-row" title="إضافة صف">')
+                    .append('<i class="ki ki-plus"></i>'))
+                .append($('<button type="button" class="btn-icon-sm btn-delete-custom delete-row" title="حذف الصف">')
+                    .append('<i class="ki ki-trash"></i>'))));
+
+            $('#modal-products-table tbody').append($newRow);
+            $newSelect.selectpicker();
             if (itemId) {
-                $('.product-select').last().val(itemId);
-                $('.product-select').last().selectpicker('refresh');
+                $newSelect.val(String(itemId)).selectpicker('refresh');
             }
+            return $newSelect;
+        }
+
+        // إعادة تهيئة النموذج لوضع الإضافة
+        function resetInvoiceExportForm() {
+            $('#invoiceExportForm')[0].reset();
+            $('#invoice_export_id').val('');
+            $('#invoiceExportModalTitle').text('إضافة فاتورة صرف');
+            $('#modal_voucher_no').val('');
+            $('#modal_voucher_date').val(new Date().toISOString().slice(0, 10));
+            $('#modal_subSection_id').val('').selectpicker('refresh');
+            $('#modal_beneficiary').val('').selectpicker('refresh');
+            $('#modal-products-table tbody').empty();
+            addProductRow();
         }
 
         $(document).on('click', '.add-row', function(e) {
@@ -765,18 +757,21 @@
                         $('#modal_voucher_no').val(data.invoice_export.voucher_no);
                         $('#modal_voucher_date').val(data.invoice_export.voucher_date);
                         $('#modal_invoice_no').val(data.invoice_export.invoice_no);
-                        $('#modal_subSection_id').val(data.invoice_export.subSection_id);
-                        $('#modal_beneficiary').val(data.invoice_export.beneficiary);
+                        $('#modal_subSection_id').val(String(data.invoice_export.subSection_id));
+                        $('#modal_beneficiary').val(String(data.invoice_export.beneficiary));
                         $('#modal_notes').val(data.invoice_export.notes);
 
                         $('#modal_subSection_id').selectpicker('refresh');
+                        $('#modal_beneficiary').selectpicker('refresh');
 
                         $('#modal-products-table tbody').empty();
                         data.invoice_export.products.forEach(function(product) {
                             addProductRow(product.item_id, product.quantity);
                         });
+                        if (!$('#modal-products-table tbody tr').length) {
+                            addProductRow();
+                        }
 
-                        loadProducts();
                         $('#invoiceExportModal').modal('show');
                     } else {
                         Swal.fire('خطأ', data.message, 'error');
@@ -796,7 +791,7 @@
             const quantities = [];
 
             $('#modal-products-table tbody tr').each(function() {
-                const productId = $(this).find('.product-select').val();
+                const productId = $(this).find('select.product-select').val();
                 const quantity = $(this).find('.quantity-input').val();
 
                 if (productId && quantity) {
@@ -831,7 +826,11 @@
                 data: formData,
                 dataType: "json",
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') || $('#invoiceExportForm input[name="_token"]').val(),
+                    'Accept': 'application/json'
+                },
+                beforeSend: function() {
+                    $('#saveInvoiceExportButton').prop('disabled', true).text('جارٍ الحفظ...');
                 },
                 success: function(data) {
                     if (data.success) {
@@ -851,8 +850,13 @@
                         }
                         Swal.fire('خطأ', errorMessage, 'error');
                     } else {
-                        Swal.fire('خطأ', 'حدث خطأ أثناء الحفظ', 'error');
+                        const serverMsg = xhr.responseJSON?.message || '';
+                        console.error('Save invoice_export failed', xhr.status, xhr.responseText);
+                        Swal.fire('خطأ', 'حدث خطأ أثناء الحفظ (HTTP ' + xhr.status + ')' + (serverMsg ? '\n' + serverMsg : ''), 'error');
                     }
+                },
+                complete: function() {
+                    $('#saveInvoiceExportButton').prop('disabled', false).text('حفظ');
                 }
             });
         }
@@ -875,7 +879,8 @@
                         data: { _method: 'DELETE' },
                         dataType: "json",
                         headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            'Accept': 'application/json'
                         },
                         success: function(data) {
                             if (data.success) {
@@ -893,28 +898,54 @@
             });
         }
 
+        // ضمان وجود صف واحد على الأقل عند فتح النافذة (دون مسح بيانات التعديل)
         $('#invoiceExportModal').on('show.bs.modal', function(e) {
-            if (!$(e.relatedTarget).data('edit-mode')) {
-                $('#invoiceExportForm')[0].reset();
-                $('#invoice_export_id').val('');
-                $('#invoiceExportModalTitle').text('إضافة فاتورة صرف');
-                $('#modal-products-table tbody').empty();
+            if (e.target !== this) return;
+            if (!$('#modal-products-table tbody tr').length) {
                 addProductRow();
             }
-            loadProducts();
+            if (!$('#modal_voucher_date').val() && !$('#invoice_export_id').val()) {
+                $('#modal_voucher_date').val(new Date().toISOString().slice(0, 10));
+            }
         });
 
-        // تحميل رقم الصنف تلقائياً عند اختيار العائلة في مودال إضافة الصنف
+        // تنظيف النموذج عند الإغلاق ليعود لوضع الإضافة
+        $('#invoiceExportModal').on('hidden.bs.modal', function(e) {
+            if (e.target !== this) return;
+            resetInvoiceExportForm();
+        });
+
+        $('#invoiceExportModal').on('shown.bs.modal', function(e) {
+            if (e.target !== this) return;
+            $(this).find('select.product-select').each(function() {
+                const $select = $(this);
+                if (!$select.data('selectpicker')) {
+                    $select.selectpicker();
+                } else {
+                    $select.selectpicker('refresh');
+                }
+            });
+            $(this).find('#modal_subSection_id, #modal_beneficiary').selectpicker('refresh');
+        });
+
+        let latestExportItemNumberRequest = 0;
+
+        // تحميل أحدث رقم صنف عند اختيار العائلة في مودال إضافة الصنف
         $('#quick_export_item_category').on('change', function() {
             const categoryId = $(this).val();
+            const requestId = ++latestExportItemNumberRequest;
+            $('#quick_export_item_num').val('');
             if (categoryId) {
                 $.ajax({
                     url: "{{ route('category.last_item', ':id') }}".replace(':id', categoryId),
                     type: "GET",
                     dataType: "json",
+                    cache: false,
                     success: function(data) {
+                        if (requestId !== latestExportItemNumberRequest || categoryId !== $('#quick_export_item_category').val()) {
+                            return;
+                        }
                         if (data && data.last_item_num !== undefined) {
-                            // زيادة الرقم كـ string للحفاظ على القيمة الصحيحة
                             const lastNumStr = String(data.last_item_num);
                             const newNumStr = String(parseInt(lastNumStr) + 1);
                             $('#quick_export_item_num').val(newNumStr);
@@ -932,6 +963,9 @@
         // تهيئة selectpicker عند فتح مودال إضافة الصنف
         $('#quickAddExportItemModal').on('shown.bs.modal', function() {
             $(this).find('.selectpicker').selectpicker('refresh');
+            if ($('#quick_export_item_category').val()) {
+                $('#quick_export_item_category').trigger('change');
+            }
         });
     </script>
 @endsection
