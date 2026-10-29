@@ -37,8 +37,19 @@
                 <div class="card-title">
                     <h3 class="card-label">تقارير فواتير الصرف</h3>
                 </div>
+                <div class="card-toolbar">
+                    <a href="{{ route('reports.index') }}" class="btn btn-primary font-weight-bolder">
+                        <i class="la la-th-large"></i> عرض جميع التقارير
+                    </a>
+                </div>
             </div>
             <div class="pt-0 card-body">
+                <div class="alert alert-info d-flex align-items-center">
+                    <i class="la la-info-circle font-size-h2 mr-3"></i>
+                    <div>
+                        <strong>ملاحظة:</strong> يمكنك الوصول إلى جميع تقارير الشراء والصرف من <a href="{{ route('reports.index') }}" class="alert-link">صفحة التقارير الموحدة</a>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-lg-6 col-md-6 mb-8">
                         <a href="{{ route('export-report.items') }}" class="d-block p-8 bg-light report-card-link text-dark">

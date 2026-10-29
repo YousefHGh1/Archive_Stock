@@ -459,6 +459,10 @@
     animateDashboardCounters();
 
     if (feedback && feedback.dataset.feedbackMessage) {
+        // إخفاء أي رسائل flash التقليدية القديمة لمنع تكرار العرض
+        document.querySelectorAll('.app-alert, .swal2-container, [class*="toast"]').forEach(function(el) {
+            el.style.display = 'none';
+        });
         showFeedback({
             message: feedback.dataset.feedbackMessage,
             type: feedback.dataset.feedbackType

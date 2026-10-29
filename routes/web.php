@@ -257,6 +257,9 @@ Route::prefix('inventory/')->middleware('auth')->group(function () {
     Route::match(['get', 'post'], 'invoice-report/invoice-values', [InvoiceReportController::class, 'invoiceValues'])->name('invoice-report.invoice-values');
     Route::match(['get', 'post'], 'invoice-report/supplier-totals', [InvoiceReportController::class, 'supplierTotals'])->name('invoice-report.supplier-totals');
 
+    // *********************** Unified Reports Index *************************
+    Route::get('reports', [ReportController::class, 'unifiedIndex'])->name('reports.index');
+
     // *****************************************Inside_Search******************************************************
     Route::post('invoice/searchdate', [InvoiceController::class, 'searchdate']);
     Route::post('invoice_export/searchdate', [InvoiceExportController::class, 'searchdate']);

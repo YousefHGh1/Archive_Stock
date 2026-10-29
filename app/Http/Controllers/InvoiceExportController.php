@@ -149,9 +149,9 @@ class InvoiceExportController extends Controller
 
         $invoiceExport->skip_reason = $validatedData['skip_reason'] ?? null;
         $invoiceExport->notes = $validatedData['notes'] ?? null;
-        $invoiceExport->save();
 
         if ($skipVoucherNo) {
+            $invoiceExport->save();
             $request->user()->recordActivity(
                 'قام بإضافة فاتورة صرف (سند فارغ للمراقبة) - سند رقم ' . $invoiceExport->voucher_no,
                 [
@@ -165,31 +165,39 @@ class InvoiceExportController extends Controller
             return redirect()->route('invoice_export.create')->with('success', 'تم حفظ فاتورة (سند فارغ للمراقبة) والانتقال للتالي.');
         }
 
-        // حفظ الأصناف المضافة إلى الفاتورة
-        for ($i = 0; $i < count($validatedData['product']); $i++) {
-            $product  = Item::findOrFail($validatedData['product'][$i]);
-            $quantity = $validatedData['quantity'][$i];
+        // التحقق من توفر الرصيد لجميع الأصناف قبل الحفظ
+        foreach ($validatedData['product'] as $index => $productId) {
+            $product = Item::findOrFail($productId);
+            $quantity = $validatedData['quantity'][$index];
 
-            $invoiceExport_product                    = new InvoiceExport_product();
-            $invoiceExport_product->invoice_export_id = $invoiceExport->id;
-            $invoiceExport_product->item_id           = $product->id;
-
-            if ($invoiceExport_product->quantity = $quantity) {
-                // Find the item
-                $item = Item::findOrFail($invoiceExport_product->item_id);
-
-                // Update the item's balance
-                if ($invoiceExport_product->quantity > $item->balance) {
-                    return redirect('inventory/invoice_export/create')->with('warning', 'الكمية المطلوبة غير متوفرة ' . ' للصنف  :' . $item->item_name . ' : الرصيد الحالي هو ' . $item->balance);
-                }
-                $item->balance -= $invoiceExport_product->quantity;
-
-                // Save the item
-                $item->update();
+            if ($quantity > $product->balance) {
+                return back()
+                    ->withInput()
+                    ->with('warning', "الكمية المطلوبة غير متوفرة للصنف {$product->item_name}، الرصيد الحالي هو {$product->balance}");
             }
-
-            $invoiceExport_product->save();
         }
+
+        DB::transaction(function () use ($invoiceExport, $validatedData) {
+            $invoiceExport->save();
+
+            // حفظ الأصناف المضافة إلى الفاتورة
+            for ($i = 0; $i < count($validatedData['product']); $i++) {
+                $product  = Item::findOrFail($validatedData['product'][$i]);
+                $quantity = $validatedData['quantity'][$i];
+
+                $invoiceExport_product                    = new InvoiceExport_product();
+                $invoiceExport_product->invoice_export_id = $invoiceExport->id;
+                $invoiceExport_product->item_id           = $product->id;
+                $invoiceExport_product->quantity          = $quantity;
+
+                // خصم الكمية من رصيد الصنف
+                $item = Item::findOrFail($invoiceExport_product->item_id);
+                $item->balance -= $invoiceExport_product->quantity;
+                $item->save();
+
+                $invoiceExport_product->save();
+            }
+        });
 
         $request->user()->recordActivity(
             'قام بإضافة فاتورة صرف - سند رقم ' . $invoiceExport->voucher_no,
@@ -307,7 +315,7 @@ class InvoiceExportController extends Controller
 
                 if ($quantity > $item->balance) {
                     throw \Illuminate\Validation\ValidationException::withMessages([
-                        'quantity.' . $index => 'الكمية المطلوبة غير متوفرة للصنف ' . $item->item_name . '، الرصيد الحالي هو ' . $item->balance . '.',
+                        'quantity.' . $index => "الكمية المطلوبة غير متوفرة للصنف {$item->item_name}، الرصيد الحالي هو {$item->balance}.",
                     ]);
                 }
 

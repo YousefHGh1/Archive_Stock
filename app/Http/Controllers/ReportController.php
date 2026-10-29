@@ -15,10 +15,15 @@ class ReportController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:report-read', ['only' => ['index', 'show', 'totalreport', 'transactions', 'transactions_report', 'balance', 'searchdate', 'searchbalance']]);
+        $this->middleware('permission:report-read', ['only' => ['index', 'show', 'totalreport', 'transactions', 'transactions_report', 'balance', 'searchdate', 'searchbalance', 'unifiedIndex']]);
         $this->middleware('permission:report-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:report-update', ['only' => ['edit', 'update']]);
         $this->middleware('permission:report-delete', ['only' => ['destroy']]);
+    }
+
+    public function unifiedIndex()
+    {
+        return view('inventory.report.index');
     }
 
     public function totalreport()

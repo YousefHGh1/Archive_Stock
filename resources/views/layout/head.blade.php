@@ -38,6 +38,7 @@
 <link href="{{ asset('assets/css/themes/layout/aside/dark.rtl.css') }}" rel="stylesheet" type="text/css">
 <link href="{{ asset('css/mobile-aside.css') }}" rel="stylesheet" type="text/css">
 <link href="{{ asset('css/app-theme.css') }}?v={{ @filemtime(public_path('css/app-theme.css')) }}" rel="stylesheet" type="text/css">
+<link href="{{ asset('css/transaction-animations.css') }}?v={{ @filemtime(public_path('css/transaction-animations.css')) }}" rel="stylesheet" type="text/css">
 <!--end::Layout Themes-->
 
 @yield('css')

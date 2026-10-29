@@ -37,6 +37,8 @@
                     <!--begin::Entry-->
                     <div class="row justify-content-center">
                         @includeIf('layout.error')
+
+                        @includeIf('layout.transaction-feedback')
                     </div>
 
 

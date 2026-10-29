@@ -25,6 +25,11 @@ class InventoryReportController extends Controller
         $this->middleware('permission:report-read');
     }
 
+    public function unifiedIndex()
+    {
+        return view('inventory.report.index');
+    }
+
     public function lowStock(Request $request)
     {
         $filters = $request->validate([

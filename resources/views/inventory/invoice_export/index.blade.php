@@ -19,256 +19,248 @@
 @section('css')
     <link href="{{ asset('assets/css/buttons.dataTables.min.css') }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{ asset('assets/css/dataTables.foundation.min.css') }}">
+
     <style>
-        .dataTables_wrapper .dataTable th,
-        .dataTables_wrapper .dataTable td {
-            padding-right: 10px !important;
-            margin: 10px !important;
+        :root {
+            --accent: #f64e60;
+            --accent-dark: #d93a4c;
+            --accent-soft: #ffeef0;
+            --accent-border: #d5c1ff;
+            --ink: #3f4254;
+            --muted: #7e8299;
+            --line: #e9ecef;
+            --bg-soft: #f8f9fb;
         }
 
-        .dataTables_wrapper .dataTable tfoot th,
+        /* ===== Page header ===== */
+        .page-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .page-head-title { display: flex; align-items: center; gap: 1rem; }
+        .page-head-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; }
+        .page-head h1 { font-size: 1.35rem; font-weight: 800; color: var(--ink); margin: 0 0 .15rem; }
+        .page-head p { margin: 0; color: var(--muted); font-size: .9rem; }
+        .head-actions { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+        .btn-solid { background: var(--accent); color: #fff; border: 1px solid var(--accent); padding: .6rem 1.1rem; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: .45rem; cursor: pointer; transition: all .2s; text-decoration: none; }
+        .btn-solid:hover { background: var(--accent-dark); color: #fff; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(246,78,96,.3); text-decoration: none; }
+        .btn-warn { background: #fff4de; color: #b77700; border: 1px solid #ffd98a; padding: .6rem 1.1rem; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: .45rem; text-decoration: none; transition: all .2s; }
+        .btn-warn:hover { background: #ffa800; color: #fff; text-decoration: none; }
+        .btn-soft { background: #fff; color: var(--ink); border: 1px solid #d9dce6; padding: .6rem 1.1rem; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: .45rem; cursor: pointer; transition: all .2s; text-decoration: none; }
+        .btn-soft:hover { background: var(--bg-soft); color: var(--ink); text-decoration: none; }
+
+        /* ===== Stat cards ===== */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { position: relative; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 2px 12px rgba(0,0,0,.04); overflow: hidden; }
+        .stat-card::before { content: ""; position: absolute; inset-block: 0; inset-inline-start: 0; width: 4px; background: var(--accent); }
+        .stat-icon { width: 46px; height: 46px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .stat-value { font-size: 1.4rem; font-weight: 800; color: var(--ink); line-height: 1.2; }
+        .stat-label { font-size: .85rem; color: var(--muted); font-weight: 500; margin-top: .15rem; }
+        .stat-card.is-blue::before { background: #3699ff; } .stat-card.is-blue .stat-icon { background: #e8f3ff; color: #3699ff; }
+        .stat-card.is-green::before { background: #1bc5bd; } .stat-card.is-green .stat-icon { background: #e1f8f6; color: #1bc5bd; }
+
+        /* ===== Cards ===== */
+        .panel-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,.05); margin-bottom: 1.5rem; overflow: hidden; }
+        .panel-card-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #fff 0%, var(--bg-soft) 100%); }
+        .panel-card-title { font-size: 1.05rem; font-weight: 700; color: var(--ink); margin: 0; display: flex; align-items: center; gap: .6rem; }
+        .panel-card-title i { color: var(--accent); font-size: 1.3rem; }
+        .panel-card-body { padding: 1.5rem; }
+
+        /* ===== Filter ===== */
+        .filter-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem 1.25rem; align-items: end; }
+        .filter-label { display: block; font-size: .82rem; font-weight: 600; color: var(--muted); margin-bottom: .4rem; }
+        .filter-input { width: 100%; padding: .6rem .9rem; border: 1px solid #d9dce6; border-radius: 8px; font-size: .92rem; background: #fff; color: var(--ink); transition: all .2s; }
+        .filter-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(246,78,96,.15); }
+        .filter-actions { display: flex; gap: .6rem; }
+        .filter-actions .btn-solid, .filter-actions .btn-soft { flex: 1; justify-content: center; }
+
+        /* ===== Datatable ===== */
+        .dataTables_wrapper .dataTable th, .dataTables_wrapper .dataTable td { padding: .85rem .75rem !important; }
+        /* ترويسة الجدول: خلفية كحلية ونص أبيض واضح (تتغلب على ألوان قالب DataTables) */
+        #example thead th,
+        #example thead tr th,
+        .dataTables_wrapper table.dataTable thead th,
         .dataTables_wrapper .dataTable thead th {
-            padding-right: 0px;
-            padding-left: 0px;
+            background-color: #2f3447 !important;
+            color: #fff !important;
             text-align: right;
+            font-weight: 700;
+            font-size: .9rem;
+            white-space: nowrap;
+            border: none !important;
+            border-bottom: 3px solid var(--accent) !important;
         }
+        #example thead th.sorting,
+        #example thead th.sorting_asc,
+        #example thead th.sorting_desc,
+        #example thead th.sorting_disabled { color: #fff !important; }
+        #example thead .sorting:before, #example thead .sorting:after,
+        #example thead .sorting_asc:before, #example thead .sorting_asc:after,
+        #example thead .sorting_desc:before, #example thead .sorting_desc:after { color: #fff !important; opacity: .55; }
+        #example thead .sorting_asc:before, #example thead .sorting_desc:after { opacity: 1; }
+        .dataTables_wrapper .dataTable tfoot th { text-align: right; }
+        #example { border: 1px solid var(--line); }
+        #example tbody td { color: #5e6278; border-bottom: 1px solid #f1f3f7; vertical-align: middle; }
+        #example tbody tr:nth-child(even) { background: #fbfcfe; }
+        #example tbody tr:hover { background: var(--accent-soft); }
+        .dataTables_wrapper .dataTables_filter input, .dataTables_wrapper .dataTables_length select { border: 1px solid #d9dce6; border-radius: 8px; padding: .4rem .7rem; }
+        div.dt-buttons { padding: .5rem 0; text-align: right; }
+        div.dt-buttons .dt-button { margin: 0 2px !important; }
+        .voucher-chip { display: inline-block; padding: .2rem .65rem; border-radius: 6px; background: var(--accent-soft); color: var(--accent-dark); font-weight: 700; font-size: .85rem; }
+        .action-group { display: inline-flex; gap: .35rem; }
+        .act-btn { width: 34px; height: 34px; border-radius: 8px; border: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all .2s; font-size: 1.1rem; text-decoration: none; }
+        .act-btn:hover { transform: translateY(-2px); text-decoration: none; }
+        .act-view { background: #e8f3ff; color: #3699ff; } .act-view:hover { background: #3699ff; color: #fff; }
+        .act-edit { background: #e1f8f6; color: #1bc5bd; } .act-edit:hover { background: #1bc5bd; color: #fff; }
+        .act-del { background: #ffeef0; color: #f64e60; } .act-del:hover { background: #f64e60; color: #fff; }
 
-        div.dt-buttons {
-            top: 50%;
-            left: 10%;
-            width: 200px;
-            margin-left: -100px;
-            margin-top: -20px;
-            text-align: center;
-            padding: 1rem 0
-        }
+        /* ===== Modals ===== */
+        .quick-add-modal { direction: rtl; text-align: right; }
+        .quick-add-modal .modal-content { border: 1px solid #e5e0ef; border-radius: 14px; box-shadow: 0 12px 36px rgba(25,30,45,.18); }
+        .quick-add-modal .modal-header, .quick-add-modal .modal-footer { justify-content: flex-start; }
+        .quick-add-modal .modal-header .close { margin: -1rem auto -1rem -1rem; }
+        .quick-add-heading { border-right: 3px solid var(--accent); padding-right: .75rem; }
+        .quick-add-context { margin: .2rem 0 0; color: #596579; font-size: .8rem; line-height: 1.4; }
+        .quick-add-modal label { font-weight: 600; }
+        .quick-add-modal .modal-body { max-height: calc(100vh - 220px); overflow-y: auto; }
+        .quick-add-modal input, .quick-add-modal select,
+        #invoiceExportModal input, #invoiceExportModal select, #invoiceExportModal textarea { border: 1px solid var(--accent-border) !important; border-radius: 8px; }
+        .quick-add-modal [data-form-error] { display: none; }
+        .quick-add-modal [data-field-error] { display: block; }
+        .quick-add-modal [data-field-error]:empty { display: none !important; }
 
-        div.dt-buttons .dt-button {
-            margin: -2px !important;
-        }
+        /* ترتيب طبقات النوافذ المتداخلة */
+        #invoiceExportModal { z-index: 1050 !important; }
+        #quickAddBeneficiaryModal { z-index: 1100 !important; }
+        #quickAddExportItemModal { z-index: 1150 !important; }
 
-        .dataTables_wrapper .dataTable thead th {
-            background-color: #E4E6EF;
-        }
+        #invoiceExportModal .modal-content { border-radius: 14px; border: none; }
+        #invoiceExportModal .modal-header { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%); color: #fff; border-radius: 14px 14px 0 0; }
+        #invoiceExportModal .modal-header .modal-title { color: #fff; font-weight: 700; }
+        #invoiceExportModal .modal-header .close { color: #fff; opacity: .9; text-shadow: none; }
+        #invoiceExportModal .modal-body { background: var(--bg-soft); }
+        #invoiceExportModal .modal-footer { background: #fff; border-radius: 0 0 14px 14px; }
+        .modal-section { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+        .modal-section-title { font-weight: 700; color: var(--ink); margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
+        .modal-section-title i { color: var(--accent); }
+        .modal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem 1.25rem; }
+        .modal-grid .span-all { grid-column: 1 / -1; }
+        .modal-grid label { display: block; font-size: .85rem; font-weight: 700; color: var(--ink); margin-bottom: .35rem; }
+        .field-with-add { display: flex; gap: .5rem; align-items: stretch; }
+        .field-with-add > .bootstrap-select, .field-with-add > select { flex: 1; width: auto !important; min-width: 0; }
+        .btn-add-inline { width: 42px; flex-shrink: 0; border: 1px dashed var(--accent); background: var(--accent-soft); color: var(--accent-dark); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all .2s; padding: 0; }
+        .btn-add-inline:hover { background: var(--accent); color: #fff; border-style: solid; }
+        .btn-tool { background: var(--accent-soft); color: var(--accent-dark); border: none; padding: .4rem .8rem; border-radius: 8px; font-weight: 600; font-size: .82rem; display: inline-flex; align-items: center; gap: .3rem; cursor: pointer; text-decoration: none; transition: all .2s; }
+        .btn-tool:hover { background: var(--accent); color: #fff; text-decoration: none; }
+        .modal-items-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+        #modal-products-table { margin: 0; min-width: 560px; border: none; }
+        #modal-products-table thead th { background: #2f3447; color: #fff; border: none; padding: .8rem 1rem; font-weight: 600; white-space: nowrap; }
+        #modal-products-table tbody td { padding: .65rem .75rem; vertical-align: top; border-color: #f1f3f7; }
 
-        .card-body {
-            padding: 10px 12px !important;
-        }
+        /* أزرار الإضافة والحذف */
+        .action-buttons { display: flex; gap: 5px; align-items: center; }
+        .btn-icon-sm { width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; transition: all .3s ease; font-size: 14px; }
+        .btn-icon-sm:hover { transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,.2); }
+        .btn-icon-sm i { font-size: 16px; }
+        .btn-icon-sm:active { transform: scale(.95); }
+        .btn-add-custom { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border: none; color: #fff; }
+        .btn-add-custom:hover { background: linear-gradient(135deg, #218838 0%, #1aa885 100%); color: #fff; }
+        .btn-delete-custom { background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%); border: none; color: #fff; }
+        .btn-delete-custom:hover { background: linear-gradient(135deg, #c82333 0%, #d63031 100%); color: #fff; }
 
-        /* تحسين أزرار الإضافة والحذف */
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-
-        .btn-icon-sm {
-            width: 32px;
-            height: 32px;
-            padding: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-
-        .btn-icon-sm:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-icon-sm i {
-            font-size: 16px;
-        }
-
-        .btn-add-custom {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            border: none;
-            color: white;
-        }
-
-        .btn-add-custom:hover {
-            background: linear-gradient(135deg, #218838 0%, #1aa885 100%);
-            color: white;
-        }
-
-        .btn-delete-custom {
-            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
-            border: none;
-            color: white;
-        }
-
-        .btn-delete-custom:hover {
-            background: linear-gradient(135deg, #c82333 0%, #d63031 100%);
-            color: white;
-        }
-
-        .btn-icon-sm:active {
-            transform: scale(0.95);
-        }
-
-        /* إصلاح z-index للمودل المستلم */
-        #quickAddBeneficiaryModal {
-            z-index: 1100 !important;
-        }
-
-        #invoiceExportModal {
-            z-index: 1050 !important;
-        }
-
-        #quickAddExportItemModal {
-            z-index: 1150 !important;
-        }
-
-        .quick-add-modal {
-            direction: rtl;
-            text-align: right;
-        }
-
-        .quick-add-modal .modal-content {
-            border: 1px solid #e5e0ef;
-            box-shadow: 0 12px 36px rgba(25, 30, 45, .18);
-        }
-
-        .quick-add-modal .modal-header,
-        .quick-add-modal .modal-footer {
-            justify-content: flex-start;
-        }
-
-        .quick-add-modal .modal-header .close {
-            margin: -1rem auto -1rem -1rem;
-        }
-
-        .quick-add-heading {
-            border-right: 3px solid #496aa8;
-            padding-right: .75rem;
-        }
-
-        .quick-add-context {
-            margin: .2rem 0 0;
-            color: #596579;
-            font-size: .8rem;
-            line-height: 1.4;
-        }
-
-        .quick-add-modal label {
-            font-weight: 600;
-        }
-
-        .quick-add-modal .modal-body {
-            max-height: calc(100vh - 220px);
-            overflow-y: auto;
-        }
-
-        .quick-add-modal input,
-        .quick-add-modal select {
-            border: 1px solid #d5c1ff !important;
-        }
-
-        .quick-add-modal [data-form-error] {
-            display: none;
-        }
-
-        .quick-add-modal [data-field-error] {
-            display: block;
-        }
-
-        .quick-add-modal [data-field-error]:empty {
-            display: none !important;
+        @media (max-width: 575.98px) {
+            .quick-add-modal .modal-dialog { width: calc(100% - 1rem); margin: .5rem; }
+            .head-actions { width: 100%; }
+            .filter-actions { flex-direction: column; }
         }
     </style>
 @endsection
 
 @section('content')
+    @php
+        $exportCount = $invoice_exports->count();
+        $sectionCount = collect($invoice_exports)->pluck('name')->filter()->unique()->count();
+        $latestDate = collect($invoice_exports)->max('voucher_date');
+    @endphp
+
     <div class="container">
 
-        <!--begin::Card-->
-        <div class="card card-custom">
-            <div class="flex-wrap pb-0 border-0 card-header">
-                <div class="card-title">
-                    <h3 class="card-label">عرض سندات الصرف </h3>
-                </div>
-                <div class="card-toolbar">
-                    <!--begin::Button-->
-                    <button type="button" class="btn btn-success font-weight-bolder" data-toggle="modal" data-target="#invoiceExportModal">
-                        <span class="svg-icon svg-icon-md">
-                            <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Flatten.svg-->
-                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                    <rect x="0" y="0" width="24" height="24" />
-                                    <circle fill="#000000" cx="9" cy="15" r="6" />
-                                    <path
-                                        d="M8.8012943,7.00241953 C9.83837775,5.20768121 11.7781543,4 14,4 C17.3137085,4 20,6.6862915 20,10 C20,12.2218457 18.7923188,14.1616223 16.9975805,15.1987057 C16.9991904,15.1326658 17,15.0664274 17,15 C17,10.581722 13.418278,7 9,7 C8.93357256,7 8.86733422,7.00080962 8.8012943,7.00241953 Z"
-                                        fill="#000000" opacity="0.3" />
-                                </g>
-                            </svg>
-                            <!--end::Svg Icon-->
-                        </span>إنشاء سند صرف جديد</button>
-
-                    @if(auth()->user()->hasRole('admin'))
-                        <a href="{{ route('invoice_export.skipped-vouchers') }}" class="btn btn-warning font-weight-bolder">
-                            <span class="svg-icon svg-icon-md">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                        <rect x="0" y="0" width="24" height="24" />
-                                        <path d="M12 22 C6.4771525 22 2 17.5228475 2 12 C2 6.4771525 6.4771525 2 12 2 C17.5228475 2 22 6.4771525 22 12 C22 17.5228475 17.5228475 22 12 22 Z M12 20 C16.418278 20 20 16.418278 20 12 C20 7.581722 16.418278 4 12 4 C7.581722 4 4 7.581722 4 12 C4 16.418278 7.581722 20 12 20 Z" fill="#000000" opacity="0.3" />
-                                        <path d="M10 8 L14 8 L14 16 L10 16 L10 8 Z M8 8 L9 8 L9 16 L8 16 L8 8 Z M15 8 L16 8 L16 16 L15 16 L15 8 Z" fill="#000000" />
-                                    </g>
-                                </svg>
-                            </span>السندات التي تم تخطيها</a>
-                    @endif
-
-                        <x-add-resource-button />
-
-                    <!--end::Button-->
+        <!-- Page Header -->
+        <div class="page-head">
+            <div class="page-head-title">
+                <div class="page-head-icon"><i class="la la-share-square"></i></div>
+                <div>
+                    <h1>عرض سندات الصرف</h1>
+                    <p>إدارة سندات صرف الأصناف من المخزون</p>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="accordion accordion-light " id="accordionExample5" style="direction: rtl;">
-                    <div class="card">
-                        <div class="card-header" id="headingOne5">
-                            <div class="card-title">
-                                <div data-toggle="collapse" data-target="#collapseOne5"
-                                    class="btn btn-primary advance_search font-weight-bolder "><i
-                                        class="flaticon-search"></i>
-                                    بحــــــــث متــقــــــــــــدم</div>
-                            </div>
-                        </div>
-                        <div id="collapseOne5" class="pl-5 collapse" data-parent="#accordionExample5"
-                            style="direction: rtl;">
-                            <div class="card-body1">
-                                <div class="mb-6 col-lg-9">
-                                    <label>التاريخ:</label>
-                                    <form action="{{ url('inventory/invoice_export/searchdate') }}" method="POST"
-                                        class="pr-5 form-group">
-                                        @csrf
-                                        <div class="input-daterange input-group">
-                                            <div class="p-0 col-4">
-                                                <input name="start_date" type="date" class="form-control"
-                                                    id="start_date" />
-                                            </div>
-                                            <div class="input-group-append">
-                                                <span class="input-group-text"><i class="la la-ellipsis-h"></i></span>
-                                            </div>
-                                            <div class="p-0 col-4">
-                                                <input name="end_date" type="date" class="form-control"
-                                                    id="end_date" />
-                                            </div>
-                                            <div class="mt-auto mb-auto col-lg-2">
-                                                <input type="submit" class="btn btn-primary btn-primary--icon"
-                                                    value="بحث" />
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+            <div class="head-actions">
+                <button type="button" class="btn-solid" data-toggle="modal" data-target="#invoiceExportModal">
+                    <i class="la la-plus-circle"></i> إنشاء سند صرف جديد
+                </button>
+                @if(auth()->user()->hasRole('admin'))
+                    <a href="{{ route('invoice_export.skipped-vouchers') }}" class="btn-warn">
+                        <i class="la la-step-forward"></i> السندات التي تم تخطيها
+                    </a>
+                @endif
+                <x-add-resource-button />
+            </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="la la-file-invoice"></i></div>
+                <div>
+                    <div class="stat-value">{{ $exportCount }}</div>
+                    <div class="stat-label">عدد سندات الصرف</div>
+                </div>
+            </div>
+            <div class="stat-card is-blue">
+                <div class="stat-icon"><i class="la la-sitemap"></i></div>
+                <div>
+                    <div class="stat-value">{{ $sectionCount }}</div>
+                    <div class="stat-label">عدد الأقسام</div>
+                </div>
+            </div>
+            <div class="stat-card is-green">
+                <div class="stat-icon"><i class="la la-calendar-check"></i></div>
+                <div>
+                    <div class="stat-value">{{ $latestDate ?? '-' }}</div>
+                    <div class="stat-label">تاريخ آخر سند</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="panel-card">
+            <div class="panel-card-header">
+                <h3 class="panel-card-title"><i class="la la-search"></i> بحث متقدم بالتاريخ</h3>
+            </div>
+            <div class="panel-card-body">
+                <form action="{{ url('inventory/invoice_export/searchdate') }}" method="POST" class="filter-form">
+                    @csrf
+                    <div>
+                        <label class="filter-label" for="start_date">من تاريخ</label>
+                        <input name="start_date" type="date" class="filter-input" id="start_date" value="{{ request('start_date') }}" />
+                    </div>
+                    <div>
+                        <label class="filter-label" for="end_date">إلى تاريخ</label>
+                        <input name="end_date" type="date" class="filter-input" id="end_date" value="{{ request('end_date') }}" />
+                    </div>
+                    <div>
+                        <div class="filter-actions">
+                            <button type="submit" class="btn-solid"><i class="la la-search"></i> بحث</button>
+                            <a href="{{ url('inventory/invoice_export') }}" class="btn-soft"><i class="la la-refresh"></i> إعادة ضبط</a>
                         </div>
                     </div>
-                </div>
+                </form>
+            </div>
+        </div>
 
+        <!-- Export invoices table -->
+        <div class="panel-card">
+            <div class="panel-card-header">
+                <h3 class="panel-card-title"><i class="la la-table"></i> قائمة سندات الصرف</h3>
+            </div>
+            <div class="panel-card-body">
                 <!--begin: Datatable-->
                 <table id="example" class="table dt-responsive" style="width:100%">
                     <thead class="thead_dark">
@@ -286,63 +278,156 @@
                     <tbody>
                         @foreach ($invoice_exports as $invoice_export)
                             <tr>
-                                <td>{{ $invoice_export->voucher_no }}</td>
+                                <td><span class="voucher-chip">{{ $invoice_export->voucher_no }}</span></td>
                                 <td>{{ $invoice_export->voucher_date }}</td>
                                 <td>{{ $invoice_export->invoice_no }}</td>
                                 <td>{{ $invoice_export->name }}</td>
                                 <td>{{ $invoice_export->beneficiary }}</td>
                                 <td>{{ $invoice_export->notes ?? '-' }}</td>
                                 <td>{!! $invoice_export->products !!}</td>
-
-                                <td data-field="Actions" data-autohide-disabled="false" aria-label="null"
-                                    class="datatable-cell">
-                                    <span style="overflow: visible; position: relative; width: 110px;">
-
+                                <td data-field="Actions" data-autohide-disabled="false" aria-label="null" class="datatable-cell">
+                                    <span class="action-group">
                                         <a href="{{ url('/inventory/invoice_export/' . $invoice_export->id) }}"
-                                            title="View invoice_exports"><button class="btn btn-sm btn-clean btn-icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
-                                                    <path
-                                                        d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
-                                                </svg></button>
+                                            class="act-btn act-view" title="عرض السند">
+                                            <i class="la la-eye"></i>
                                         </a>
                                         {{-- زر الحذف type=button حتى لا يُرسل النموذج قبل تأكيد SweetAlert --}}
-                                        <button type="button" class="btn btn-sm btn-clean btn-icon"
-                                            title="Delete invoice_export"
-                                            onclick="deleteInvoiceExport({{ $invoice_export->id }})"> <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-                                            </svg></button>
+                                        <button type="button" class="act-btn act-del" title="حذف السند"
+                                            onclick="deleteInvoiceExport({{ $invoice_export->id }})">
+                                            <i class="la la-trash"></i>
+                                        </button>
                                         @canany(['invoice_exports-update', 'admin', 'stock', 'Super-User'])
-                                            <button type="button" class="btn btn-sm btn-clean btn-icon"
-                                                title="Edit details"
-                                                onclick="editInvoiceExport({{ $invoice_export->id }})"><i
-                                                    class="la la-edit"></i></button>
+                                            <button type="button" class="act-btn act-edit" title="تعديل السند"
+                                                onclick="editInvoiceExport({{ $invoice_export->id }})">
+                                                <i class="la la-edit"></i>
+                                            </button>
                                         @endcanany
-
                                     </span>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
-
-
                 <!--end: Datatable-->
             </div>
         </div>
-        <!--end::Card-->
     </div>
-@endsection
 
-@section('scripts')
-    <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
-    <script src="{{ asset('assets/js/pages/features/miscellaneous/sweetalert2.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('assets/js/pages/data-json.js') }}" type="text/javascript"></script>
+    <!-- Invoice Export Modal -->
+    <div class="modal fade" id="invoiceExportModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="invoiceExportModalTitle">إضافة فاتورة صرف</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="invoiceExportForm">
+                        @csrf
+                        <input type="hidden" name="invoice_export_id" id="invoice_export_id" value="">
+
+                        <div class="modal-section">
+                            <div class="modal-section-title"><i class="la la-clipboard-list"></i> بيانات السند</div>
+                            <div class="modal-grid">
+                                <div>
+                                    <label for="modal_voucher_no">رقم السند</label>
+                                    <input type="number" class="form-control" id="modal_voucher_no" disabled>
+                                </div>
+                                <div>
+                                    <label for="modal_voucher_date">تاريخ السند</label>
+                                    <input type="date" class="form-control" id="modal_voucher_date" required>
+                                </div>
+                                <div>
+                                    <label for="modal_invoice_no">رقم الفاتورة</label>
+                                    <input type="number" class="form-control" id="modal_invoice_no" required>
+                                </div>
+                                <div>
+                                    <label for="modal_subSection_id">القسم</label>
+                                    <select class="form-control selectpicker" id="modal_subSection_id" data-live-search="true" required>
+                                        <option value="">اختر القسم</option>
+                                        @foreach ($subSection as $sub)
+                                            <option value="{{ $sub->id }}">{{ $sub->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="modal_beneficiary">المستلم</label>
+                                    <div class="field-with-add">
+                                        <select class="form-control selectpicker" id="modal_beneficiary" name="beneficiary" required
+                                            data-live-search="true" title="اختر المستلم">
+                                            <option value="">اختر المستلم</option>
+                                            @foreach ($beneficiaries as $id => $name)
+                                                <option value="{{ $id }}">{{ $name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <button type="button" class="btn-add-inline" title="إضافة مستلم جديد"
+                                            data-toggle="modal" data-target="#quickAddBeneficiaryModal">
+                                            <i class="ki ki-solid-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="span-all">
+                                    <label for="modal_notes">ملاحظات</label>
+                                    <textarea class="form-control" id="modal_notes" rows="2" maxlength="5000"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-section mb-0">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap mb-3" style="gap:.5rem">
+                                <div class="modal-section-title mb-0"><i class="la la-boxes"></i> الأصناف</div>
+                                <button type="button" class="btn-tool" data-toggle="modal" data-target="#quickAddExportItemModal">
+                                    <i class="ki ki-solid-plus"></i> صنف جديد
+                                </button>
+                            </div>
+                            <div class="modal-items-wrap">
+                                <table class="table table-bordered" id="modal-products-table">
+                                    <thead>
+                                        <tr>
+                                            <th width="60%">الصنف</th>
+                                            <th>الكمية</th>
+                                            <th width="8%">إجراءات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="product-row">
+                                            <td>
+                                                <select class="form-control selectpicker product-select" data-live-search="true" data-size="7" data-width="100%" title="اختر الصنف">
+                                                    <option value="">اختر الصنف</option>
+                                                    @foreach ($products as $product)
+                                                        <option value="{{ $product->id }}">
+                                                            {{ $product->item_num }} {{ $product->item_name }}
+                                                            (الرصيد: {{ $product->balance }})
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" min="0.1" class="form-control quantity-input">
+                                            </td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <button type="button" class="btn-icon-sm btn-add-custom add-row" title="إضافة صف">
+                                                        <i class="ki ki-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    <button type="button" class="btn btn-primary" id="saveInvoiceExportButton" onclick="saveInvoiceExport()">حفظ</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Quick Add Beneficiary Modal -->
     <div class="modal fade quick-add-modal" id="quickAddBeneficiaryModal" tabindex="-1" role="dialog"
@@ -455,132 +540,13 @@
             </div>
         </div>
     </div>
+@endsection
 
+@section('scripts')
+    <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
+    <script src="{{ asset('assets/js/pages/features/miscellaneous/sweetalert2.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/pages/data-json.js') }}" type="text/javascript"></script>
     <script src="{{ asset('js/recipient-select.js') }}"></script>
-
-    <!-- Invoice Export Modal -->
-    <div class="modal fade" id="invoiceExportModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="invoiceExportModalTitle">إضافة فاتورة صرف</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="invoiceExportForm">
-                        @csrf
-                        <input type="hidden" name="invoice_export_id" id="invoice_export_id" value="">
-
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-form-label">رقم السند:</label>
-                            <div class="col-lg-3">
-                                <input type="number" class="form-control" id="modal_voucher_no" disabled>
-                            </div>
-
-                            <label class="col-lg-2 col-form-label">تاريخ السند:</label>
-                            <div class="col-lg-3">
-                                <input type="date" class="form-control" id="modal_voucher_date" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-form-label">رقم الفاتورة:</label>
-                            <div class="col-lg-3">
-                                <input type="number" class="form-control" id="modal_invoice_no" required>
-                            </div>
-
-                            <label class="col-lg-2 col-form-label">القسم:</label>
-                            <div class="col-lg-3">
-                                <select class="form-control selectpicker" id="modal_subSection_id" data-live-search="true" required>
-                                    <option value="">اختر القسم</option>
-                                    @foreach ($subSection as $sub)
-                                        <option value="{{ $sub->id }}">{{ $sub->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-form-label">المستلم:</label>
-                            <div class="col-lg-3">
-                                <div class="input-group">
-                                    <select class="form-control selectpicker" id="modal_beneficiary" name="beneficiary" required
-                                        data-live-search="true" title="اختر المستلم">
-                                        <option value="">اختر المستلم</option>
-                                        @foreach ($beneficiaries as $id => $name)
-                                            <option value="{{ $id }}">{{ $name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-outline-primary"
-                                            title="إضافة مستلم جديد"
-                                            data-toggle="modal" data-target="#quickAddBeneficiaryModal">
-                                            <i class="ki ki-solid-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-form-label">ملاحظات:</label>
-                            <div class="col-lg-9">
-                                <textarea class="form-control" id="modal_notes" rows="2" maxlength="5000"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>الأصناف:</label>
-                            <table class="table table-bordered" id="modal-products-table">
-                                <thead>
-                                    <tr>
-                                        <th width="50%">الصنف
-                                            <button type="button" class="btn btn-link p-0" data-toggle="modal" data-target="#quickAddExportItemModal">
-                                                <i class="p-3 ki ki-solid-plus icon-md"></i>
-                                            </button>
-                                        </th>
-                                        <th>الكمية</th>
-                                        <th width="5%">إجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="product-row">
-                                        <td>
-                                            <select class="form-control selectpicker product-select" data-live-search="true" data-size="7" data-width="100%" title="اختر الصنف">
-                                                <option value="">اختر الصنف</option>
-                                                @foreach ($products as $product)
-                                                    <option value="{{ $product->id }}">
-                                                        {{ $product->item_num }} {{ $product->item_name }}
-                                                        (الرصيد: {{ $product->balance }})
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="number" step="0.01" min="0.1" class="form-control quantity-input">
-                                        </td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button type="button" class="btn-icon-sm btn-add-custom add-row" title="إضافة صف">
-                                                    <i class="ki ki-plus"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
-                    <button type="button" class="btn btn-primary" id="saveInvoiceExportButton" onclick="saveInvoiceExport()">حفظ</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script>
         // نسخة ثابتة من خيارات الأصناف (لا تعتمد على وجود صف في الجدول)
@@ -965,6 +931,20 @@
             $(this).find('.selectpicker').selectpicker('refresh');
             if ($('#quick_export_item_category').val()) {
                 $('#quick_export_item_category').trigger('change');
+            }
+        });
+
+        // تنظيف رسائل الخطأ عند إغلاق نوافذ الإضافة السريعة، والحفاظ على قفل التمرير للنافذة الأم
+        $('.quick-add-modal').on('hidden.bs.modal', function() {
+            const form = $(this).find('[data-ajax-quick-add]')[0];
+            if (form) {
+                const $form = $(form);
+                $form.find('[data-form-error]').hide().text('');
+                $form.find('[data-field-error]').text('');
+                $form.find('.is-invalid').removeClass('is-invalid');
+            }
+            if ($('.modal.show').length) {
+                $('body').addClass('modal-open');
             }
         });
     </script>

@@ -77,11 +77,15 @@ class DieselExportController extends Controller
             }
         }
 
-        $totalDieselQuantity       = Diesel::sum("quantity");
-        $totalDieselExportQuantity = DieselExport::sum("quantity");
+        // التحقق من الرصيد حسب نوع المحروقات المختار
+        $totalDieselQuantity       = Diesel::where('typesfuel_id', $validatedData['typesfuel_id'])->sum("quantity");
+        $totalDieselExportQuantity = DieselExport::where('typesfuel_id', $validatedData['typesfuel_id'])->sum("quantity");
+        $remainingBalance = $totalDieselQuantity - $totalDieselExportQuantity;
 
-        if (($totalDieselQuantity - $totalDieselExportQuantity) < $validatedData['quantity']) {
-            return back()->with('warning', 'تحقق من كمية المحروقات المتبقي');
+        if ($remainingBalance < $validatedData['quantity']) {
+            return back()
+                ->withInput()
+                ->with('warning', "الرصيد المتبقي لنوع المحروقات المختار هو {$remainingBalance}، لا يمكن صرف {$validatedData['quantity']}");
         }
 
         DieselExport::create($validatedData);
@@ -150,14 +154,21 @@ class DieselExportController extends Controller
         $dieselexport->section_id  = $request->section_id;
         $dieselexport->voucher     = $request->voucher;
 
-        // لادخال كمية الصادر بناء على كمية الوارد
-        if ((Diesel::sum("quantity") > $request->quantity)) {
+        // التحقق من الرصيد حسب نوع المحروقات المختار
+        $totalDieselQuantity       = Diesel::where('typesfuel_id', $request->typesfuel_id)->sum("quantity");
+        $totalDieselExportQuantity = DieselExport::where('typesfuel_id', $request->typesfuel_id)->sum("quantity");
+        $remainingBalance = $totalDieselQuantity - $totalDieselExportQuantity;
 
-            $dieselexport->quantity = $request->quantity;
-        } else {
-            return back()->with('warning', 'تحقق من كمية المحروقات المتبقي');
+        // إضافة الكمية الحالية للسند المعدل لأنها ستُزال من المجموع
+        $remainingBalance += $dieselexport->quantity;
+
+        if ($remainingBalance < $request->quantity) {
+            return back()
+                ->withInput()
+                ->with('warning', "الرصيد المتبقي لنوع المحروقات المختار هو {$remainingBalance}، لا يمكن صرف {$request->quantity}");
         }
-        //انتها شرط الكمية
+
+        $dieselexport->quantity = $request->quantity;
         $dieselexport->date         = $request->date;
         $dieselexport->typesfuel_id = $request->typesfuel_id;
 

@@ -61,18 +61,18 @@
                         </a>
                     </li>
 
-                    
+
                     @can('stock')
                         <li class="menu-section">
                             <h4 class="menu-text">المخازن</h4>
                             <i class="menu-icon ki ki-bold-more-hor icon-md"></i>
                         </li>
-                        
+
                         <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
                             <a href="javascript:;" class="menu-link menu-toggle">
                                 <span class="svg-icon menu-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-box-seam" viewBox="0 0 16 16">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                        fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
                                         <path
                                             d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z" />
                                     </svg>
@@ -290,7 +290,8 @@
                                                 <a href="javascript:;" class="menu-link menu-toggle">
                                                     <span class="svg-icon menu-icon">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" class="bi bi-building-add" viewBox="0 0 16 16">
+                                                            fill="currentColor" class="bi bi-building-add"
+                                                            viewBox="0 0 16 16">
                                                             <path
                                                                 d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Z" />
                                                             <path
@@ -474,7 +475,8 @@
                                                 <a href="javascript:;" class="menu-link menu-toggle">
                                                     <span class="svg-icon menu-icon">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" class="bi bi-database-check" viewBox="0 0 16 16">
+                                                            fill="currentColor" class="bi bi-database-check"
+                                                            viewBox="0 0 16 16">
                                                             <path
                                                                 d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514Z" />
                                                             <path
@@ -656,7 +658,8 @@
                                                 <a href="javascript:;" class="menu-link menu-toggle">
                                                     <span class="svg-icon menu-icon">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" class="bi bi-person-video2" viewBox="0 0 16 16">
+                                                            fill="currentColor" class="bi bi-person-video2"
+                                                            viewBox="0 0 16 16">
                                                             <path d="M10 9.05a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
                                                             <path
                                                                 d="M2 1a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2ZM1 3a1 1 0 0 1 1-1h2v2H1V3Zm4 10V2h9a1 1 0 0 1 1 1v9c0 .285-.12.543-.31.725C14.15 11.494 12.822 10 10 10c-3.037 0-4.345 1.73-4.798 3H5Zm-4-2h3v2H2a1 1 0 0 1-1-1v-1Zm3-1H1V8h3v2Zm0-3H1V5h3v2Z" />
@@ -699,178 +702,525 @@
                                             </li>
                                         @endcanany
 
-                   
+
 
                                     </ul>
                                 </ul>
                             </div>
                         </li>
                     @endcan
-                    <li class="menu-section">
+
+
+                    @canany(['vehicles-read', 'drivers-read', 'vehicle-operations-read', 'vehicle-reports-read'])
+                        <li class="menu-section">
                             <h4 class="menu-text">الكراج</h4>
                             <i class="menu-icon ki ki-bold-more-hor icon-md"></i>
                         </li>
-                                       @canany(['vehicles-read', 'drivers-read', 'vehicle-operations-read', 'vehicle-reports-read'])
-                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
-                                                data-menu-toggle="hover">
-                                                <a href="javascript:;" class="menu-link menu-toggle">
-                                                    <span class="svg-icon menu-icon">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" class="bi bi-car-front" viewBox="0 0 16 16">
-                                                            <path d="M4.52 1.698a.5.5 0 0 1 .434.14L8 4.814l2.946-2.976a.5.5 0 0 1 .865.497l-2.9 5.956a.5.5 0 0 1-.054.094l-2.916 5.956a.5.5 0 0 1-.865-.497l2.9-5.956a.5.5 0 0 1 .054-.094L4.52 1.698zM6.874 8.5l-1.58-3.23 1.58 3.23zm-2.39 2.324 1.58 3.23-1.58-3.23z"/>
-                                                            <path d="M2.5 10a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm10 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z"/>
-                                                        </svg>
-                                                        <!--end::Svg Icon-->
-                                                    </span>
-                                                    <!--end::Svg Icon-->
-                                                    <span class="menu-text">الكراج</span>
-                                                    <i class="menu-arrow"></i>
-                                                </a>
-                                                <div class="menu-submenu">
-                                                    <i class="menu-arrow"></i>
-                                                    <ul class="menu-subnav">
-                                                        <li class="menu-item menu-item-parent" aria-haspopup="true">
-                                                            <span class="menu-link">
-                                                                <span class="menu-text">الكراج</span>
+                        <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                        fill="currentColor" class="bi bi-car-front" viewBox="0 0 16 16">
+                                        <path
+                                            d="M4.52 1.698a.5.5 0 0 1 .434.14L8 4.814l2.946-2.976a.5.5 0 0 1 .865.497l-2.9 5.956a.5.5 0 0 1-.054.094l-2.916 5.956a.5.5 0 0 1-.865-.497l2.9-5.956a.5.5 0 0 1 .054-.094L4.52 1.698zM6.874 8.5l-1.58-3.23 1.58 3.23zm-2.39 2.324 1.58 3.23-1.58-3.23z" />
+                                        <path
+                                            d="M2.5 10a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm10 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z" />
+                                    </svg>
+                                    <!--end::Svg Icon-->
+                                </span>
+                                <!--end::Svg Icon-->
+                                <span class="menu-text">الكراج</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">الكراج</span>
+                                        </span>
+                                    </li>
+                                    @canany(['vehicles-read', 'vehicles-manager'])
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="javascript:;" class="menu-link menu-toggle">
+                                                <span class="svg-icon menu-icon">
+                                                    <i class="flaticon2-car"></i>
+                                                </span>
+                                                <span class="menu-text">المركبات</span>
+                                                <i class="menu-arrow"></i>
+                                            </a>
+                                            <div class="menu-submenu">
+                                                <i class="menu-arrow"></i>
+                                                <ul class="menu-subnav">
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('vehicles.create') }}" class="menu-link">
+                                                            <span class="menu-text">إضافة مركبة</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('vehicles.index') }}" class="menu-link">
+                                                            <span class="menu-text">عرض المركبات</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    @endcanany
+                                    @canany(['drivers-read', 'drivers-manager'])
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="javascript:;" class="menu-link menu-toggle">
+                                                <span class="svg-icon menu-icon">
+                                                    <i class="flaticon-user"></i>
+                                                </span>
+                                                <span class="menu-text">السائقون</span>
+                                                <i class="menu-arrow"></i>
+                                            </a>
+                                            <div class="menu-submenu">
+                                                <i class="menu-arrow"></i>
+                                                <ul class="menu-subnav">
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('drivers.create') }}" class="menu-link">
+                                                            <span class="menu-text">إضافة سائق</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('drivers.index') }}" class="menu-link">
+                                                            <span class="menu-text">عرض السائقين</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    @endcanany
+                                    @canany(['vehicle-operations-read', 'vehicle-operations-manager'])
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="javascript:;" class="menu-link menu-toggle">
+                                                <span class="svg-icon menu-icon">
+                                                    <i class="flaticon-file-2"></i>
+                                                </span>
+                                                <span class="menu-text">تسجيل العمليات</span>
+                                                <i class="menu-arrow"></i>
+                                            </a>
+                                            <div class="menu-submenu">
+                                                <i class="menu-arrow"></i>
+                                                <ul class="menu-subnav">
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('vehicle-operations.create') }}" class="menu-link">
+                                                            <span class="menu-text">إضافة عملية</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('vehicle-operations.index') }}" class="menu-link">
+                                                            <span class="menu-text">عرض العمليات</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    @endcanany
+                                    @canany(['vehicle-reports-read', 'vehicle-reports-manager'])
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="javascript:;" class="menu-link menu-toggle">
+                                                <span class="svg-icon menu-icon">
+                                                    <i class="flaticon-graph"></i>
+                                                </span>
+                                                <span class="menu-text">التقارير</span>
+                                                <i class="menu-arrow"></i>
+                                            </a>
+                                            <div class="menu-submenu">
+                                                <i class="menu-arrow"></i>
+                                                <ul class="menu-subnav">
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('vehicle-reports.index') }}" class="menu-link">
+                                                            <span class="menu-text">تقرير عام</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('vehicle-reports.diesel') }}" class="menu-link">
+                                                            <span class="menu-text">تقرير المحروقات</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('vehicle-reports.oil') }}" class="menu-link">
+                                                            <span class="menu-text">تقرير الزيوت</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('vehicle-reports.monthly') }}" class="menu-link">
+                                                            <span class="menu-text">تقرير شهري</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('vehicle-reports.maintenance') }}"
+                                                            class="menu-link">
+                                                            <span class="menu-text">تقرير الصيانة</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('vehicle-reports.driver') }}" class="menu-link">
+                                                            <span class="menu-text">تقرير السائقين</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('vehicle-reports.summary') }}" class="menu-link">
+                                                            <span class="menu-text">ملخص عام</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    @endcanany
+                                </ul>
+                            </div>
+                        </li>
+                    @endcanany
+
+
+                    @canany(['diesels-read', 'diesels-manager'])
+                        <li class="menu-section">
+                            <h4 class="menu-text">المحروقات والسولار</h4>
+                            <i class="menu-icon ki ki-bold-more-hor icon-md"></i>
+                        </li>
+
+                        <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Bucket.svg-->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                        fill="currentColor" class="bi bi-fuel-pump-diesel" viewBox="0 0 16 16">
+                                        <path
+                                            d="M3.5 2a.5.5 0 0 0-.5.5v5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-5a.5.5 0 0 0-.5-.5h-5ZM4 14V9h1.796c.5 0 .913.098 1.237.293.325.195.567.479.725.85.161.371.242.82.242 1.344 0 .528-.08.98-.242 1.355a1.805 1.805 0 0 1-.732.861c-.324.198-.734.297-1.23.297H4Zm1.666-4.194h-.692v3.385h.692c.229 0 .427-.035.595-.103a.986.986 0 0 0 .412-.315c.108-.142.188-.318.241-.528.056-.21.083-.456.083-.74 0-.376-.048-.69-.144-.94a1.11 1.11 0 0 0-.436-.569c-.195-.127-.445-.19-.75-.19Z" />
+                                        <path
+                                            d="M3 0a2 2 0 0 0-2 2v13H.5a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1H11v-4a1 1 0 0 1 1 1v.5a1.5 1.5 0 0 0 3 0V8h.5a.5.5 0 0 0 .5-.5V4.324c0-.616 0-1.426-.294-2.081a1.969 1.969 0 0 0-.794-.907C14.534 1.111 14.064 1 13.5 1a.5.5 0 0 0 0 1c.436 0 .716.086.9.195a.97.97 0 0 1 .394.458c.147.328.19.746.201 1.222H13.5a.5.5 0 0 0-.5.5V7.5a.5.5 0 0 0 .5.5h.5v4.5a.5.5 0 0 1-1 0V12a2 2 0 0 0-2-2V2a2 2 0 0 0-2-2H3Zm7 2v13H2V2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1Z" />
+                                    </svg>
+                                    <!--end::Svg Icon-->
+                                </span>
+                                <span class="menu-text">المحروقات</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">المحروقات</span>
+                                        </span>
+                                    </li>
+
+                                    <ul class="menu-subnav">
+
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="javascript:;" class="menu-link menu-toggle">
+                                                <span class="svg-icon menu-icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
+                                                        height="24px" viewBox="0 0 24 24" version="1.1">
+                                                        <g stroke="none" stroke-width="1" fill="none"
+                                                            fill-rule="evenodd">
+                                                            <rect x="0" y="0" width="24" height="24">
+                                                            </rect>
+                                                            <rect fill="#000000" opacity="0.3"
+                                                                transform="translate(12.000000, 7.000000) rotate(-180.000000) translate(-12.000000, -7.000000) "
+                                                                x="11" y="1" width="2" height="12"
+                                                                rx="1"></rect>
+                                                            <path
+                                                                d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
+                                                                fill="#000000" fill-rule="nonzero" opacity="0.3"></path>
+                                                            <path
+                                                                d="M14.2928932,10.2928932 C14.6834175,9.90236893 15.3165825,9.90236893 15.7071068,10.2928932 C16.0976311,10.6834175 16.0976311,11.3165825 15.7071068,11.7071068 L12.7071068,14.7071068 C12.3165825,15.0976311 11.6834175,15.0976311 11.2928932,14.7071068 L8.29289322,11.7071068 C7.90236893,11.3165825 7.90236893,10.6834175 8.29289322,10.2928932 C8.68341751,9.90236893 9.31658249,9.90236893 9.70710678,10.2928932 L12,12.5857864 L14.2928932,10.2928932 Z"
+                                                                fill="#000000" fill-rule="nonzero"></path>
+                                                        </g>
+                                                    </svg>
+                                                </span>
+                                                <span class="menu-text"> الوارد</span>
+                                                <i class="menu-arrow"></i>
+                                            </a>
+                                            <div class="menu-submenu">
+                                                <i class="menu-arrow"></i>
+                                                <ul class="menu-subnav">
+                                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                                        <span class="menu-link">
+                                                            <span class="menu-text"> الوارد</span>
+                                                        </span>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('diesel.create') }}" class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="menu-bullet flaticon-add-circular-button"></i>
                                                             </span>
+
+                                                            <span class="menu-text">إضافة وارد
+                                                                المحروقات</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('diesel.index') }}" class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="menu-bullet flaticon-eye"></i>
+                                                            </span>
+                                                            <span class="menu-text">عرض وارد
+                                                                المحروقات</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('diesel.report') }}" class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="menu-bullet flaticon-graphic"></i>
+                                                            </span>
+                                                            <span class="menu-text">تقارير
+                                                                الوارد</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="javascript:;" class="menu-link menu-toggle">
+                                                <span class="svg-icon menu-icon">
+                                                    <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
+                                                        height="24px" viewBox="0 0 24 24" version="1.1">
+                                                        <g stroke="none" stroke-width="1" fill="none"
+                                                            fill-rule="evenodd">
+                                                            <rect x="0" y="0" width="24" height="24" />
+                                                            <path
+                                                                d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
+                                                                fill="#000000" fill-rule="nonzero" opacity="0.3" />
+                                                            <rect fill="#000000" opacity="0.3"
+                                                                transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
+                                                                x="11" y="2" width="2" height="12"
+                                                                rx="1" />
+                                                            <path
+                                                                d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
+                                                                fill="#000000" fill-rule="nonzero"
+                                                                transform="translate(12.000000, 2.500000) scale(1, -1) translate(-12.000000, -2.500000) " />
+                                                        </g>
+                                                    </svg>
+                                                </span>
+                                                <span class="menu-text"> الصادر</span>
+                                                <i class="menu-arrow"></i>
+                                            </a>
+                                            <div class="menu-submenu">
+                                                <i class="menu-arrow"></i>
+                                                <ul class="menu-subnav">
+                                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                                        <span class="menu-link">
+                                                            <span class="menu-text"> الصادر</span>
+                                                        </span>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('dieselexport.create') }}" class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="flaticon-add-circular-button"></i>
+                                                                <!--end::Svg Icon-->
+                                                            </span>
+                                                            <span class="menu-text">إضافة صادر
+                                                                المحروقات</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('dieselexport.index') }}" class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="flaticon-eye"></i>
+                                                                <!--end::Svg Icon-->
+                                                            </span>
+                                                            <span class="menu-text">عرض صادر
+                                                                المحروقات</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('dieselexport.report') }}" class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="menu-bullet flaticon-graphic"></i>
+                                                            </span>
+                                                            <span class="menu-text">تقارير
+                                                                الصادر</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="javascript:;" class="menu-link menu-toggle">
+                                                <span class="svg-icon menu-icon">
+                                                    <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Bucket.svg-->
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
+                                                        height="24px" viewBox="0 0 24 24" version="1.1">
+                                                        <g stroke="none" stroke-width="1" fill="none"
+                                                            fill-rule="evenodd">
+                                                            <polygon points="0 0 24 0 24 24 0 24" />
+                                                            <path
+                                                                d="M4.85714286,1 L11.7364114,1 C12.0910962,1 12.4343066,1.12568431 12.7051108,1.35473959 L17.4686994,5.3839416 C17.8056532,5.66894833 18,6.08787823 18,6.52920201 L18,19.0833333 C18,20.8738751 17.9795521,21 16.1428571,21 L4.85714286,21 C3.02044787,21 3,20.8738751 3,19.0833333 L3,2.91666667 C3,1.12612489 3.02044787,1 4.85714286,1 Z M8,12 C7.44771525,12 7,12.4477153 7,13 C7,13.5522847 7.44771525,14 8,14 L15,14 C15.5522847,14 16,13.5522847 16,13 C16,12.4477153 15.5522847,12 15,12 L8,12 Z M8,16 C7.44771525,16 7,16.4477153 7,17 C7,17.5522847 7.44771525,18 8,18 L11,18 C11.5522847,18 12,17.5522847 12,17 C12,16.4477153 11.5522847,16 11,16 L8,16 Z"
+                                                                fill="#000000" fill-rule="nonzero" opacity="0.3" />
+                                                            <path
+                                                                d="M6.85714286,3 L14.7364114,3 C15.0910962,3 15.4343066,3.12568431 15.7051108,3.35473959 L20.4686994,7.3839416 C20.8056532,7.66894833 21,8.08787823 21,8.52920201 L21,21.0833333 C21,22.8738751 20.9795521,23 19.1428571,23 L6.85714286,23 C5.02044787,23 5,22.8738751 5,21.0833333 L5,4.91666667 C5,3.12612489 5.02044787,3 6.85714286,3 Z M8,12 C7.44771525,12 7,12.4477153 7,13 C7,13.5522847 7.44771525,14 8,14 L15,14 C15.5522847,14 16,13.5522847 16,13 C16,12.4477153 15.5522847,12 15,12 L8,12 Z M8,16 C7.44771525,16 7,16.4477153 7,17 C7,17.5522847 7.44771525,18 8,18 L11,18 C11.5522847,18 12,17.5522847 12,17 C12,16.4477153 11.5522847,16 11,16 L8,16 Z"
+                                                                fill="#000000" fill-rule="nonzero" />
+                                                        </g>
+                                                    </svg>
+                                                    <!--end::Svg Icon-->
+                                                </span>
+                                                <span class="menu-text">الملف التاريخي</span>
+                                                <i class="menu-arrow"></i>
+                                            </a>
+                                            <div class="menu-submenu">
+                                                <i class="menu-arrow"></i>
+                                                <ul class="menu-subnav">
+                                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                                        <span class="menu-link">
+                                                            <span class="menu-text">الملف
+                                                                التاريخي</span>
+                                                        </span>
+                                                    </li>
+                                                    <ul class="menu-subnav">
+                                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                                            data-menu-toggle="hover">
+                                                            <a href="javascript:;" class="menu-link menu-toggle">
+                                                                <span class="svg-icon menu-icon">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                                        width="24px" height="24px" viewBox="0 0 24 24"
+                                                                        version="1.1">
+                                                                        <g stroke="none" stroke-width="1" fill="none"
+                                                                            fill-rule="evenodd">
+                                                                            <rect x="0" y="0" width="24"
+                                                                                height="24" />
+                                                                            <rect fill="#000000" opacity="0.3"
+                                                                                transform="translate(12.000000, 7.000000) rotate(-180.000000) translate(-12.000000, -7.000000) "
+                                                                                x="11" y="1" width="2" height="12"
+                                                                                rx="1" />
+                                                                            <path
+                                                                                d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
+                                                                                fill="#000000" fill-rule="nonzero"
+                                                                                opacity="0.3" />
+                                                                            <path
+                                                                                d="M14.2928932,10.2928932 C14.6834175,9.90236893 15.3165825,9.90236893 15.7071068,10.2928932 C16.0976311,10.6834175 16.0976311,11.3165825 15.7071068,11.7071068 L12.7071068,14.7071068 C12.3165825,15.0976311 11.6834175,15.0976311 11.2928932,14.7071068 L8.29289322,11.7071068 C7.90236893,11.3165825 7.90236893,10.6834175 8.29289322,10.2928932 C8.68341751,9.90236893 9.31658249,9.90236893 9.70710678,10.2928932 L12,12.5857864 L14.2928932,10.2928932 Z"
+                                                                                fill="#000000" fill-rule="nonzero" />
+                                                                        </g>
+                                                                    </svg>
+                                                                    <!--end::Svg Icon-->
+                                                                </span>
+                                                                <!--end::Svg Icon-->
+                                                                <span class="menu-text">
+                                                                    الوارد</span>
+                                                                <i class="menu-arrow"></i>
+                                                            </a>
+                                                            <div class="menu-submenu">
+                                                                <i class="menu-arrow"></i>
+                                                                <ul class="menu-subnav">
+                                                                    <li class="menu-item menu-item-parent"
+                                                                        aria-haspopup="true">
+                                                                        <span class="menu-link">
+                                                                            <span class="menu-text">
+                                                                                الوارد</span>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="menu-item" aria-haspopup="true">
+                                                                        <a href="{{ route('historical.waredindex') }}"
+                                                                            class="menu-link">
+                                                                            <i class="menu-bullet menu-bullet-dot">
+                                                                                <span></span>
+                                                                            </i>
+                                                                            <span class="menu-text">
+                                                                                الملف
+                                                                                التاريخي
+                                                                                للوارد</span>
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
                                                         </li>
-                                                        @canany(['vehicles-read', 'vehicles-manager'])
-                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
-                                                                data-menu-toggle="hover">
-                                                                <a href="javascript:;" class="menu-link menu-toggle">
-                                                                    <span class="svg-icon menu-icon">
-                                                                        <i class="flaticon2-car"></i>
-                                                                    </span>
-                                                                    <span class="menu-text">المركبات</span>
-                                                                    <i class="menu-arrow"></i>
-                                                                </a>
-                                                                <div class="menu-submenu">
-                                                                    <i class="menu-arrow"></i>
-                                                                    <ul class="menu-subnav">
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('vehicles.create') }}" class="menu-link">
-                                                                                <span class="menu-text">إضافة مركبة</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('vehicles.index') }}" class="menu-link">
-                                                                                <span class="menu-text">عرض المركبات</span>
-                                                                            </a>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </li>
-                                                        @endcanany
-                                                        @canany(['drivers-read', 'drivers-manager'])
-                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
-                                                                data-menu-toggle="hover">
-                                                                <a href="javascript:;" class="menu-link menu-toggle">
-                                                                    <span class="svg-icon menu-icon">
-                                                                        <i class="flaticon-user"></i>
-                                                                    </span>
-                                                                    <span class="menu-text">السائقون</span>
-                                                                    <i class="menu-arrow"></i>
-                                                                </a>
-                                                                <div class="menu-submenu">
-                                                                    <i class="menu-arrow"></i>
-                                                                    <ul class="menu-subnav">
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('drivers.create') }}" class="menu-link">
-                                                                                <span class="menu-text">إضافة سائق</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('drivers.index') }}" class="menu-link">
-                                                                                <span class="menu-text">عرض السائقين</span>
-                                                                            </a>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </li>
-                                                        @endcanany
-                                                        @canany(['vehicle-operations-read', 'vehicle-operations-manager'])
-                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
-                                                                data-menu-toggle="hover">
-                                                                <a href="javascript:;" class="menu-link menu-toggle">
-                                                                    <span class="svg-icon menu-icon">
-                                                                        <i class="flaticon-file-2"></i>
-                                                                    </span>
-                                                                    <span class="menu-text">تسجيل العمليات</span>
-                                                                    <i class="menu-arrow"></i>
-                                                                </a>
-                                                                <div class="menu-submenu">
-                                                                    <i class="menu-arrow"></i>
-                                                                    <ul class="menu-subnav">
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('vehicle-operations.create') }}" class="menu-link">
-                                                                                <span class="menu-text">إضافة عملية</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('vehicle-operations.index') }}" class="menu-link">
-                                                                                <span class="menu-text">عرض العمليات</span>
-                                                                            </a>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </li>
-                                                        @endcanany
-                                                        @canany(['vehicle-reports-read', 'vehicle-reports-manager'])
-                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
-                                                                data-menu-toggle="hover">
-                                                                <a href="javascript:;" class="menu-link menu-toggle">
-                                                                    <span class="svg-icon menu-icon">
-                                                                        <i class="flaticon-graph"></i>
-                                                                    </span>
-                                                                    <span class="menu-text">التقارير</span>
-                                                                    <i class="menu-arrow"></i>
-                                                                </a>
-                                                                <div class="menu-submenu">
-                                                                    <i class="menu-arrow"></i>
-                                                                    <ul class="menu-subnav">
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('vehicle-reports.index') }}" class="menu-link">
-                                                                                <span class="menu-text">تقرير عام</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('vehicle-reports.diesel') }}" class="menu-link">
-                                                                                <span class="menu-text">تقرير المحروقات</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('vehicle-reports.oil') }}" class="menu-link">
-                                                                                <span class="menu-text">تقرير الزيوت</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('vehicle-reports.monthly') }}" class="menu-link">
-                                                                                <span class="menu-text">تقرير شهري</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('vehicle-reports.maintenance') }}" class="menu-link">
-                                                                                <span class="menu-text">تقرير الصيانة</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('vehicle-reports.driver') }}" class="menu-link">
-                                                                                <span class="menu-text">تقرير السائقين</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('vehicle-reports.summary') }}" class="menu-link">
-                                                                                <span class="menu-text">ملخص عام</span>
-                                                                            </a>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </li>
-                                                        @endcanany
+                                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                                            data-menu-toggle="hover">
+                                                            <a href="javascript:;" class="menu-link menu-toggle">
+                                                                <span class="svg-icon menu-icon">
+                                                                    <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                                        width="24px" height="24px" viewBox="0 0 24 24"
+                                                                        version="1.1">
+                                                                        <g stroke="none" stroke-width="1" fill="none"
+                                                                            fill-rule="evenodd">
+                                                                            <rect x="0" y="0" width="24"
+                                                                                height="24" />
+                                                                            <path
+                                                                                d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
+                                                                                fill="#000000" fill-rule="nonzero"
+                                                                                opacity="0.3" />
+                                                                            <rect fill="#000000" opacity="0.3"
+                                                                                transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
+                                                                                x="11" y="2" width="2" height="12"
+                                                                                rx="1" />
+                                                                            <path
+                                                                                d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
+                                                                                fill="#000000" fill-rule="nonzero"
+                                                                                transform="translate(12.000000, 2.500000) scale(1, -1) translate(-12.000000, -2.500000) " />
+                                                                        </g>
+                                                                    </svg>
+                                                                    <!--end::Svg Icon-->
+                                                                </span>
+                                                                <span class="menu-text">
+                                                                    الصادر</span>
+                                                                <i class="menu-arrow"></i>
+                                                            </a>
+                                                            <div class="menu-submenu">
+                                                                <i class="menu-arrow"></i>
+                                                                <ul class="menu-subnav">
+                                                                    <li class="menu-item menu-item-parent"
+                                                                        aria-haspopup="true">
+                                                                        <span class="menu-link">
+                                                                            <span class="menu-text">
+                                                                                الصادر</span>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="menu-item" aria-haspopup="true">
+                                                                        <a href="{{ route('historical.exportindex') }}"
+                                                                            class="menu-link">
+                                                                            <i class="menu-bullet menu-bullet-dot">
+                                                                                <span></span>
+                                                                            </i>
+                                                                            <span class="menu-text">
+                                                                                الملف
+                                                                                التاريخي
+                                                                                للصادر</span>
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </li>
                                                     </ul>
-                                                </div>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"><a
+                                                href="{{ route('TypesFuel.index') }}" class="menu-link "><i
+                                                    class="menu-bullet menu-bullet-dot"><span></span></i><span
+                                                    class="menu-text">أنواع المحروقات</span></a>
+                                        </li>
+                                        @foreach ($sidebarFuelTypes ?? [] as $sidebarFuelType)
+                                            <li class="menu-item" aria-haspopup="true">
+                                                <a href="{{ route('diesel.transactions', $sidebarFuelType->id) }}"
+                                                    class="menu-link">
+                                                    <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                                    <span class="menu-text">حركة الوارد والصادر -
+                                                        {{ $sidebarFuelType->name }}</span>
+                                                </a>
                                             </li>
-                                        @endcanany
+                                        @endforeach
+                                    </ul>
+                                </ul>
+                            </div>
+                        </li>
+                    @endcanany
+
                     @can('purchases-read')
                         <li class="menu-section">
                             <h4 class="menu-text">المشتريات</h4>
@@ -881,8 +1231,10 @@
                                 <span class="svg-icon menu-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                         fill="currentColor" class="bi bi-cart-check" viewBox="0 0 16 16">
-                                        <path d="M11.354 6.354a.5.5 0 0 0-.708-.708L8 8.293 6.854 7.146a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"/>
-                                        <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                                        <path
+                                            d="M11.354 6.354a.5.5 0 0 0-.708-.708L8 8.293 6.854 7.146a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z" />
+                                        <path
+                                            d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
                                     </svg>
                                 </span>
                                 <span class="menu-text">طلبات الشراء</span>
@@ -942,13 +1294,13 @@
                             </div>
                         </li>
                     @endcan
-                    
+
                     @can('archivecore')
                         <li class="menu-section">
                             <h4 class="menu-text">الأرشيف المركزي</h4>
                             <i class="menu-icon ki ki-bold-more-hor icon-md"></i>
                         </li>
-                        
+
                         <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
                             <a href="javascript:;" class="menu-link menu-toggle">
                                 <span class="svg-icon menu-icon">
@@ -982,9 +1334,9 @@
                                                 <a href="javascript:;" class="menu-link menu-toggle">
                                                     <span class="svg-icon menu-icon">
                                                         <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Bucket.svg-->
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" class="bi bi-file-earmark-arrow-down"
-                                                            viewBox="0 0 16 16">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                            height="16" fill="currentColor"
+                                                            class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
                                                             <path
                                                                 d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z" />
                                                             <path
@@ -1010,15 +1362,16 @@
                                                                     <span class="svg-icon menu-icon">
                                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
-                                                                                <rect x="0" y="0" width="24" height="24" />
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
+                                                                                <rect x="0" y="0" width="24"
+                                                                                    height="24" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 7.000000) rotate(-180.000000) translate(-12.000000, -7.000000) "
-                                                                                    x="11" y="1" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="1" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -1047,19 +1400,23 @@
                                                                             <a href="{{ url('/archive/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">إضافة وارد الأرشيف</span>
+                                                                                <span class="menu-text">إضافة وارد
+                                                                                    الأرشيف</span>
                                                                             </a>
                                                                         </li>
                                                                         <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ url('/archive') }}" class="menu-link">
+                                                                            <a href="{{ url('/archive') }}"
+                                                                                class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
                                                                                     <i class="flaticon-eye"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">عرض وارد الأرشيف</span>
+                                                                                <span class="menu-text">عرض وارد
+                                                                                    الأرشيف</span>
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1072,19 +1429,20 @@
                                                                         <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
                                                                             xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
-                                                                                <rect x="0" y="0" width="24" height="24" />
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
+                                                                                <rect x="0" y="0" width="24"
+                                                                                    height="24" />
                                                                                 <path
                                                                                     d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
                                                                                     opacity="0.3" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                                                                                    x="11" y="2" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="2" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -1109,10 +1467,12 @@
                                                                             <a href="{{ url('/archiveExport/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">إضافة صادر الأرشيف</span>
+                                                                                <span class="menu-text">إضافة صادر
+                                                                                    الأرشيف</span>
                                                                             </a>
                                                                         </li>
                                                                         <li class="menu-item" aria-haspopup="true">
@@ -1122,7 +1482,8 @@
                                                                                     <i class="flaticon-eye"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">عرض صادر الأرشيف</span>
+                                                                                <span class="menu-text">عرض صادر
+                                                                                    الأرشيف</span>
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1132,8 +1493,9 @@
                                                                 data-menu-toggle="hover">
                                                                 <a href="javascript:;" class="menu-link menu-toggle">
                                                                     <span class="svg-icon menu-icon">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                            height="16" fill="currentColor" class="bi bi-send"
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            width="16" height="16"
+                                                                            fill="currentColor" class="bi bi-send"
                                                                             viewBox="0 0 16 16">
                                                                             <path
                                                                                 d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
@@ -1156,7 +1518,8 @@
                                                                             <a href="{{ url('/sendNotification/archiveNot/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
                                                                                 <span class="menu-text">ارسال الأرشيف</span>
@@ -1179,9 +1542,10 @@
                                                                 data-menu-toggle="hover">
                                                                 <a href="javascript:;" class="menu-link menu-toggle">
                                                                     <span class="svg-icon menu-icon">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                            height="16" fill="currentColor"
-                                                                            class="bi bi-three-dots" viewBox="0 0 16 16">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            width="16" height="16"
+                                                                            fill="currentColor" class="bi bi-three-dots"
+                                                                            viewBox="0 0 16 16">
                                                                             <path
                                                                                 d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
                                                                         </svg>
@@ -1195,7 +1559,8 @@
                                                                     <ul class="menu-subnav">
                                                                         <li class="menu-item menu-item-submenu"
                                                                             aria-haspopup="true" data-menu-toggle="hover">
-                                                                            <a href="javascript:;" class="menu-link menu-toggle">
+                                                                            <a href="javascript:;"
+                                                                                class="menu-link menu-toggle">
                                                                                 <span class="svg-icon menu-icon">
                                                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                                                         width="16" height="16"
@@ -1207,7 +1572,8 @@
                                                                                     </svg>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">الجهات الوارد منها</span>
+                                                                                <span class="menu-text">الجهات الوارد
+                                                                                    منها</span>
                                                                                 <i class="menu-arrow"></i>
                                                                             </a>
                                                                             <div class="menu-submenu">
@@ -1216,11 +1582,13 @@
                                                                                     <li class="menu-item menu-item-parent"
                                                                                         aria-haspopup="true">
                                                                                         <span class="menu-link">
-                                                                                            <span class="menu-text">الجهات الوارد
+                                                                                            <span class="menu-text">الجهات
+                                                                                                الوارد
                                                                                                 منها</span>
                                                                                         </span>
                                                                                     </li>
-                                                                                    <li class="menu-item" aria-haspopup="true">
+                                                                                    <li class="menu-item"
+                                                                                        aria-haspopup="true">
                                                                                         <a href="{{ url('import/create') }}"
                                                                                             class="menu-link">
                                                                                             <span class="svg-icon menu-icon">
@@ -1228,12 +1596,14 @@
                                                                                                     class="flaticon-add-circular-button"></i>
                                                                                                 <!--end::Svg Icon-->
                                                                                             </span>
-                                                                                            <span class="menu-text">اضافة الجهات
+                                                                                            <span class="menu-text">اضافة
+                                                                                                الجهات
                                                                                                 الوارد
                                                                                                 منها</span>
                                                                                         </a>
                                                                                     </li>
-                                                                                    <li class="menu-item" aria-haspopup="true">
+                                                                                    <li class="menu-item"
+                                                                                        aria-haspopup="true">
                                                                                         <a href="{{ url('import') }}"
                                                                                             class="menu-link">
                                                                                             <i
@@ -1263,7 +1633,8 @@
                                                                                     </svg>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">الجهات الصادر اليها</span>
+                                                                                <span class="menu-text">الجهات الصادر
+                                                                                    اليها</span>
                                                                                 <i class="menu-arrow"></i>
                                                                             </a>
                                                                             <div class="menu-submenu">
@@ -1272,11 +1643,13 @@
                                                                                     <li class="menu-item menu-item-parent"
                                                                                         aria-haspopup="true">
                                                                                         <span class="menu-link">
-                                                                                            <span class="menu-text">الجهات الصادر
+                                                                                            <span class="menu-text">الجهات
+                                                                                                الصادر
                                                                                                 اليها</span>
                                                                                         </span>
                                                                                     </li>
-                                                                                    <li class="menu-item" aria-haspopup="true">
+                                                                                    <li class="menu-item"
+                                                                                        aria-haspopup="true">
                                                                                         <a href="{{ url('export/create') }}"
                                                                                             class="menu-link">
                                                                                             <span class="svg-icon menu-icon">
@@ -1284,12 +1657,14 @@
                                                                                                     class="flaticon-add-circular-button"></i>
                                                                                                 <!--end::Svg Icon-->
                                                                                             </span>
-                                                                                            <span class="menu-text">اضافة الجهات
+                                                                                            <span class="menu-text">اضافة
+                                                                                                الجهات
                                                                                                 الصادر
                                                                                                 اليها</span>
                                                                                         </a>
                                                                                     </li>
-                                                                                    <li class="menu-item" aria-haspopup="true">
+                                                                                    <li class="menu-item"
+                                                                                        aria-haspopup="true">
                                                                                         <a href="{{ url('export') }}"
                                                                                             class="menu-link">
                                                                                             <i
@@ -1311,7 +1686,8 @@
                                                                                 <span class="svg-icon menu-icon">
                                                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                                                         width="16" height="16"
-                                                                                        fill="currentColor" class="bi bi-bricks"
+                                                                                        fill="currentColor"
+                                                                                        class="bi bi-bricks"
                                                                                         viewBox="0 0 16 16">
                                                                                         <path
                                                                                             d="M0 .5A.5.5 0 0 1 .5 0h15a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5H14v2h1.5a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5H14v2h1.5a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5H2v-2H.5a.5.5 0 0 1-.5-.5v-3A.5.5 0 0 1 .5 6H2V4H.5a.5.5 0 0 1-.5-.5v-3zM3 4v2h4.5V4H3zm5.5 0v2H13V4H8.5zM3 10v2h4.5v-2H3zm5.5 0v2H13v-2H8.5zM1 1v2h3.5V1H1zm4.5 0v2h5V1h-5zm6 0v2H15V1h-3.5zM1 7v2h3.5V7H1zm4.5 0v2h5V7h-5zm6 0v2H15V7h-3.5zM1 13v2h3.5v-2H1zm4.5 0v2h5v-2h-5zm6 0v2H15v-2h-3.5z" />
@@ -1331,7 +1707,8 @@
                                                                                                 المراسلات</span>
                                                                                         </span>
                                                                                     </li>
-                                                                                    <li class="menu-item" aria-haspopup="true">
+                                                                                    <li class="menu-item"
+                                                                                        aria-haspopup="true">
                                                                                         <a href="{{ url('type/create') }}"
                                                                                             class="menu-link">
                                                                                             <span class="svg-icon menu-icon">
@@ -1343,7 +1720,8 @@
                                                                                                 للمراسلات</span>
                                                                                         </a>
                                                                                     </li>
-                                                                                    <li class="menu-item" aria-haspopup="true">
+                                                                                    <li class="menu-item"
+                                                                                        aria-haspopup="true">
                                                                                         <a href="{{ url('type') }}"
                                                                                             class="menu-link">
                                                                                             <i
@@ -1372,8 +1750,9 @@
                                                 <a href="javascript:;" class="menu-link menu-toggle">
                                                     <span class="svg-icon menu-icon">
                                                         <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Bucket.svg-->
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" class="bi bi-briefcase" viewBox="0 0 16 16">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                            height="16" fill="currentColor" class="bi bi-briefcase"
+                                                            viewBox="0 0 16 16">
                                                             <path
                                                                 d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5zm1.886 6.914L15 7.151V12.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7.15l6.614 1.764a1.5 1.5 0 0 0 .772 0zM1.5 4h13a.5.5 0 0 1 .5.5v1.616L8.129 7.948a.5.5 0 0 1-.258 0L1 6.116V4.5a.5.5 0 0 1 .5-.5z" />
                                                         </svg>
@@ -1397,16 +1776,16 @@
                                                                     <span class="svg-icon menu-icon">
                                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
                                                                                 <rect x="0" y="0" width="24"
                                                                                     height="24" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 7.000000) rotate(-180.000000) translate(-12.000000, -7.000000) "
-                                                                                    x="11" y="1" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="1" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -1436,7 +1815,8 @@
                                                                             <a href="{{ url('/legal/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
                                                                                 <span class="menu-text">إضافة وارد الشؤون
@@ -1444,7 +1824,8 @@
                                                                             </a>
                                                                         </li>
                                                                         <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ url('/legal') }}" class="menu-link">
+                                                                            <a href="{{ url('/legal') }}"
+                                                                                class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
                                                                                     <i class="flaticon-eye"></i>
                                                                                     <!--end::Svg Icon-->
@@ -1463,10 +1844,10 @@
                                                                         <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
                                                                             xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
                                                                                 <rect x="0" y="0" width="24"
                                                                                     height="24" />
                                                                                 <path
@@ -1475,8 +1856,8 @@
                                                                                     opacity="0.3" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                                                                                    x="11" y="2" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="2" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -1502,7 +1883,8 @@
                                                                             <a href="{{ url('/legalexport/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
                                                                                 <span class="menu-text">إضافة صادر الشؤون
@@ -1530,10 +1912,10 @@
                                                                         <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
                                                                             xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
                                                                                 <rect x="0" y="0" width="24"
                                                                                     height="24" />
                                                                                 <path
@@ -1542,8 +1924,8 @@
                                                                                     opacity="0.3" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                                                                                    x="11" y="2" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="2" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -1569,7 +1951,8 @@
                                                                             <a href="{{ url('/sendNotification/legalNot/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
                                                                                 <span class="menu-text">ارسال الشؤون
@@ -1601,8 +1984,9 @@
                                                 <a href="javascript:;" class="menu-link menu-toggle">
                                                     <span class="svg-icon menu-icon">
                                                         <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Bucket.svg-->
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" class="bi bi-laptop" viewBox="0 0 16 16">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                            height="16" fill="currentColor" class="bi bi-laptop"
+                                                            viewBox="0 0 16 16">
                                                             <path
                                                                 d="M13.5 3a.5.5 0 0 1 .5.5V11H2V3.5a.5.5 0 0 1 .5-.5h11zm-11-1A1.5 1.5 0 0 0 1 3.5V12h14V3.5A1.5 1.5 0 0 0 13.5 2h-11zM0 12.5h16a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 12.5z" />
                                                         </svg>
@@ -1626,16 +2010,16 @@
                                                                     <span class="svg-icon menu-icon">
                                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
                                                                                 <rect x="0" y="0" width="24"
                                                                                     height="24" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 7.000000) rotate(-180.000000) translate(-12.000000, -7.000000) "
-                                                                                    x="11" y="1" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="1" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -1664,19 +2048,23 @@
                                                                             <a href="{{ url('/computer/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">إضافة وارد الحاسوب</span>
+                                                                                <span class="menu-text">إضافة وارد
+                                                                                    الحاسوب</span>
                                                                             </a>
                                                                         </li>
                                                                         <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ url('/computer') }}" class="menu-link">
+                                                                            <a href="{{ url('/computer') }}"
+                                                                                class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
                                                                                     <i class="flaticon-eye"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">عرض وارد الحاسوب</span>
+                                                                                <span class="menu-text">عرض وارد
+                                                                                    الحاسوب</span>
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1689,10 +2077,10 @@
                                                                         <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
                                                                             xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
                                                                                 <rect x="0" y="0" width="24"
                                                                                     height="24" />
                                                                                 <path
@@ -1701,8 +2089,8 @@
                                                                                     opacity="0.3" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                                                                                    x="11" y="2" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="2" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -1727,10 +2115,12 @@
                                                                             <a href="{{ url('/computerExport/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">إضافة صادر الحاسوب</span>
+                                                                                <span class="menu-text">إضافة صادر
+                                                                                    الحاسوب</span>
                                                                             </a>
                                                                         </li>
                                                                         <li class="menu-item" aria-haspopup="true">
@@ -1740,7 +2130,8 @@
                                                                                     <i class="flaticon-eye"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">عرض صادر الحاسوب</span>
+                                                                                <span class="menu-text">عرض صادر
+                                                                                    الحاسوب</span>
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1753,10 +2144,10 @@
                                                                         <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
                                                                             xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
                                                                                 <rect x="0" y="0" width="24"
                                                                                     height="24" />
                                                                                 <path
@@ -1765,8 +2156,8 @@
                                                                                     opacity="0.3" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                                                                                    x="11" y="2" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="2" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -1791,7 +2182,8 @@
                                                                             <a href="{{ url('/sendNotification/computerNot/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
                                                                                 <span class="menu-text">ارسال الحاسوب</span>
@@ -1821,8 +2213,9 @@
                                                 data-menu-toggle="hover">
                                                 <a href="javascript:;" class="menu-link menu-toggle">
                                                     <span class="svg-icon menu-icon">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" class="bi bi-cash-coin" viewBox="0 0 16 16">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                            height="16" fill="currentColor" class="bi bi-cash-coin"
+                                                            viewBox="0 0 16 16">
                                                             <path fill-rule="evenodd"
                                                                 d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0z" />
                                                             <path
@@ -1850,9 +2243,10 @@
                                                                 data-menu-toggle="hover">
                                                                 <a href="javascript:;" class="menu-link menu-toggle">
                                                                     <span class="svg-icon menu-icon">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                            height="16" fill="currentColor"
-                                                                            class="bi bi-cash-coin" viewBox="0 0 16 16">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            width="16" height="16"
+                                                                            fill="currentColor" class="bi bi-cash-coin"
+                                                                            viewBox="0 0 16 16">
                                                                             <path fill-rule="evenodd"
                                                                                 d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0z" />
                                                                             <path
@@ -1880,19 +2274,23 @@
                                                                             <a href="{{ url('/jibaya/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">إضافة وارد الجباية</span>
+                                                                                <span class="menu-text">إضافة وارد
+                                                                                    الجباية</span>
                                                                             </a>
                                                                         </li>
                                                                         <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ url('/jibaya') }}" class="menu-link">
+                                                                            <a href="{{ url('/jibaya') }}"
+                                                                                class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
                                                                                     <i class="flaticon-eye"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">عرض وارد الجباية</span>
+                                                                                <span class="menu-text">عرض وارد
+                                                                                    الجباية</span>
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1905,10 +2303,10 @@
                                                                         <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
                                                                             xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
                                                                                 <rect x="0" y="0" width="24"
                                                                                     height="24" />
                                                                                 <path
@@ -1917,8 +2315,8 @@
                                                                                     opacity="0.3" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                                                                                    x="11" y="2" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="2" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -1943,10 +2341,12 @@
                                                                             <a href="{{ url('/jibayaexport/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">إضافة صادر الجباية</span>
+                                                                                <span class="menu-text">إضافة صادر
+                                                                                    الجباية</span>
                                                                             </a>
                                                                         </li>
                                                                         <li class="menu-item" aria-haspopup="true">
@@ -1956,7 +2356,8 @@
                                                                                     <i class="flaticon-eye"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">عرض صادر الجباية</span>
+                                                                                <span class="menu-text">عرض صادر
+                                                                                    الجباية</span>
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1969,10 +2370,10 @@
                                                                         <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
                                                                             xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
                                                                                 <rect x="0" y="0" width="24"
                                                                                     height="24" />
                                                                                 <path
@@ -1981,8 +2382,8 @@
                                                                                     opacity="0.3" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                                                                                    x="11" y="2" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="2" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -2007,7 +2408,8 @@
                                                                             <a href="{{ url('/sendNotification/jibayaNot/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
                                                                                 <span class="menu-text">ارسال الجباية</span>
@@ -2038,8 +2440,9 @@
                                                 <a href="javascript:;" class="menu-link menu-toggle">
                                                     <span class="svg-icon menu-icon">
                                                         <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Bucket.svg-->
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                            height="16" fill="currentColor" class="bi bi-eye"
+                                                            viewBox="0 0 16 16">
                                                             <path
                                                                 d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
                                                             <path
@@ -2065,16 +2468,16 @@
                                                                     <span class="svg-icon menu-icon">
                                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
                                                                                 <rect x="0" y="0" width="24"
                                                                                     height="24" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 7.000000) rotate(-180.000000) translate(-12.000000, -7.000000) "
-                                                                                    x="11" y="1" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="1" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -2103,10 +2506,12 @@
                                                                             <a href="{{ url('/censorship/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">إضافة وارد الرقابة</span>
+                                                                                <span class="menu-text">إضافة وارد
+                                                                                    الرقابة</span>
                                                                             </a>
                                                                         </li>
                                                                         <li class="menu-item" aria-haspopup="true">
@@ -2116,7 +2521,8 @@
                                                                                     <i class="flaticon-eye"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">عرض وارد الرقابة</span>
+                                                                                <span class="menu-text">عرض وارد
+                                                                                    الرقابة</span>
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -2129,10 +2535,10 @@
                                                                         <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
                                                                             xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
                                                                                 <rect x="0" y="0" width="24"
                                                                                     height="24" />
                                                                                 <path
@@ -2141,8 +2547,8 @@
                                                                                     opacity="0.3" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                                                                                    x="11" y="2" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="2" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -2167,10 +2573,12 @@
                                                                             <a href="{{ url('/censorshipExport/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">إضافة صادر الرقابة</span>
+                                                                                <span class="menu-text">إضافة صادر
+                                                                                    الرقابة</span>
                                                                             </a>
                                                                         </li>
                                                                         <li class="menu-item" aria-haspopup="true">
@@ -2180,7 +2588,8 @@
                                                                                     <i class="flaticon-eye"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
-                                                                                <span class="menu-text">عرض صادر الرقابة</span>
+                                                                                <span class="menu-text">عرض صادر
+                                                                                    الرقابة</span>
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -2193,10 +2602,10 @@
                                                                         <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
                                                                             xmlns="http://www.w3.org/2000/svg"
                                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
+                                                                            width="24px" height="24px"
+                                                                            viewBox="0 0 24 24" version="1.1">
+                                                                            <g stroke="none" stroke-width="1"
+                                                                                fill="none" fill-rule="evenodd">
                                                                                 <rect x="0" y="0" width="24"
                                                                                     height="24" />
                                                                                 <path
@@ -2205,8 +2614,8 @@
                                                                                     opacity="0.3" />
                                                                                 <rect fill="#000000" opacity="0.3"
                                                                                     transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                                                                                    x="11" y="2" width="2" height="12"
-                                                                                    rx="1" />
+                                                                                    x="11" y="2" width="2"
+                                                                                    height="12" rx="1" />
                                                                                 <path
                                                                                     d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
                                                                                     fill="#000000" fill-rule="nonzero"
@@ -2231,7 +2640,8 @@
                                                                             <a href="{{ url('/sendNotification/censorshipNot/create') }}"
                                                                                 class="menu-link">
                                                                                 <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
+                                                                                    <i
+                                                                                        class="flaticon-add-circular-button"></i>
                                                                                     <!--end::Svg Icon-->
                                                                                 </span>
                                                                                 <span class="menu-text">ارسال الرقابة</span>
@@ -2261,377 +2671,6 @@
                             </div>
                         </li>
                     @endcan
-                    
-                                        @canany(['diesels-read', 'diesels-manager'])
-                        <li class="menu-section">
-                            <h4 class="menu-text">المحروقات والسولار</h4>
-                            <i class="menu-icon ki ki-bold-more-hor icon-md"></i>
-                        </li>
-                                        
-                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
-                                                <a href="javascript:;" class="menu-link menu-toggle">
-                                                    <span class="svg-icon menu-icon">
-                                                        <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Bucket.svg-->
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" class="bi bi-fuel-pump-diesel" viewBox="0 0 16 16">
-                                                            <path
-                                                                d="M3.5 2a.5.5 0 0 0-.5.5v5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-5a.5.5 0 0 0-.5-.5h-5ZM4 14V9h1.796c.5 0 .913.098 1.237.293.325.195.567.479.725.85.161.371.242.82.242 1.344 0 .528-.08.98-.242 1.355a1.805 1.805 0 0 1-.732.861c-.324.198-.734.297-1.23.297H4Zm1.666-4.194h-.692v3.385h.692c.229 0 .427-.035.595-.103a.986.986 0 0 0 .412-.315c.108-.142.188-.318.241-.528.056-.21.083-.456.083-.74 0-.376-.048-.69-.144-.94a1.11 1.11 0 0 0-.436-.569c-.195-.127-.445-.19-.75-.19Z" />
-                                                            <path
-                                                                d="M3 0a2 2 0 0 0-2 2v13H.5a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1H11v-4a1 1 0 0 1 1 1v.5a1.5 1.5 0 0 0 3 0V8h.5a.5.5 0 0 0 .5-.5V4.324c0-.616 0-1.426-.294-2.081a1.969 1.969 0 0 0-.794-.907C14.534 1.111 14.064 1 13.5 1a.5.5 0 0 0 0 1c.436 0 .716.086.9.195a.97.97 0 0 1 .394.458c.147.328.19.746.201 1.222H13.5a.5.5 0 0 0-.5.5V7.5a.5.5 0 0 0 .5.5h.5v4.5a.5.5 0 0 1-1 0V12a2 2 0 0 0-2-2V2a2 2 0 0 0-2-2H3Zm7 2v13H2V2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1Z" />
-                                                        </svg>
-                                                        <!--end::Svg Icon-->
-                                                    </span>
-                                                    <span class="menu-text">المحروقات</span>
-                                                    <i class="menu-arrow"></i>
-                                                </a>
-                                                <div class="menu-submenu">
-                                                    <i class="menu-arrow"></i>
-                                                    <ul class="menu-subnav">
-                                                        <li class="menu-item menu-item-parent" aria-haspopup="true">
-                                                            <span class="menu-link">
-                                                                <span class="menu-text">المحروقات</span>
-                                                            </span>
-                                                        </li>
-
-                                                        <ul class="menu-subnav">
-
-                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
-                                                                data-menu-toggle="hover">
-                                                                <a href="javascript:;" class="menu-link menu-toggle">
-                                                                    <span class="svg-icon menu-icon">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                                            xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
-                                                                                <rect x="0" y="0" width="24" height="24">
-                                                                                </rect>
-                                                                                <rect fill="#000000" opacity="0.3"
-                                                                                    transform="translate(12.000000, 7.000000) rotate(-180.000000) translate(-12.000000, -7.000000) "
-                                                                                    x="11" y="1" width="2" height="12"
-                                                                                    rx="1"></rect>
-                                                                                <path
-                                                                                    d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
-                                                                                    fill="#000000" fill-rule="nonzero"
-                                                                                    opacity="0.3"></path>
-                                                                                <path
-                                                                                    d="M14.2928932,10.2928932 C14.6834175,9.90236893 15.3165825,9.90236893 15.7071068,10.2928932 C16.0976311,10.6834175 16.0976311,11.3165825 15.7071068,11.7071068 L12.7071068,14.7071068 C12.3165825,15.0976311 11.6834175,15.0976311 11.2928932,14.7071068 L8.29289322,11.7071068 C7.90236893,11.3165825 7.90236893,10.6834175 8.29289322,10.2928932 C8.68341751,9.90236893 9.31658249,9.90236893 9.70710678,10.2928932 L12,12.5857864 L14.2928932,10.2928932 Z"
-                                                                                    fill="#000000" fill-rule="nonzero"></path>
-                                                                            </g>
-                                                                        </svg>
-                                                                    </span>
-                                                                    <span class="menu-text"> الوارد</span>
-                                                                    <i class="menu-arrow"></i>
-                                                                </a>
-                                                                <div class="menu-submenu">
-                                                                    <i class="menu-arrow"></i>
-                                                                    <ul class="menu-subnav">
-                                                                        <li class="menu-item menu-item-parent"
-                                                                            aria-haspopup="true">
-                                                                            <span class="menu-link">
-                                                                                <span class="menu-text"> الوارد</span>
-                                                                            </span>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('diesel.create') }}"
-                                                                                class="menu-link">
-                                                                                <span class="svg-icon menu-icon">
-                                                                                    <i
-                                                                                        class="menu-bullet flaticon-add-circular-button"></i>
-                                                                                </span>
-
-                                                                                <span class="menu-text">إضافة وارد
-                                                                                    المحروقات</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('diesel.index') }}"
-                                                                                class="menu-link">
-                                                                                <span class="svg-icon menu-icon">
-                                                                                    <i class="menu-bullet flaticon-eye"></i>
-                                                                                </span>
-                                                                                <span class="menu-text">عرض وارد
-                                                                                    المحروقات</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('diesel.report') }}"
-                                                                                class="menu-link">
-                                                                                <span class="svg-icon menu-icon">
-                                                                                    <i class="menu-bullet flaticon-graphic"></i>
-                                                                                </span>
-                                                                                <span class="menu-text">تقارير
-                                                                                    الوارد</span>
-                                                                            </a>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </li>
-                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
-                                                                data-menu-toggle="hover">
-                                                                <a href="javascript:;" class="menu-link menu-toggle">
-                                                                    <span class="svg-icon menu-icon">
-                                                                        <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                            xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
-                                                                                <rect x="0" y="0" width="24" height="24" />
-                                                                                <path
-                                                                                    d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
-                                                                                    fill="#000000" fill-rule="nonzero"
-                                                                                    opacity="0.3" />
-                                                                                <rect fill="#000000" opacity="0.3"
-                                                                                    transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                                                                                    x="11" y="2" width="2" height="12"
-                                                                                    rx="1" />
-                                                                                <path
-                                                                                    d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
-                                                                                    fill="#000000" fill-rule="nonzero"
-                                                                                    transform="translate(12.000000, 2.500000) scale(1, -1) translate(-12.000000, -2.500000) " />
-                                                                            </g>
-                                                                        </svg>
-                                                                    </span>
-                                                                    <span class="menu-text"> الصادر</span>
-                                                                    <i class="menu-arrow"></i>
-                                                                </a>
-                                                                <div class="menu-submenu">
-                                                                    <i class="menu-arrow"></i>
-                                                                    <ul class="menu-subnav">
-                                                                        <li class="menu-item menu-item-parent"
-                                                                            aria-haspopup="true">
-                                                                            <span class="menu-link">
-                                                                                <span class="menu-text"> الصادر</span>
-                                                                            </span>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('dieselexport.create') }}"
-                                                                                class="menu-link">
-                                                                                <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-add-circular-button"></i>
-                                                                                    <!--end::Svg Icon-->
-                                                                                </span>
-                                                                                <span class="menu-text">إضافة صادر
-                                                                                    المحروقات</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('dieselexport.index') }}"
-                                                                                class="menu-link">
-                                                                                <span class="svg-icon menu-icon">
-                                                                                    <i class="flaticon-eye"></i>
-                                                                                    <!--end::Svg Icon-->
-                                                                                </span>
-                                                                                <span class="menu-text">عرض صادر
-                                                                                    المحروقات</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="menu-item" aria-haspopup="true">
-                                                                            <a href="{{ route('dieselexport.report') }}"
-                                                                                class="menu-link">
-                                                                                <span class="svg-icon menu-icon">
-                                                                                    <i class="menu-bullet flaticon-graphic"></i>
-                                                                                </span>
-                                                                                <span class="menu-text">تقارير
-                                                                                    الصادر</span>
-                                                                            </a>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </li>
-                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
-                                                                data-menu-toggle="hover">
-                                                                <a href="javascript:;" class="menu-link menu-toggle">
-                                                                    <span class="svg-icon menu-icon">
-                                                                        <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Bucket.svg-->
-                                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                                            xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                            width="24px" height="24px" viewBox="0 0 24 24"
-                                                                            version="1.1">
-                                                                            <g stroke="none" stroke-width="1" fill="none"
-                                                                                fill-rule="evenodd">
-                                                                                <polygon points="0 0 24 0 24 24 0 24" />
-                                                                                <path
-                                                                                    d="M4.85714286,1 L11.7364114,1 C12.0910962,1 12.4343066,1.12568431 12.7051108,1.35473959 L17.4686994,5.3839416 C17.8056532,5.66894833 18,6.08787823 18,6.52920201 L18,19.0833333 C18,20.8738751 17.9795521,21 16.1428571,21 L4.85714286,21 C3.02044787,21 3,20.8738751 3,19.0833333 L3,2.91666667 C3,1.12612489 3.02044787,1 4.85714286,1 Z M8,12 C7.44771525,12 7,12.4477153 7,13 C7,13.5522847 7.44771525,14 8,14 L15,14 C15.5522847,14 16,13.5522847 16,13 C16,12.4477153 15.5522847,12 15,12 L8,12 Z M8,16 C7.44771525,16 7,16.4477153 7,17 C7,17.5522847 7.44771525,18 8,18 L11,18 C11.5522847,18 12,17.5522847 12,17 C12,16.4477153 11.5522847,16 11,16 L8,16 Z"
-                                                                                    fill="#000000" fill-rule="nonzero"
-                                                                                    opacity="0.3" />
-                                                                                <path
-                                                                                    d="M6.85714286,3 L14.7364114,3 C15.0910962,3 15.4343066,3.12568431 15.7051108,3.35473959 L20.4686994,7.3839416 C20.8056532,7.66894833 21,8.08787823 21,8.52920201 L21,21.0833333 C21,22.8738751 20.9795521,23 19.1428571,23 L6.85714286,23 C5.02044787,23 5,22.8738751 5,21.0833333 L5,4.91666667 C5,3.12612489 5.02044787,3 6.85714286,3 Z M8,12 C7.44771525,12 7,12.4477153 7,13 C7,13.5522847 7.44771525,14 8,14 L15,14 C15.5522847,14 16,13.5522847 16,13 C16,12.4477153 15.5522847,12 15,12 L8,12 Z M8,16 C7.44771525,16 7,16.4477153 7,17 C7,17.5522847 7.44771525,18 8,18 L11,18 C11.5522847,18 12,17.5522847 12,17 C12,16.4477153 11.5522847,16 11,16 L8,16 Z"
-                                                                                    fill="#000000" fill-rule="nonzero" />
-                                                                            </g>
-                                                                        </svg>
-                                                                        <!--end::Svg Icon-->
-                                                                    </span>
-                                                                    <span class="menu-text">الملف التاريخي</span>
-                                                                    <i class="menu-arrow"></i>
-                                                                </a>
-                                                                <div class="menu-submenu">
-                                                                    <i class="menu-arrow"></i>
-                                                                    <ul class="menu-subnav">
-                                                                        <li class="menu-item menu-item-parent"
-                                                                            aria-haspopup="true">
-                                                                            <span class="menu-link">
-                                                                                <span class="menu-text">الملف
-                                                                                    التاريخي</span>
-                                                                            </span>
-                                                                        </li>
-                                                                        <ul class="menu-subnav">
-                                                                            <li class="menu-item menu-item-submenu"
-                                                                                aria-haspopup="true" data-menu-toggle="hover">
-                                                                                <a href="javascript:;"
-                                                                                    class="menu-link menu-toggle">
-                                                                                    <span class="svg-icon menu-icon">
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                            xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                                            width="24px" height="24px"
-                                                                                            viewBox="0 0 24 24" version="1.1">
-                                                                                            <g stroke="none" stroke-width="1"
-                                                                                                fill="none"
-                                                                                                fill-rule="evenodd">
-                                                                                                <rect x="0" y="0" width="24"
-                                                                                                    height="24" />
-                                                                                                <rect fill="#000000"
-                                                                                                    opacity="0.3"
-                                                                                                    transform="translate(12.000000, 7.000000) rotate(-180.000000) translate(-12.000000, -7.000000) "
-                                                                                                    x="11" y="1" width="2"
-                                                                                                    height="12"
-                                                                                                    rx="1" />
-                                                                                                <path
-                                                                                                    d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
-                                                                                                    fill="#000000"
-                                                                                                    fill-rule="nonzero"
-                                                                                                    opacity="0.3" />
-                                                                                                <path
-                                                                                                    d="M14.2928932,10.2928932 C14.6834175,9.90236893 15.3165825,9.90236893 15.7071068,10.2928932 C16.0976311,10.6834175 16.0976311,11.3165825 15.7071068,11.7071068 L12.7071068,14.7071068 C12.3165825,15.0976311 11.6834175,15.0976311 11.2928932,14.7071068 L8.29289322,11.7071068 C7.90236893,11.3165825 7.90236893,10.6834175 8.29289322,10.2928932 C8.68341751,9.90236893 9.31658249,9.90236893 9.70710678,10.2928932 L12,12.5857864 L14.2928932,10.2928932 Z"
-                                                                                                    fill="#000000"
-                                                                                                    fill-rule="nonzero" />
-                                                                                            </g>
-                                                                                        </svg>
-                                                                                        <!--end::Svg Icon-->
-                                                                                    </span>
-                                                                                    <!--end::Svg Icon-->
-                                                                                    <span class="menu-text">
-                                                                                        الوارد</span>
-                                                                                    <i class="menu-arrow"></i>
-                                                                                </a>
-                                                                                <div class="menu-submenu">
-                                                                                    <i class="menu-arrow"></i>
-                                                                                    <ul class="menu-subnav">
-                                                                                        <li class="menu-item menu-item-parent"
-                                                                                            aria-haspopup="true">
-                                                                                            <span class="menu-link">
-                                                                                                <span class="menu-text">
-                                                                                                    الوارد</span>
-                                                                                            </span>
-                                                                                        </li>
-                                                                                        <li class="menu-item"
-                                                                                            aria-haspopup="true">
-                                                                                            <a href="{{ route('historical.waredindex') }}"
-                                                                                                class="menu-link">
-                                                                                                <i
-                                                                                                    class="menu-bullet menu-bullet-dot">
-                                                                                                    <span></span>
-                                                                                                </i>
-                                                                                                <span class="menu-text">عرض
-                                                                                                    الملف
-                                                                                                    التاريخي
-                                                                                                    للوارد</span>
-                                                                                            </a>
-                                                                                        </li>
-                                                                                    </ul>
-                                                                                </div>
-                                                                            </li>
-                                                                            <li class="menu-item menu-item-submenu"
-                                                                                aria-haspopup="true" data-menu-toggle="hover">
-                                                                                <a href="javascript:;"
-                                                                                    class="menu-link menu-toggle">
-                                                                                    <span class="svg-icon menu-icon">
-                                                                                        <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo4/dist/../src/media/svg/icons/Files/Export.svg--><svg
-                                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                                            xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                                            width="24px" height="24px"
-                                                                                            viewBox="0 0 24 24" version="1.1">
-                                                                                            <g stroke="none" stroke-width="1"
-                                                                                                fill="none"
-                                                                                                fill-rule="evenodd">
-                                                                                                <rect x="0" y="0" width="24"
-                                                                                                    height="24" />
-                                                                                                <path
-                                                                                                    d="M17,8 C16.4477153,8 16,7.55228475 16,7 C16,6.44771525 16.4477153,6 17,6 L18,6 C20.209139,6 22,7.790861 22,10 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 L2,9.99305689 C2,7.7839179 3.790861,5.99305689 6,5.99305689 L7.00000482,5.99305689 C7.55228957,5.99305689 8.00000482,6.44077214 8.00000482,6.99305689 C8.00000482,7.54534164 7.55228957,7.99305689 7.00000482,7.99305689 L6,7.99305689 C4.8954305,7.99305689 4,8.88848739 4,9.99305689 L4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,10 C20,8.8954305 19.1045695,8 18,8 L17,8 Z"
-                                                                                                    fill="#000000"
-                                                                                                    fill-rule="nonzero"
-                                                                                                    opacity="0.3" />
-                                                                                                <rect fill="#000000"
-                                                                                                    opacity="0.3"
-                                                                                                    transform="translate(12.000000, 8.000000) scale(1, -1) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                                                                                                    x="11" y="2" width="2"
-                                                                                                    height="12"
-                                                                                                    rx="1" />
-                                                                                                <path
-                                                                                                    d="M12,2.58578644 L14.2928932,0.292893219 C14.6834175,-0.0976310729 15.3165825,-0.0976310729 15.7071068,0.292893219 C16.0976311,0.683417511 16.0976311,1.31658249 15.7071068,1.70710678 L12.7071068,4.70710678 C12.3165825,5.09763107 11.6834175,5.09763107 11.2928932,4.70710678 L8.29289322,1.70710678 C7.90236893,1.31658249 7.90236893,0.683417511 8.29289322,0.292893219 C8.68341751,-0.0976310729 9.31658249,-0.0976310729 9.70710678,0.292893219 L12,2.58578644 Z"
-                                                                                                    fill="#000000"
-                                                                                                    fill-rule="nonzero"
-                                                                                                    transform="translate(12.000000, 2.500000) scale(1, -1) translate(-12.000000, -2.500000) " />
-                                                                                            </g>
-                                                                                        </svg>
-                                                                                        <!--end::Svg Icon-->
-                                                                                    </span>
-                                                                                    <span class="menu-text">
-                                                                                        الصادر</span>
-                                                                                    <i class="menu-arrow"></i>
-                                                                                </a>
-                                                                                <div class="menu-submenu">
-                                                                                    <i class="menu-arrow"></i>
-                                                                                    <ul class="menu-subnav">
-                                                                                        <li class="menu-item menu-item-parent"
-                                                                                            aria-haspopup="true">
-                                                                                            <span class="menu-link">
-                                                                                                <span class="menu-text">
-                                                                                                    الصادر</span>
-                                                                                            </span>
-                                                                                        </li>
-                                                                                        <li class="menu-item"
-                                                                                            aria-haspopup="true">
-                                                                                            <a href="{{ route('historical.exportindex') }}"
-                                                                                                class="menu-link">
-                                                                                                <i
-                                                                                                    class="menu-bullet menu-bullet-dot">
-                                                                                                    <span></span>
-                                                                                                </i>
-                                                                                                <span class="menu-text">عرض
-                                                                                                    الملف
-                                                                                                    التاريخي
-                                                                                                    للصادر</span>
-                                                                                            </a>
-                                                                                        </li>
-                                                                                    </ul>
-                                                                                </div>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </ul>
-                                                                </div>
-                                                            </li>
-                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"><a
-                                                                    href="{{ route('TypesFuel.index') }}" class="menu-link "><i
-                                                                        class="menu-bullet menu-bullet-dot"><span></span></i><span
-                                                                        class="menu-text">أنواع المحروقات</span></a>
-                                                            </li>
-                                                                                                                                @foreach ($sidebarFuelTypes ?? [] as $sidebarFuelType)
-                                                                                                                                    <li class="menu-item" aria-haspopup="true">
-                                                                                                                                        <a href="{{ route('diesel.transactions', $sidebarFuelType->id) }}" class="menu-link">
-                                                                                                                                            <i class="menu-bullet menu-bullet-dot"><span></span></i>
-                                                                                                                                            <span class="menu-text">حركة الوارد والصادر - {{ $sidebarFuelType->name }}</span>
-                                                                                                                                        </a>
-                                                                                                                                    </li>
-                                                                                                                                @endforeach
-                                                        </ul>
-                                                    </ul>
-                                                </div>
-                                            </li>
-                    @endcanany
                     
                     @can('HR')
 
@@ -2840,11 +2879,11 @@
                 // Add 'active' to the clicked item
                 $(this).closest('.menu-item').addClass('active');
 
-            // Open submenu if it is a submenu link
-            if ($(this).closest('.menu-item').hasClass('menu-item-submenu')) {
-                $(this).closest('.menu-item').addClass('open');
-                $(this).closest('.menu-item').children('.menu-submenu').show();
-            }
+                // Open submenu if it is a submenu link
+                if ($(this).closest('.menu-item').hasClass('menu-item-submenu')) {
+                    $(this).closest('.menu-item').addClass('open');
+                    $(this).closest('.menu-item').children('.menu-submenu').show();
+                }
+            });
         });
-    });
-</script>
+    </script>
