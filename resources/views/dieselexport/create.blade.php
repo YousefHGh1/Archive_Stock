@@ -156,6 +156,16 @@
         #quickAddDieselRecipientModal {
             z-index: 1100 !important;
         }
+
+        /* إصلاح z-index للمودل الدائرة */
+        #quickAddSectionModal {
+            z-index: 1100 !important;
+        }
+
+        /* إصلاح z-index للمودل القسم */
+        #quickAddSubSectionModal {
+            z-index: 1100 !important;
+        }
     </style>
 @endsection
 
@@ -205,34 +215,60 @@
                                 <div class="row">
                                     <div class="col-md-4 form-group">
                                         <label for="section_id">الدائرة</label>
-                                        <select name="section_id" id="section_id"
-                                            class="@error('section_id') is-invalid @enderror form-control selectpicker"
-                                            data-size="7" data-live-search="true">
-                                            <option value="">اختر الدائرة</option>
-                                            @foreach ($section as $sections)
-                                                <option value="{{ $sections->id }}"
-                                                    {{ old('section_id') == $sections->id ? 'selected' : '' }}>
-                                                    {{ $sections->name_section }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        <div class="input-group">
+                                            <div class="flex-grow-1">
+                                                <div class="dropdown bootstrap-select form-control dropup">
+                                                    <select name="section_id" id="section_id"
+                                                        class="@error('section_id') is-invalid @enderror form-control selectpicker"
+                                                        data-size="7" data-live-search="true">
+                                                        <option value="">اختر الدائرة</option>
+                                                        @foreach ($section as $sections)
+                                                            <option value="{{ $sections->id }}"
+                                                                {{ old('section_id') == $sections->id ? 'selected' : '' }}>
+                                                                {{ $sections->name_section }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-primary" title="إضافة دائرة"
+                                                    aria-label="إضافة دائرة" data-toggle="modal"
+                                                    data-target="#quickAddSectionModal">
+                                                    <i class="ki ki-solid-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                         @error('section_id')
                                             <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
                                     <div class="col-md-4 form-group">
                                         <label for="sub_section_id">القسم</label>
-                                        <select name="sub_section_id" id="sub_section_id"
-                                            class="@error('sub_section_id') is-invalid @enderror form-control"
-                                            data-size="7" data-live-search="true">
-                                            <option value="">اختر القسم</option>
-                                            @foreach ($subSection as $subSections)
-                                                <option value="{{ $subSections->id }}"
-                                                    {{ old('sub_section_id') == $subSections->id ? 'selected' : '' }}>
-                                                    {{ $subSections->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        <div class="input-group">
+                                            <div class="flex-grow-1">
+                                                <div class="dropdown bootstrap-select form-control dropup">
+                                                    <select name="sub_section_id" id="sub_section_id"
+                                                        class="@error('sub_section_id') is-invalid @enderror form-control"
+                                                        data-size="7" data-live-search="true">
+                                                        <option value="">اختر القسم</option>
+                                                        @foreach ($subSection as $subSections)
+                                                            <option value="{{ $subSections->id }}"
+                                                                {{ old('sub_section_id') == $subSections->id ? 'selected' : '' }}>
+                                                                {{ $subSections->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-primary" title="إضافة قسم"
+                                                    aria-label="إضافة قسم" data-toggle="modal"
+                                                    data-target="#quickAddSubSectionModal">
+                                                    <i class="ki ki-solid-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                         @error('sub_section_id')
                                             <span class="text-sm text-danger">{{ $message }}</span>
                                         @enderror
@@ -415,6 +451,81 @@
 
 <!-- Quick-add modals -->
 
+<!-- Section quick-add modal -->
+<div class="modal fade quick-add-modal" id="quickAddSectionModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title quick-add-heading">إضافة دائرة</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="quick-add-context">سيتم اختيار الدائرة تلقائياً بعد الإضافة.</p>
+                <form action="{{ route('section.store') }}" method="POST" data-ajax-quick-add data-entity="section">
+                    @csrf
+                    <div data-form-error class="alert alert-danger"></div>
+
+                    <div class="form-group">
+                        <label>اسم الدائرة</label>
+                        <input type="text" name="name_section" class="form-control" required minlength="2" maxlength="255" />
+                        <div data-field-error="name_section" class="text-danger"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" data-submit-label="حفظ">حفظ</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SubSection quick-add modal -->
+<div class="modal fade quick-add-modal" id="quickAddSubSectionModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title quick-add-heading">إضافة قسم</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="quick-add-context">سيتم اختيار القسم تلقائياً بعد الإضافة.</p>
+                <form action="{{ route('subSection.store') }}" method="POST" data-ajax-quick-add data-entity="sub_section">
+                    @csrf
+                    <div data-form-error class="alert alert-danger"></div>
+
+                    <div class="form-group">
+                        <label>الدائرة</label>
+                        <select name="section_id" class="form-control selectpicker" data-live-search="true" required>
+                            <option value="">اختر الدائرة</option>
+                            @foreach ($section as $sections)
+                                <option value="{{ $sections->id }}">{{ $sections->name_section }}</option>
+                            @endforeach
+                        </select>
+                        <div data-field-error="section_id" class="text-danger"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>اسم القسم</label>
+                        <input type="text" name="name" class="form-control" required minlength="2" maxlength="255" />
+                        <div data-field-error="name" class="text-danger"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" data-submit-label="حفظ">حفظ</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- TypesFuel quick-add modal -->
 <div class="modal fade quick-add-modal" id="quickAddTypesFuelModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -554,6 +665,12 @@
                     }
                     if (entityType === 'diesel_recipient') {
                         addOption('#num_section', entity.id, entity.name);
+                    }
+                    if (entityType === 'section') {
+                        addOption('#section_id', entity.id, entity.name_section);
+                    }
+                    if (entityType === 'sub_section') {
+                        addOption('#sub_section_id', entity.id, entity.name);
                     }
                     form.reset();
                     $form.closest('.modal').modal('hide');
