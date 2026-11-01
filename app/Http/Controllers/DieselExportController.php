@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Exports\DieselExportExport;
 use App\Http\Controllers\Concerns\CalculatesFuelBalances;
 use App\Http\Controllers\Concerns\ExportsCsv;
 use App\Models\Diesel;
@@ -11,6 +12,7 @@ use App\Models\SubSection;
 use App\Models\TypesFuel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DieselExportController extends Controller
 {
@@ -255,8 +257,16 @@ class DieselExportController extends Controller
             ->orderByDesc('date')
             ->orderByDesc('id');
 
-        // تصدير جميع النتائج المفلترة إلى ملف Excel (CSV)
+        // تصدير جميع النتائج المفلترة إلى ملف Excel (xlsx)
         if ($request->input('export') === 'excel') {
+            return Excel::download(
+                new DieselExportExport($query->get()),
+                'diesel-export-report-' . date('Y-m-d') . '.xlsx'
+            );
+        }
+
+        // تصدير جميع النتائج المفلترة إلى ملف CSV
+        if ($request->input('export') === 'csv') {
             return $this->exportReportCsv('diesel-export-report-' . date('Y-m-d') . '.csv', [
                 'نوع المحروقات', 'الدائرة', 'القسم الفرعي', 'رقم الإيصال', 'كمية الصادر', 'الجهة المستلمة', 'رقم الدفتر', 'تاريخ الصادر',
             ], $query->get()->map(function ($row) {

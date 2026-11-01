@@ -58,9 +58,19 @@
                 </div>
             </div>
             <div class="fr-hero-actions fr-no-print">
-                <a href="{{ request()->fullUrlWithQuery(['export' => 'excel', 'page' => null]) }}" class="btn">
-                    <i class="la la-file-excel"></i> تصدير Excel
-                </a>
+                <div class="dropdown">
+                    <button type="button" class="btn" data-toggle="dropdown">
+                        <i class="la la-download"></i> تصدير
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a href="{{ request()->fullUrlWithQuery(['export' => 'excel', 'page' => null]) }}" class="dropdown-item">
+                            <i class="la la-file-excel text-success"></i> تصدير Excel (.xlsx)
+                        </a>
+                        <a href="{{ request()->fullUrlWithQuery(['export' => 'csv', 'page' => null]) }}" class="dropdown-item">
+                            <i class="la la-file-csv text-primary"></i> تصدير CSV
+                        </a>
+                    </div>
+                </div>
                 <button type="button" class="btn" onclick="window.print()">
                     <i class="la la-print"></i> طباعة
                 </button>
