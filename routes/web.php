@@ -218,6 +218,7 @@ Route::prefix('inventory/')->middleware('auth')->group(function () {
     Route::get('invoice/skipped-vouchers', [InvoiceController::class, 'skippedVouchers'])->name('invoice.skipped-vouchers');
     Route::resource('invoice', InvoiceController::class);
     Route::get('invoice_export/skipped-vouchers', [InvoiceExportController::class, 'skippedVouchers'])->name('invoice_export.skipped-vouchers');
+    Route::get('invoice_export/next-voucher', [InvoiceExportController::class, 'getNextVoucher'])->name('invoice_export.next_voucher');
     Route::resource('invoice_export', InvoiceExportController::class);
     Route::resource('beneficiary', BeneficiaryController::class);
     Route::resource('custody', CustodyController::class);

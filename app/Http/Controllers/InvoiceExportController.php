@@ -85,6 +85,14 @@ class InvoiceExportController extends Controller
         ));
     }
 
+    public function getNextVoucher()
+    {
+        $lastVoucher  = DB::table('invoice_exports')->max(DB::raw('CAST(voucher_no AS UNSIGNED)'));
+        $newVoucherNo = $lastVoucher ? $lastVoucher + 1 : 1;
+
+        return response()->json(['voucher_no' => $newVoucherNo]);
+    }
+
     public function store(Request $request)
     {
         $skipVoucherNo = (bool) $request->input('skip_voucher_no');

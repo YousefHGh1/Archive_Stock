@@ -327,6 +327,8 @@
                     <form id="invoiceExportForm">
                         @csrf
                         <input type="hidden" name="invoice_export_id" id="invoice_export_id" value="">
+                        <input type="hidden" name="skip_voucher_no" id="skip_voucher_no" value="0">
+                        <input type="hidden" name="skip_reason" id="skip_reason" value="">
 
                         <div class="modal-section">
                             <div class="modal-section-title"><i class="la la-clipboard-list"></i> بيانات السند</div>
@@ -423,6 +425,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    @if (auth()->user()->hasRole('stock') || auth()->user()->hasRole('admin'))
+                        <button type="button" class="btn btn-warning" id="skipVoucherButton" onclick="submitSkipForm()">
+                            <i class="la la-step-forward"></i> تخطي رقم السند
+                        </button>
+                    @endif
                     <button type="button" class="btn btn-primary" id="saveInvoiceExportButton" onclick="saveInvoiceExport()">حفظ</button>
                 </div>
             </div>
@@ -749,26 +756,85 @@
             });
         }
 
-        function saveInvoiceExport() {
+        function submitSkipForm() {
+            // التحقق من تاريخ السند قبل التخطي
+            const voucherDate = document.getElementById('modal_voucher_date').value;
+            if (!voucherDate) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'يرجى إدخال تاريخ السند قبل التخطي',
+                    confirmButtonText: 'موافق'
+                });
+                return;
+            }
+
+            // إزالة required من الحقول الاختيارية قبل التخطي
+            document.getElementById('modal_subSection_id').removeAttribute('required');
+            document.getElementById('modal_beneficiary').removeAttribute('required');
+            document.getElementById('modal_invoice_no').removeAttribute('required');
+
+            Swal.fire({
+                title: 'سبب تخطي رقم السند',
+                input: 'textarea',
+                inputLabel: 'يرجى إدخال سبب التخطي',
+                inputPlaceholder: 'اكتب السبب هنا...',
+                inputAttributes: {
+                    'aria-label': 'اكتب السبب هنا',
+                    'maxlength': 500,
+                    'rows': 4
+                },
+                showCancelButton: true,
+                confirmButtonText: 'تأكيد التخطي',
+                cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#f1c40f',
+                cancelButtonColor: '#d33',
+                customClass: {
+                    input: 'text-right',
+                    inputLabel: 'text-right'
+                },
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'يرجى إدخال سبب التخطي!'
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('skip_voucher_no').value = '1';
+                    document.getElementById('skip_reason').value = result.value;
+                    saveInvoiceExport(true);
+                } else {
+                    // إعادة required للحقول عند الإلغاء
+                    document.getElementById('modal_subSection_id').setAttribute('required', 'required');
+                    document.getElementById('modal_beneficiary').setAttribute('required', 'required');
+                    document.getElementById('modal_invoice_no').setAttribute('required', 'required');
+                }
+            });
+        }
+
+        function saveInvoiceExport(skipMode = false) {
             const invoiceExportId = $('#invoice_export_id').val();
             const url = invoiceExportId ? "{{ route('invoice_export.update', ':id') }}".replace(':id', invoiceExportId) : "{{ route('invoice_export.store') }}";
 
             const products = [];
             const quantities = [];
 
-            $('#modal-products-table tbody tr').each(function() {
-                const productId = $(this).find('select.product-select').val();
-                const quantity = $(this).find('.quantity-input').val();
+            // في وضع التخطي، لا نطلب أصناف
+            if (!skipMode) {
+                $('#modal-products-table tbody tr').each(function() {
+                    const productId = $(this).find('select.product-select').val();
+                    const quantity = $(this).find('.quantity-input').val();
 
-                if (productId && quantity) {
-                    products.push(productId);
-                    quantities.push(quantity);
+                    if (productId && quantity) {
+                        products.push(productId);
+                        quantities.push(quantity);
+                    }
+                });
+
+                if (products.length === 0) {
+                    Swal.fire('تنبيه', 'يجب إضافة صنف واحد على الأقل', 'warning');
+                    return;
                 }
-            });
-
-            if (products.length === 0) {
-                Swal.fire('تنبيه', 'يجب إضافة صنف واحد على الأقل', 'warning');
-                return;
             }
 
             const formData = {
@@ -779,6 +845,8 @@
                 notes: $('#modal_notes').val(),
                 product: products,
                 quantity: quantities,
+                skip_voucher_no: $('#skip_voucher_no').val(),
+                skip_reason: $('#skip_reason').val(),
             };
 
             if (invoiceExportId) {
@@ -872,6 +940,19 @@
             }
             if (!$('#modal_voucher_date').val() && !$('#invoice_export_id').val()) {
                 $('#modal_voucher_date').val(new Date().toISOString().slice(0, 10));
+            }
+            // تحميل رقم السند التالي عند الإضافة
+            if (!$('#invoice_export_id').val()) {
+                $.ajax({
+                    url: "{{ route('invoice_export.next_voucher') }}",
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        if (data.voucher_no) {
+                            $('#modal_voucher_no').val(data.voucher_no);
+                        }
+                    }
+                });
             }
         });
 

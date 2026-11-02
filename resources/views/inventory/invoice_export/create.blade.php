@@ -164,7 +164,7 @@
                     <div class="form-grid">
 
                         <div>
-                            <label for="voucher_no" class="field-label">رقم أمر التوريد</label>
+                            <label for="voucher_no" class="field-label">رقم السند</label>
                             <input type="number" class="@error('voucher_no') is-invalid @enderror form-control"
                                 id="voucher_no" name="voucher_no" disabled
                                 value="{{ old('voucher_no', $newVoucherNo) }}">
@@ -331,8 +331,7 @@
                         <input type="number" step="0.01" id="total-quantity" class="form-control" readonly tabindex="-1" value="0">
                     </div>
                     <div class="action-buttons-bar">
-                        {{-- @if (auth()->user()->hasRole('admin')) --}}
-                        @if (auth()->user()->hasRole('Super-User'))
+                        @if (auth()->user()->hasRole('stock') || auth()->user()->hasRole('admin'))
                             <button type="button" class="btn-skip" onclick="submitSkipForm()">
                                 <i class="la la-step-forward"></i> تخطي رقم السند
                             </button>
