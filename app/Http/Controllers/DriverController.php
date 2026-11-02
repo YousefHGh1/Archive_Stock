@@ -43,7 +43,14 @@ class DriverController extends Controller
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
 
-        Driver::create($data);
+        $driver = Driver::create($data);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'id' => $driver->id,
+                'name' => $driver->name,
+            ], 201);
+        }
 
         return redirect()->route('drivers.index')->with('success', 'تمت إضافة السائق بنجاح.');
     }

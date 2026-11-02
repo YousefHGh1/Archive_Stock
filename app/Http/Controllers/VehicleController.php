@@ -55,7 +55,15 @@ class VehicleController extends Controller
 
         unset($data['image']);
 
-        Vehicle::create($data);
+        $vehicle = Vehicle::create($data);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'id' => $vehicle->id,
+                'plate_number' => $vehicle->plate_number,
+                'vehicle_type' => $vehicle->vehicle_type,
+            ], 201);
+        }
 
         return redirect()->route('vehicles.index')->with('success', 'تمت إضافة المركبة بنجاح.');
     }
