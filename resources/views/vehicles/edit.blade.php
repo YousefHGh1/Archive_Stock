@@ -6,10 +6,16 @@
 @csrf @method('PUT')
 <div class="row">
 <div class="form-group col-md-6"><label>نوع المركبة *</label><input name="vehicle_type" value="{{ old('vehicle_type',$vehicle->vehicle_type) }}" class="form-control" required></div>
-<div class="form-group col-md-6"><label>رقم المركبة *</label><input name="plate_number" value="{{ old('plate_number',$vehicle->plate_number) }}" class="form-control" required>@error('plate_number')<span class="text-danger">{{ $message }}</span>@enderror</div>
-<div class="form-group col-md-6"><label>رقم الشاصي *</label><input name="vin" value="{{ old('vin',$vehicle->vin) }}" class="form-control" required>@error('vin')<span class="text-danger">{{ $message }}</span>@enderror</div>
+<div class="form-group col-md-6"><label>رقم المركبة</label><input name="plate_number" value="{{ old('plate_number',$vehicle->plate_number) }}" class="form-control">@error('plate_number')<span class="text-danger">{{ $message }}</span>@enderror</div>
+<div class="form-group col-md-6"><label>رقم الشاصي</label><input name="vin" value="{{ old('vin',$vehicle->vin) }}" class="form-control">@error('vin')<span class="text-danger">{{ $message }}</span>@enderror</div>
 <div class="form-group col-md-6"><label>سنة الإنتاج</label><input type="number" name="manufacture_year" value="{{ old('manufacture_year',$vehicle->manufacture_year) }}" class="form-control"></div>
-<div class="form-group col-md-6"><label>اللون</label><input name="color" value="{{ old('color',$vehicle->color) }}" class="form-control"></div>
+@php
+    $color = old('color', $vehicle->color);
+    if (! preg_match('/^#[0-9A-Fa-f]{6}$/', $color ?? '')) {
+        $color = '#ffffff';
+    }
+@endphp
+<div class="form-group col-md-6"><label>اللون</label><input type="color" name="color" value="{{ $color }}" class="form-control form-control-color" title="اختر لون المركبة">@error('color')<span class="text-danger">{{ $message }}</span>@enderror</div>
 <div class="form-group col-md-6"><label>السائق</label><select name="driver_id" class="form-control"><option value="">اختر السائق (اختياري)</option>@foreach(\App\Models\Driver::where('is_active', true)->get() as $driver)<option value="{{ $driver->id }}" {{ old('driver_id', $vehicle->driver_id) == $driver->id ? 'selected' : '' }}>{{ $driver->name }}</option>@endforeach</select>@error('driver_id')<span class="text-danger">{{ $message }}</span>@enderror</div>
 <div class="form-group col-md-6"><label>صورة جديدة</label><input type="file" name="image" class="form-control" accept="image/*">@if($vehicle->image_path)<small>الصورة الحالية محفوظة</small>@endif</div>
 <div class="form-group col-md-6"><label>الحالة</label><select name="is_active" class="form-control"><option value="1" @selected($vehicle->is_active)>نشطة</option><option value="0" @selected(!$vehicle->is_active)>غير نشطة</option></select></div>

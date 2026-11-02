@@ -195,8 +195,8 @@ $('.quick-add-modal').on('hidden.bs.modal', function() {
                     <div data-form-error class="alert alert-danger"></div>
 
                     <div class="form-group">
-                        <label>رقم اللوحة *</label>
-                        <input type="text" name="plate_number" class="form-control" required minlength="2" maxlength="50" />
+                        <label>رقم اللوحة</label>
+                        <input type="text" name="plate_number" class="form-control" minlength="2" maxlength="50" />
                         <div data-field-error="plate_number" class="text-danger"></div>
                     </div>
 
