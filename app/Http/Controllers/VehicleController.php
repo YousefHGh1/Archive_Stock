@@ -34,6 +34,12 @@ class VehicleController extends Controller
             $query->where('is_active', $request->input('is_active'));
         }
 
+        // Return JSON for AJAX requests (allow for search functionality)
+        if ($request->expectsJson()) {
+            $vehicles = $query->with('driver')->orderByDesc('id')->get();
+            return response()->json(['data' => $vehicles]);
+        }
+
         $vehicles = $query->orderByDesc('id')->paginate(10);
 
         return view('vehicles.index', compact('vehicles'));
@@ -48,6 +54,7 @@ class VehicleController extends Controller
     {
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
+        $data['driver_id'] = $request->input('driver_id') ?: null;
 
         if ($request->hasFile('image')) {
             $data['image_path'] = $request->file('image')->store('vehicles', 'public');
@@ -87,6 +94,7 @@ class VehicleController extends Controller
         $vehicle = Vehicle::findOrFail($id);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active');
+        $data['driver_id'] = $request->input('driver_id') ?: null;
 
         if ($request->hasFile('image')) {
             if ($vehicle->image_path) {

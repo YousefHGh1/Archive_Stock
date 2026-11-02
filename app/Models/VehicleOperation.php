@@ -26,6 +26,7 @@ class VehicleOperation extends Model
         'vehicle_id',
         'driver_id',
         'diesel_export_id',
+        'invoice_export_id',
         'liters',
         'maintenance_cost',
         'operation_date',
@@ -53,6 +54,11 @@ class VehicleOperation extends Model
     public function dieselExport()
     {
         return $this->belongsTo(DieselExport::class);
+    }
+
+    public function invoiceExport()
+    {
+        return $this->belongsTo(InvoiceExport::class);
     }
 
     public function creator()

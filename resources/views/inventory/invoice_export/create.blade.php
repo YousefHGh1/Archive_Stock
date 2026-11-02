@@ -248,6 +248,66 @@
                 </div>
             </div>
 
+            <!-- Vehicle Linking (Optional) -->
+            <div class="form-card">
+                <div class="form-card-header">
+                    <h3 class="form-card-title"><i class="la la-car"></i> ربط بالمركبات (اختياري)</h3>
+                </div>
+                <div class="form-card-body">
+                    <div class="form-grid">
+                        <div class="span-all">
+                            <label class="field-label">
+                                <input type="checkbox" id="link_to_vehicle" name="link_to_vehicle" value="1" {{ old('link_to_vehicle') ? 'checked' : '' }}>
+                                ربط السند بعملية مركبة
+                            </label>
+                        </div>
+
+                        <div id="vehicle_fields" style="display: {{ old('link_to_vehicle') ? 'block' : 'none' }}; grid-column: 1 / -1;">
+                            <div class="form-grid">
+                                <div>
+                                    <label for="vehicle_event_type" class="field-label">نوع الحدث</label>
+                                    <select name="vehicle_event_type" class="form-control @error('vehicle_event_type') is-invalid @enderror">
+                                        <option value="">اختر نوع الحدث</option>
+                                        <option value="oil" {{ old('vehicle_event_type') == 'oil' ? 'selected' : '' }}>زيت</option>
+                                        <option value="recycled_oil" {{ old('vehicle_event_type') == 'recycled_oil' ? 'selected' : '' }}>أضف زيت مكرر</option>
+                                        <option value="maintenance" {{ old('vehicle_event_type') == 'maintenance' ? 'selected' : '' }}>صيانة</option>
+                                    </select>
+                                    @error('vehicle_event_type')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="vehicle_id" class="field-label">المركبة</label>
+                                    <select name="vehicle_id" class="form-control selectpicker @error('vehicle_id') is-invalid @enderror" data-live-search="true">
+                                        <option value="">اختر المركبة</option>
+                                        @foreach($vehicles as $v)
+                                            <option value="{{ $v->id }}" {{ old('vehicle_id') == $v->id ? 'selected' : '' }}>{{ $v->plate_number }} - {{ $v->vehicle_type }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('vehicle_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="driver_id" class="field-label">السائق</label>
+                                    <select name="driver_id" class="form-control selectpicker @error('driver_id') is-invalid @enderror" data-live-search="true">
+                                        <option value="">اختر السائق</option>
+                                        @foreach($drivers as $d)
+                                            <option value="{{ $d->id }}" {{ old('driver_id') == $d->id ? 'selected' : '' }}>{{ $d->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('driver_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Items -->
             <div class="form-card">
                 <div class="form-card-header">
@@ -564,6 +624,57 @@
 
     <script>
         $(document).ready(function() {
+            // إظهار/إخفاء حقول المركبة بناءً على checkbox
+            $('#link_to_vehicle').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#vehicle_fields').show();
+                } else {
+                    $('#vehicle_fields').hide();
+                }
+            });
+
+            // اختيار الصنف تلقائياً بناءً على نوع الحدث
+            $('select[name="vehicle_event_type"]').on('change', function() {
+                const eventType = $(this).val();
+                const productSelects = $('#products-table tbody select[name="product[]"]');
+
+                if (eventType === 'oil') {
+                    // البحث عن صنف زيت وتعطيل القائمة
+                    const oilOption = productSelects.first().find('option').filter(function() {
+                        return $(this).text().trim() === 'زيت' || $(this).text().includes('زيت');
+                    }).first();
+
+                    if (oilOption.length) {
+                        const oilId = oilOption.val();
+                        productSelects.each(function() {
+                            $(this).val(oilId).selectpicker('refresh');
+                            $(this).prop('disabled', true);
+                            $(this).closest('.bootstrap-select').addClass('disabled');
+                        });
+                    }
+                } else if (eventType === 'recycled_oil') {
+                    // البحث عن صنف زيت مكرر وتعطيل القائمة
+                    const recycledOilOption = productSelects.first().find('option').filter(function() {
+                        return $(this).text().includes('زيت مكرر') || $(this).text().includes('مكرر');
+                    }).first();
+
+                    if (recycledOilOption.length) {
+                        const oilId = recycledOilOption.val();
+                        productSelects.each(function() {
+                            $(this).val(oilId).selectpicker('refresh');
+                            $(this).prop('disabled', true);
+                            $(this).closest('.bootstrap-select').addClass('disabled');
+                        });
+                    }
+                } else {
+                    // إعادة تفعيل القائمة للخيارات الأخرى
+                    productSelects.each(function() {
+                        $(this).prop('disabled', false);
+                        $(this).closest('.bootstrap-select').removeClass('disabled');
+                    });
+                }
+            });
+
             // إبراز حقول selectpicker التي عليها خطأ بعد رجوع Laravel
             $('#products-table .product-row select.is-invalid').each(function() {
                 $(this).closest('td').find('.bootstrap-select > .dropdown-toggle').addClass('is-invalid');

@@ -31,4 +31,9 @@ class DieselExport extends Model
     {
         return $this->hasMany(VehicleOperation::class);
     }
+
+    public function vehicleOperation()
+    {
+        return $this->hasOne(VehicleOperation::class);
+    }
 }

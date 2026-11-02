@@ -40,6 +40,17 @@ class VehicleOperationValidationTest extends TestCase
         $this->assertTrue($v->fails());
     }
 
+    public function test_driver_is_optional(): void
+    {
+        $rules = $this->rules(['event_type' => 'diesel']);
+
+        $this->assertContains('nullable', $rules['driver_id']);
+        $this->assertNotContains('required', $rules['driver_id']);
+
+        $v = Validator::make(['driver_id' => null], ['driver_id' => $rules['driver_id']]);
+        $this->assertFalse($v->fails());
+    }
+
     public function test_event_types_map_to_arabic_labels(): void
     {
         $this->assertSame('سولار', VehicleOperation::TYPES['diesel']);

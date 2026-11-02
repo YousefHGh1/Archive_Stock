@@ -23,4 +23,9 @@ class Driver extends Model
     {
         return $this->hasMany(VehicleOperation::class);
     }
+
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class);
+    }
 }

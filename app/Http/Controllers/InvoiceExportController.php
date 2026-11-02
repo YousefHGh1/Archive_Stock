@@ -11,6 +11,9 @@ use App\Models\SubSection;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\Beneficiary;
+use App\Models\Vehicle;
+use App\Models\Driver;
+use App\Models\VehicleOperation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +57,11 @@ class InvoiceExportController extends Controller
         // المستلمون من جدول beneficiaries
         $beneficiaries = Beneficiary::where('is_active', true)->orderBy('name')->pluck('name', 'id');
 
-        return view('inventory.invoice_export.index', compact('invoice_exports', 'subSection', 'beneficiaries', 'categories', 'units', 'products'));
+        // المركبات والسائقين للربط بعمليات المركبات
+        $vehicles = Vehicle::where('is_active', true)->orderBy('plate_number')->get();
+        $drivers = Driver::where('is_active', true)->orderBy('name')->get();
+
+        return view('inventory.invoice_export.index', compact('invoice_exports', 'subSection', 'beneficiaries', 'categories', 'units', 'products', 'vehicles', 'drivers'));
     }
 
     public function create()
@@ -73,6 +80,10 @@ class InvoiceExportController extends Controller
         // المستلمون من جدول beneficiaries
         $beneficiaries = Beneficiary::where('is_active', true)->orderBy('name')->pluck('name', 'id');
 
+        // المركبات والسائقين للربط بعمليات المركبات
+        $vehicles = Vehicle::where('is_active', true)->orderBy('plate_number')->get();
+        $drivers = Driver::where('is_active', true)->orderBy('name')->get();
+
         return view('inventory.invoice_export.create', compact(
             'beneficiaries',
             'products',
@@ -81,7 +92,9 @@ class InvoiceExportController extends Controller
             'categories',
             'units',
             'user',
-            'newVoucherNo'
+            'newVoucherNo',
+            'vehicles',
+            'drivers'
         ));
     }
 
@@ -115,6 +128,9 @@ class InvoiceExportController extends Controller
                 'product.*'     => 'required|exists:items,id',
                 'quantity'      => 'required|array|min:1',
                 'quantity.*'    => 'required|numeric|min:0.1',
+                'vehicle_event_type' => 'nullable|in:oil,recycled_oil,maintenance',
+                'vehicle_id'    => 'nullable|exists:vehicles,id',
+                'driver_id'     => 'nullable|exists:drivers,id',
             ];
 
             $messages = [
@@ -157,6 +173,9 @@ class InvoiceExportController extends Controller
 
         $invoiceExport->skip_reason = $validatedData['skip_reason'] ?? null;
         $invoiceExport->notes = $validatedData['notes'] ?? null;
+        $invoiceExport->vehicle_event_type = $validatedData['vehicle_event_type'] ?? null;
+        $invoiceExport->vehicle_id = $validatedData['vehicle_id'] ?? null;
+        $invoiceExport->driver_id = $validatedData['driver_id'] ?? null;
 
         if ($skipVoucherNo) {
             $invoiceExport->save();
@@ -206,6 +225,35 @@ class InvoiceExportController extends Controller
                 $invoiceExport_product->save();
             }
         });
+
+        // إذا تم اختيار ربط المركبة، أنشئ عملية مركبة
+        if (!empty($invoiceExport->vehicle_event_type) && !empty($invoiceExport->vehicle_id) && !empty($invoiceExport->driver_id)) {
+            $vehicleOperation = new VehicleOperation();
+            $vehicleOperation->event_type = $invoiceExport->vehicle_event_type;
+            $vehicleOperation->vehicle_id = $invoiceExport->vehicle_id;
+            $vehicleOperation->driver_id = $invoiceExport->driver_id;
+            $vehicleOperation->invoice_export_id = $invoiceExport->id;
+            $vehicleOperation->operation_date = $invoiceExport->voucher_date;
+            $vehicleOperation->notes = $invoiceExport->notes;
+            $vehicleOperation->created_by = $request->user()->id ?? null;
+            $vehicleOperation->idempotency_key = \Illuminate\Support\Str::uuid()->toString();
+
+            // حساب اللترات من الأصناف (إذا كان نوع الحدث ليس صيانة)
+            if ($invoiceExport->vehicle_event_type !== 'maintenance') {
+                $totalLiters = 0;
+                foreach ($validatedData['product'] as $index => $productId) {
+                    $product = Item::findOrFail($productId);
+                    $quantity = $validatedData['quantity'][$index];
+                    // جمع الكمية - يمكن تحسينها لاحقاً حسب الوحدة
+                    $totalLiters += $quantity;
+                }
+                $vehicleOperation->liters = $totalLiters;
+            } else {
+                $vehicleOperation->liters = null;
+            }
+
+            $vehicleOperation->save();
+        }
 
         $request->user()->recordActivity(
             'قام بإضافة فاتورة صرف - سند رقم ' . $invoiceExport->voucher_no,
@@ -396,6 +444,11 @@ class InvoiceExportController extends Controller
                 $item           = Item::findOrFail($product->item_id);
                 $item->balance += $product->quantity;
                 $item->update();
+            }
+
+            // حذف العملية المرتبطة بسند الصرف إذا وجدت
+            if ($invoiceExport->vehicleOperation) {
+                $invoiceExport->vehicleOperation->delete();
             }
 
             // تحديث حالة الفاتورة وتمييزها كمحذوفة

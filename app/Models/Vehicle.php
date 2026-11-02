@@ -18,6 +18,7 @@ class Vehicle extends Model
         'image_path',
         'is_active',
         'notes',
+        'driver_id',
     ];
 
     protected $casts = [
@@ -28,5 +29,10 @@ class Vehicle extends Model
     public function operations()
     {
         return $this->hasMany(VehicleOperation::class);
+    }
+
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class);
     }
 }

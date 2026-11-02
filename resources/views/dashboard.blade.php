@@ -506,9 +506,9 @@
                                 </select>
                             </div>
                             <div class="form-group col-md-4">
-                                <label>السائق *</label>
-                                <select name="driver_id" class="form-control" required>
-                                    <option value="">اختر</option>
+                                <label>السائق</label>
+                                <select name="driver_id" class="form-control">
+                                    <option value="">بدون سائق</option>
                                     @foreach($drivers ?? [] as $d)
                                         <option value="{{ $d->id }}">{{ $d->name }}</option>
                                     @endforeach

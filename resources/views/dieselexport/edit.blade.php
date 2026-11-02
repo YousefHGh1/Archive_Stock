@@ -144,6 +144,9 @@
                                             </button>
                                         </div>
                                     </div>
+                                    <div id="vehicle-match-indicator" class="text-sm text-success mt-1" style="display: none;">
+                                        <i class="la la-check-circle"></i> سيتم تسجيل العملية للمركبة تلقائياً
+                                    </div>
                                 </div>
                                 <label for="num_note" class="col-lg-2 col-form-label text-lg-right">رقم الدفتر:</label>
                                 <div class="col-lg-3">
@@ -421,6 +424,39 @@
             }).always(function() {
                 $submit.prop('disabled', false).text(label);
             });
+        });
+
+        // الكشف عن المطابقة بين الجهة المستلمة والمركبات
+        $('#num_section').on('change', function() {
+            var selectedText = $(this).find('option:selected').text();
+            var $indicator = $('#vehicle-match-indicator');
+
+            if (selectedText && selectedText !== 'اختر الجهة المستلمة') {
+                // البحث عن المركبات التي تطابق الاسم
+                $.ajax({
+                    url: '{{ route('vehicles.index') }}',
+                    method: 'GET',
+                    dataType: 'json',
+                    data: { search: selectedText }
+                }).done(function(data) {
+                    if (data.data && data.data.length > 0) {
+                        var vehicle = data.data[0];
+                        var message = '<i class="la la-check-circle"></i> سيتم تسجيل العملية للمركبة تلقائياً: ' + vehicle.vehicle_type;
+                        if (vehicle.driver_id) {
+                            message += ' (السائق: سيتم اختياره تلقائياً)';
+                        } else {
+                            message += ' (بدون سائق)';
+                        }
+                        $indicator.html(message).show();
+                    } else {
+                        $indicator.hide();
+                    }
+                }).fail(function() {
+                    $indicator.hide();
+                });
+            } else {
+                $indicator.hide();
+            }
         });
     </script>
 @endsection

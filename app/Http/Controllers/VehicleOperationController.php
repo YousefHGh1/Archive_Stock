@@ -22,7 +22,7 @@ class VehicleOperationController extends Controller
 
     public function index(Request $request)
     {
-        $query = VehicleOperation::with(['vehicle', 'driver', 'dieselExport']);
+        $query = VehicleOperation::with(['vehicle', 'driver', 'dieselExport', 'invoiceExport']);
 
         if ($request->filled('vehicle_id')) {
             $query->where('vehicle_id', $request->input('vehicle_id'));
@@ -68,16 +68,18 @@ class VehicleOperationController extends Controller
         $data = $this->normalize($request->validated());
 
         $vehicle = Vehicle::findOrFail($data['vehicle_id']);
-        $driver = Driver::findOrFail($data['driver_id']);
+        $driver = ! empty($data['driver_id'])
+            ? Driver::findOrFail($data['driver_id'])
+            : null;
 
-        if (! $vehicle->is_active || ! $driver->is_active) {
+        if (! $vehicle->is_active || ($driver && ! $driver->is_active)) {
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'المركبة والسائق يجب أن يكونا نشطين.'
+                    'message' => 'المركبة، والسائق عند اختياره، يجب أن يكونا نشطين.'
                 ], 400);
             }
-            return back()->withInput()->with('warning', 'المركبة والسائق يجب أن يكونا نشطين.');
+            return back()->withInput()->with('warning', 'المركبة، والسائق عند اختياره، يجب أن يكونا نشطين.');
         }
 
         $data['created_by'] = $request->user()->id ?? null;
@@ -135,10 +137,12 @@ class VehicleOperationController extends Controller
         $data = $this->normalize($request->validated());
 
         $vehicle = Vehicle::findOrFail($data['vehicle_id']);
-        $driver = Driver::findOrFail($data['driver_id']);
+        $driver = ! empty($data['driver_id'])
+            ? Driver::findOrFail($data['driver_id'])
+            : null;
 
-        if (! $vehicle->is_active || ! $driver->is_active) {
-            return back()->withInput()->with('warning', 'المركبة والسائق يجب أن يكونا نشطين.');
+        if (! $vehicle->is_active || ($driver && ! $driver->is_active)) {
+            return back()->withInput()->with('warning', 'المركبة، والسائق عند اختياره، يجب أن يكونا نشطين.');
         }
 
         unset($data['idempotency_key']);
@@ -153,6 +157,11 @@ class VehicleOperationController extends Controller
     public function destroy($id)
     {
         $operation = VehicleOperation::findOrFail($id);
+
+        // التحقق من أن العملية ليست مرتبطة بسند صرف
+        if ($operation->invoiceExport) {
+            return redirect()->route('vehicle-operations.index')->with('error', 'لا يمكن حذف هذه العملية لأنها مرتبطة بسند صرف من المخازن. يجب حذف السند أولاً.');
+        }
 
         DB::transaction(function () use ($operation) {
             $operation->delete();

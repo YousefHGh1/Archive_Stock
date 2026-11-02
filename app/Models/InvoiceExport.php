@@ -10,7 +10,7 @@ class InvoiceExport extends Model
 {
     use HasFactory, SoftDeletes;
 
-    public $fillable = ['voucher_no', 'voucher_date', 'invoice_no', 'subSection_id','beneficiary', 'skip_reason', 'notes'];
+    public $fillable = ['voucher_no', 'voucher_date', 'invoice_no', 'subSection_id','beneficiary', 'skip_reason', 'notes', 'vehicle_event_type', 'vehicle_id', 'driver_id'];
 
     public function products()
     {
@@ -29,6 +29,20 @@ class InvoiceExport extends Model
         return $this->belongsTo(SubSection::class, 'subSection_id', 'id');
     }
 
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
+
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class);
+    }
+
+    public function vehicleOperation()
+    {
+        return $this->hasOne(VehicleOperation::class);
+    }
 
     public function item()
     {

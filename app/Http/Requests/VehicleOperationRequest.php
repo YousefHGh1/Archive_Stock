@@ -20,7 +20,7 @@ class VehicleOperationRequest extends FormRequest
         $rules = [
             'event_type' => ['required', Rule::in(array_keys(VehicleOperation::TYPES))],
             'vehicle_id' => ['required', 'integer', 'exists:vehicles,id'],
-            'driver_id' => ['required', 'integer', 'exists:drivers,id'],
+            'driver_id' => ['nullable', 'integer', 'exists:drivers,id'],
             'diesel_export_id' => ['nullable', 'integer', 'exists:diesel_exports,id'],
             'operation_date' => ['required', 'date'],
             'notes' => ['nullable', 'string', 'max:5000'],
@@ -48,7 +48,6 @@ class VehicleOperationRequest extends FormRequest
             'event_type.in' => 'نوع الحدث غير صالح.',
             'vehicle_id.required' => 'المركبة مطلوبة.',
             'vehicle_id.exists' => 'المركبة المختارة غير موجودة.',
-            'driver_id.required' => 'السائق مطلوب.',
             'driver_id.exists' => 'السائق المختار غير موجود.',
             'diesel_export_id.exists' => 'سند الصادر المختار غير موجود.',
             'liters.required' => 'كمية اللترات مطلوبة للسولار والزيت.',

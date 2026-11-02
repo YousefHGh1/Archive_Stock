@@ -270,7 +270,7 @@
                             <th width="6%">رقم الإيصال</th>
                             <th width="11%">اسم القسم</th>
                             <th width="11%">اسم المستلم</th>
-                            <th width="12%">ملاحظات</th>
+                            <!-- <th width="12%">ملاحظات</th> -->
                             <th width="35%">الأصناف</th>
                             <th width="13%">الإجراءات</th>
                         </tr>
@@ -283,7 +283,7 @@
                                 <td>{{ $invoice_export->invoice_no }}</td>
                                 <td>{{ $invoice_export->name }}</td>
                                 <td>{{ $invoice_export->beneficiary }}</td>
-                                <td>{{ $invoice_export->notes ?? '-' }}</td>
+                                <!-- <td>{{ $invoice_export->notes ?? '-' }}</td> -->
                                 <td>{!! $invoice_export->products !!}</td>
                                 <td data-field="Actions" data-autohide-disabled="false" aria-label="null" class="datatable-cell">
                                     <span class="action-group">
@@ -373,6 +373,49 @@
                                 <div class="span-all">
                                     <label for="modal_notes">ملاحظات</label>
                                     <textarea class="form-control" id="modal_notes" rows="2" maxlength="5000"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-section">
+                            <div class="modal-section-title"><i class="la la-car"></i> ربط بالمركبات (اختياري)</div>
+                            <div class="modal-grid">
+                                <div class="span-all">
+                                    <label>
+                                        <input type="checkbox" id="modal_link_to_vehicle" name="link_to_vehicle" value="1">
+                                        ربط السند بعملية مركبة
+                                    </label>
+                                </div>
+                                <div id="modal_vehicle_fields" style="display: none; grid-column: 1 / -1;">
+                                    <div class="modal-grid">
+                                        <div>
+                                            <label for="modal_vehicle_event_type">نوع الحدث</label>
+                                            <select name="vehicle_event_type" class="form-control" id="modal_vehicle_event_type">
+                                                <option value="">اختر نوع الحدث</option>
+                                                <option value="oil">زيت</option>
+                                                <option value="recycled_oil">أضف زيت مكرر</option>
+                                                <option value="maintenance">صيانة</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="modal_vehicle_id">المركبة</label>
+                                            <select name="vehicle_id" class="form-control selectpicker" id="modal_vehicle_id" data-live-search="true">
+                                                <option value="">اختر المركبة</option>
+                                                @foreach($vehicles as $v)
+                                                    <option value="{{ $v->id }}">{{ $v->plate_number }} - {{ $v->vehicle_type }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="modal_driver_id">السائق</label>
+                                            <select name="driver_id" class="form-control selectpicker" id="modal_driver_id" data-live-search="true">
+                                                <option value="">اختر السائق</option>
+                                                @foreach($drivers as $d)
+                                                    <option value="{{ $d->id }}">{{ $d->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -704,6 +747,11 @@
             $('#modal_voucher_date').val(new Date().toISOString().slice(0, 10));
             $('#modal_subSection_id').val('').selectpicker('refresh');
             $('#modal_beneficiary').val('').selectpicker('refresh');
+            $('#modal_vehicle_event_type').val('');
+            $('#modal_vehicle_id').val('').selectpicker('refresh');
+            $('#modal_driver_id').val('').selectpicker('refresh');
+            $('#modal_link_to_vehicle').prop('checked', false);
+            $('#modal_vehicle_fields').hide();
             $('#modal-products-table tbody').empty();
             addProductRow();
         }
@@ -844,6 +892,9 @@
                 quantity: quantities,
                 skip_voucher_no: $('#skip_voucher_no').val(),
                 skip_reason: $('#skip_reason').val(),
+                vehicle_event_type: $('#modal_vehicle_event_type').val(),
+                vehicle_id: $('#modal_vehicle_id').val(),
+                driver_id: $('#modal_driver_id').val(),
             };
 
             if (invoiceExportId) {
@@ -949,6 +1000,57 @@
                             $('#modal_voucher_no').val(data.voucher_no);
                         }
                     }
+                });
+            }
+        });
+
+        // إظهار/إخفاء حقول المركبة بناءً على checkbox في modal
+        $('#modal_link_to_vehicle').on('change', function() {
+            if ($(this).is(':checked')) {
+                $('#modal_vehicle_fields').show();
+            } else {
+                $('#modal_vehicle_fields').hide();
+            }
+        });
+
+        // اختيار الصنف تلقائياً بناءً على نوع الحدث في modal
+        $('#modal_vehicle_event_type').on('change', function() {
+            const eventType = $(this).val();
+            const productSelects = $('#modal-products-table tbody select.product-select');
+
+            if (eventType === 'oil') {
+                // البحث عن صنف زيت وتعطيل القائمة
+                const oilOption = productSelects.first().find('option').filter(function() {
+                    return $(this).text().trim() === 'زيت' || $(this).text().includes('زيت');
+                }).first();
+
+                if (oilOption.length) {
+                    const oilId = oilOption.val();
+                    productSelects.each(function() {
+                        $(this).val(oilId).selectpicker('refresh');
+                        $(this).prop('disabled', true);
+                        $(this).closest('.bootstrap-select').addClass('disabled');
+                    });
+                }
+            } else if (eventType === 'recycled_oil') {
+                // البحث عن صنف زيت مكرر وتعطيل القائمة
+                const recycledOilOption = productSelects.first().find('option').filter(function() {
+                    return $(this).text().includes('زيت مكرر') || $(this).text().includes('مكرر');
+                }).first();
+
+                if (recycledOilOption.length) {
+                    const oilId = recycledOilOption.val();
+                    productSelects.each(function() {
+                        $(this).val(oilId).selectpicker('refresh');
+                        $(this).prop('disabled', true);
+                        $(this).closest('.bootstrap-select').addClass('disabled');
+                    });
+                }
+            } else {
+                // إعادة تفعيل القائمة للخيارات الأخرى
+                productSelects.each(function() {
+                    $(this).prop('disabled', false);
+                    $(this).closest('.bootstrap-select').removeClass('disabled');
                 });
             }
         });

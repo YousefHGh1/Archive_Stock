@@ -10,6 +10,8 @@ use App\Models\DieselRecipient;
 use App\Models\Section;
 use App\Models\SubSection;
 use App\Models\TypesFuel;
+use App\Models\Vehicle;
+use App\Models\VehicleOperation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -111,7 +113,28 @@ class DieselExportController extends Controller
                 ->with('warning', "الرصيد المتبقي لنوع المحروقات المختار هو {$remainingBalance}، لا يمكن صرف {$validatedData['quantity']}");
         }
 
-        DieselExport::create($validatedData);
+        $dieselExport = DieselExport::create($validatedData);
+
+        // البحث عن مركبة يطابق اسمها مع اسم الجهة المستلمة
+        $recipientName = $validatedData['num_section'];
+        $vehicle = Vehicle::where('vehicle_type', 'like', '%' . $recipientName . '%')
+            ->orWhere('plate_number', 'like', '%' . $recipientName . '%')
+            ->first();
+
+        // إذا وجد تطابق، أنشئ عملية مركبة تلقائياً
+        if ($vehicle) {
+            $vehicleOperation = new VehicleOperation();
+            $vehicleOperation->event_type = 'diesel';
+            $vehicleOperation->vehicle_id = $vehicle->id;
+            $vehicleOperation->driver_id = $vehicle->driver_id; // السائق المرتبط بالمركبة
+            $vehicleOperation->diesel_export_id = $dieselExport->id;
+            $vehicleOperation->liters = $validatedData['quantity'];
+            $vehicleOperation->operation_date = $validatedData['date'];
+            $vehicleOperation->notes = $validatedData['notes'] ?? null;
+            $vehicleOperation->created_by = $request->user()->id ?? null;
+            $vehicleOperation->idempotency_key = \Illuminate\Support\Str::uuid()->toString();
+            $vehicleOperation->save();
+        }
 
         $request->user()->recordActivity(
             'قام بإضافة قيد صادر سولار - سند رقم ' . $validatedData['voucher'] . ' (الكمية: ' . $validatedData['quantity'] . ')',
@@ -211,6 +234,11 @@ class DieselExportController extends Controller
             return $request->expectsJson()
                 ? response()->json(['message' => $message], 404)
                 : redirect()->route('dieselexport.index')->with('error', $message);
+        }
+
+        // حذف العملية المرتبطة بسند الصرف إذا وجدت
+        if ($dieselexport->vehicleOperation) {
+            $dieselexport->vehicleOperation->delete();
         }
 
         $dieselexport->delete();
