@@ -26,11 +26,32 @@ class DieselExportController extends Controller
         $this->middleware('permission:dieselexport-delete', ['only' => ['destroy']]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $currentYear = date('Y');
 
-        $dieselexport = DieselExport::with('section', 'subSection')->whereYear('date', $currentYear)->paginate(10);
+        $query = DieselExport::with('section', 'subSection', 'typesfuel')->whereYear('date', $currentYear);
+
+        // البحث بناءً على الكلمة المفتاحية
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('num_section', 'like', '%' . $search . '%')
+                  ->orWhere('num_note', 'like', '%' . $search . '%')
+                  ->orWhere('voucher', 'like', '%' . $search . '%')
+                  ->orWhereHas('section', function($q) use ($search) {
+                      $q->where('name_section', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('subSection', function($q) use ($search) {
+                      $q->where('name', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('typesfuel', function($q) use ($search) {
+                      $q->where('name', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+
+        $dieselexport = $query->paginate(10)->withQueryString();
         return view('dieselexport.index', compact('dieselexport'));
 
     }

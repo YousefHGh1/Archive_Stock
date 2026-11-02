@@ -151,26 +151,31 @@
                 <!--begin: Search Form-->
                 <!--begin::Search Form-->
                 <div class="mb-7">
-                    <div class="row align-items-center">
-                        <div class="col-lg-9 col-xl-8">
-                            <div class="row align-items-center">
-                                <div class="my-2 col-md-4 my-md-0">
-                                    <div class="input-icon">
-                                        <input type="text" class="form-control" placeholder="ابحث..."
-                                            id="kt_datatable_search_query" />
-                                        <span>
-                                            <i class="flaticon2-search-1 text-muted"></i>
-                                        </span>
+                    <form action="{{ route('dieselexport.index') }}" method="GET">
+                        <div class="row align-items-center">
+                            <div class="col-lg-9 col-xl-8">
+                                <div class="row align-items-center">
+                                    <div class="my-2 col-md-4 my-md-0">
+                                        <div class="input-icon">
+                                            <input type="text" class="form-control" placeholder="ابحث..."
+                                                name="search" value="{{ request('search') }}" />
+                                            <span>
+                                                <i class="flaticon2-search-1 text-muted"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-5 col-lg-3 col-xl-4 mt-lg-0">
+                                        <button type="submit" class="px-6 btn btn-light-primary font-weight-bold">البحث</button>
+                                        @if(request('search'))
+                                            <a href="{{ route('dieselexport.index') }}" class="px-6 btn btn-light font-weight-bold ml-2">إلغاء</a>
+                                        @endif
                                     </div>
                                 </div>
-
-                                <div class="mt-5 col-lg-3 col-xl-4 mt-lg-0">
-                                    <a href="#" class="px-6 btn btn-light-primary font-weight-bold">البحث</a>
-                                </div>
                             </div>
-                        </div>
 
-                    </div>
+                        </div>
+                    </form>
                 </div>
                 <!--end::Search Form-->
                 <table class="table table-head-custom table-head-bg table-borderless table-vertical-center">
