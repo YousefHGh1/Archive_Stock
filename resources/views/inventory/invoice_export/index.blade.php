@@ -774,42 +774,39 @@
             document.getElementById('modal_beneficiary').removeAttribute('required');
             document.getElementById('modal_invoice_no').removeAttribute('required');
 
-            Swal.fire({
-                title: 'سبب تخطي رقم السند',
-                input: 'textarea',
-                inputLabel: 'يرجى إدخال سبب التخطي',
-                inputPlaceholder: 'اكتب السبب هنا...',
-                inputAttributes: {
-                    'aria-label': 'اكتب السبب هنا',
-                    'maxlength': 500,
-                    'rows': 4
-                },
-                showCancelButton: true,
-                confirmButtonText: 'تأكيد التخطي',
-                cancelButtonText: 'إلغاء',
-                confirmButtonColor: '#f1c40f',
-                cancelButtonColor: '#d33',
-                customClass: {
-                    input: 'text-right',
-                    inputLabel: 'text-right'
-                },
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'يرجى إدخال سبب التخطي!'
+            // إغلاق المودال المؤقتاً لتجنب تداخل z-index
+            $('#invoiceExportModal').modal('hide');
+
+            setTimeout(function() {
+                Swal.fire({
+                    title: 'سبب تخطي رقم السند',
+                    input: 'textarea',
+                    inputPlaceholder: 'اكتب السبب هنا...',
+                    showCancelButton: true,
+                    confirmButtonText: 'تأكيد التخطي',
+                    cancelButtonText: 'إلغاء',
+                    confirmButtonColor: '#f1c40f',
+                    cancelButtonColor: '#d33',
+                    inputValidator: (value) => {
+                        if (!value || value.trim() === '') {
+                            return 'يرجى إدخال سبب التخطي!'
+                        }
                     }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('skip_voucher_no').value = '1';
-                    document.getElementById('skip_reason').value = result.value;
-                    saveInvoiceExport(true);
-                } else {
-                    // إعادة required للحقول عند الإلغاء
-                    document.getElementById('modal_subSection_id').setAttribute('required', 'required');
-                    document.getElementById('modal_beneficiary').setAttribute('required', 'required');
-                    document.getElementById('modal_invoice_no').setAttribute('required', 'required');
-                }
-            });
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('skip_voucher_no').value = '1';
+                        document.getElementById('skip_reason').value = result.value;
+                        saveInvoiceExport(true);
+                    } else {
+                        // إعادة فتح المودال عند الإلغاء
+                        $('#invoiceExportModal').modal('show');
+                        // إعادة required للحقول
+                        document.getElementById('modal_subSection_id').setAttribute('required', 'required');
+                        document.getElementById('modal_beneficiary').setAttribute('required', 'required');
+                        document.getElementById('modal_invoice_no').setAttribute('required', 'required');
+                    }
+                });
+            }, 300);
         }
 
         function saveInvoiceExport(skipMode = false) {

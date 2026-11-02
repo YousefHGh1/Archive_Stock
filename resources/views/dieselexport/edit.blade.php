@@ -63,7 +63,7 @@
                         </div>
                         <div class="card-toolbar">
 
-                            <a href="https://master/CoreArchive/public/dieselexport" class="btn btn-info font-weight-bolder">
+                           <a href="{{ route('dieselexport.index') }}" class="btn btn-info font-weight-bolder">
                                 <span class="svg-icon svg-icon-md">
                                     <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Flatten.svg-->
                                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -311,6 +311,32 @@
 
 @section('scripts')
     <script>
+        $(document).ready(function() {
+            // تحميل الأقسام الفرعية عند تغيير القسم
+            $('select[name="section_id"]').on('change', function() {
+                var section_id = $(this).val();
+                if (section_id) {
+                    $.ajax({
+                        url: "{{ URL::to('getsub_section') }}/" + section_id,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('select[name="sub_section_id"]').empty();
+                            $.each(data, function(id, name) {
+                                $('select[name="sub_section_id"]').append(
+                                    '<option value="' + id + '">' + name + '</option>'
+                                );
+                            });
+                            // تحديث selectpicker بعد إضافة الخيارات
+                            $('select[name="sub_section_id"]').selectpicker('refresh');
+                        },
+                    });
+                } else {
+                    console.log('AJAX load did not work');
+                }
+            });
+        });
+
         function addOption(select, id, label) {
             const $select = $(select);
             const value = String(id);

@@ -175,6 +175,7 @@ class DieselExportController extends Controller
         $dieselexport->num_section = $numSection;
         $dieselexport->num_note    = $request->num_note;
         $dieselexport->section_id  = $request->section_id;
+        $dieselexport->sub_section_id = $request->sub_section_id;
         $dieselexport->voucher     = $request->voucher;
 
         // التحقق من الرصيد حسب نوع المحروقات المختار
