@@ -166,6 +166,11 @@
         #quickAddSubSectionModal {
             z-index: 1100 !important;
         }
+
+        /* إصلاح z-index لقائمة selectpicker داخل المودال */
+        .modal .dropdown-menu {
+            z-index: 1200 !important;
+        }
     </style>
 @endsection
 
@@ -249,7 +254,7 @@
                                             <div class="flex-grow-1">
                                                 <div class="dropdown bootstrap-select form-control dropup">
                                                     <select name="sub_section_id" id="sub_section_id"
-                                                        class="@error('sub_section_id') is-invalid @enderror form-control"
+                                                        class="@error('sub_section_id') is-invalid @enderror form-control selectpicker"
                                                         data-size="7" data-live-search="true">
                                                         <option value="">اختر القسم</option>
                                                         @foreach ($subSection as $subSections)
@@ -501,7 +506,7 @@
 
                     <div class="form-group">
                         <label>الدائرة</label>
-                        <select name="section_id" class="form-control selectpicker" data-live-search="true" required>
+                        <select name="section_id" class="form-control" required>
                             <option value="">اختر الدائرة</option>
                             @foreach ($section as $sections)
                                 <option value="{{ $sections->id }}">{{ $sections->name_section }}</option>
@@ -610,6 +615,8 @@
                                     '</option>'
                                 );
                             });
+                            // تحديث selectpicker بعد إضافة الخيارات
+                            $('select[name="sub_section_id"]').selectpicker('refresh');
                         },
                     });
                 } else {
