@@ -121,6 +121,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('vehicles', App\Http\Controllers\VehicleController::class);
     Route::resource('drivers', App\Http\Controllers\DriverController::class);
     Route::resource('vehicle-operations', App\Http\Controllers\VehicleOperationController::class);
+    Route::post('vehicle-operations/import-from-inventory', [App\Http\Controllers\VehicleOperationController::class, 'importFromInventory'])->name('vehicle-operations.import-from-inventory');
     Route::prefix('vehicle-reports')->name('vehicle-reports.')->group(function () {
         Route::get('/', [App\Http\Controllers\VehicleReportController::class, 'index'])->name('index');
         Route::get('/diesel', [App\Http\Controllers\VehicleReportController::class, 'diesel'])->name('diesel');

@@ -118,6 +118,106 @@ class VehicleOperationController extends Controller
         return view('vehicle_operations.show', compact('operation'));
     }
 
+    public function importFromInventory(Request $request)
+    {
+        // جلب جميع سندات صرف المخازن التي لها بيانات مركبة وليس لها عملية مرتبطة
+        $invoiceExports = \App\Models\InvoiceExport::with('InvoiceExport_product.item')
+            ->whereNotNull('vehicle_id')
+            ->whereDoesntHave('vehicleOperation')
+            ->get();
+
+        $importedCount = 0;
+        $skippedCount = 0;
+
+        foreach ($invoiceExports as $invoiceExport) {
+            // تحليل الأصناف في السند
+            $hasOil = false;
+            $hasRecycledOil = false;
+            $hasMaintenance = false;
+            $oilLiters = 0;
+            $recycledOilLiters = 0;
+            $maintenanceCost = 0;
+
+            foreach ($invoiceExport->InvoiceExport_product as $product) {
+                if ($product->item) {
+                    $itemName = trim($product->item->item_name);
+                    $itemNum = $product->item->item_num;
+
+                    // تحقق من زيت - مطابقة دقيقة فقط "زيت"
+                    if ($itemName === 'زيت') {
+                        $hasOil = true;
+                        $oilLiters += $product->quantity;
+                    }
+                    // تحقق من زيت مكرر - مطابقة دقيقة فقط "زيت مكرر"
+                    elseif ($itemName === 'زيت مكرر') {
+                        $hasRecycledOil = true;
+                        $recycledOilLiters += $product->quantity;
+                    }
+                    // تحقق من أصناف الصيانة (تبدأ بـ 4)
+                    elseif (strpos($itemNum, '4') === 0) {
+                        $hasMaintenance = true;
+                        $maintenanceCost += $product->quantity;
+                    }
+                }
+            }
+
+            // إذا كان هناك أكثر من نوع واحد، تخطي السند
+            $typeCount = ($hasOil ? 1 : 0) + ($hasRecycledOil ? 1 : 0) + ($hasMaintenance ? 1 : 0);
+            if ($typeCount > 1) {
+                $skippedCount++;
+                continue;
+            }
+
+            // إنشاء العملية بناءً على نوع الأصناف
+            if ($hasOil) {
+                $vehicleOperation = new VehicleOperation();
+                $vehicleOperation->event_type = 'oil';
+                $vehicleOperation->vehicle_id = $invoiceExport->vehicle_id;
+                $vehicleOperation->driver_id = $invoiceExport->driver_id;
+                $vehicleOperation->invoice_export_id = $invoiceExport->id;
+                $vehicleOperation->liters = $oilLiters;
+                $vehicleOperation->operation_date = $invoiceExport->voucher_date;
+                $vehicleOperation->notes = $invoiceExport->notes;
+                $vehicleOperation->created_by = $request->user()->id ?? null;
+                $vehicleOperation->idempotency_key = \Illuminate\Support\Str::uuid()->toString();
+                $vehicleOperation->save();
+                $importedCount++;
+            } elseif ($hasRecycledOil) {
+                $vehicleOperation = new VehicleOperation();
+                $vehicleOperation->event_type = 'recycled_oil';
+                $vehicleOperation->vehicle_id = $invoiceExport->vehicle_id;
+                $vehicleOperation->driver_id = $invoiceExport->driver_id;
+                $vehicleOperation->invoice_export_id = $invoiceExport->id;
+                $vehicleOperation->liters = $recycledOilLiters;
+                $vehicleOperation->operation_date = $invoiceExport->voucher_date;
+                $vehicleOperation->notes = $invoiceExport->notes;
+                $vehicleOperation->created_by = $request->user()->id ?? null;
+                $vehicleOperation->idempotency_key = \Illuminate\Support\Str::uuid()->toString();
+                $vehicleOperation->save();
+                $importedCount++;
+            } elseif ($hasMaintenance) {
+                $vehicleOperation = new VehicleOperation();
+                $vehicleOperation->event_type = 'maintenance';
+                $vehicleOperation->vehicle_id = $invoiceExport->vehicle_id;
+                $vehicleOperation->driver_id = $invoiceExport->driver_id;
+                $vehicleOperation->invoice_export_id = $invoiceExport->id;
+                $vehicleOperation->maintenance_cost = $maintenanceCost;
+                $vehicleOperation->operation_date = $invoiceExport->voucher_date;
+                $vehicleOperation->notes = $invoiceExport->notes;
+                $vehicleOperation->created_by = $request->user()->id ?? null;
+                $vehicleOperation->idempotency_key = \Illuminate\Support\Str::uuid()->toString();
+                $vehicleOperation->save();
+                $importedCount++;
+            } else {
+                // إذا لم يكن هناك أي صنف معروف، تخطي السند
+                $skippedCount++;
+            }
+        }
+
+        return redirect()->route('vehicle-operations.index')
+            ->with('success', "تم استيراد {$importedCount} عملية بنجاح. تم تخطي {$skippedCount} سند (أصناف مختلطة أو غير معروفة).");
+    }
+
     public function edit($id)
     {
         $operation = VehicleOperation::with('dieselExport')->findOrFail($id);
