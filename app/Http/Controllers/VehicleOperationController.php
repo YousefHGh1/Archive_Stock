@@ -120,14 +120,14 @@ class VehicleOperationController extends Controller
 
     public function importFromInventory(Request $request)
     {
-        // جلب جميع سندات صرف المخازن التي لها بيانات مركبة وليس لها عملية مرتبطة
+        // جلب جميع سندات صرف المخازن التي ليس لها عملية مرتبطة
         $invoiceExports = \App\Models\InvoiceExport::with('InvoiceExport_product.item')
-            ->whereNotNull('vehicle_id')
             ->whereDoesntHave('vehicleOperation')
             ->get();
 
         $importedCount = 0;
         $skippedCount = 0;
+        $noVehicleCount = 0;
 
         foreach ($invoiceExports as $invoiceExport) {
             // تحليل الأصناف في السند
@@ -168,12 +168,35 @@ class VehicleOperationController extends Controller
                 continue;
             }
 
+            // إذا لم يكن هناك أي صنف معروف، تخطي السند
+            if (!$hasOil && !$hasRecycledOil && !$hasMaintenance) {
+                $skippedCount++;
+                continue;
+            }
+
+            // الحصول على المركبة المرتبطة أو البحث عنها
+            $vehicle = null;
+            if ($invoiceExport->vehicle_id) {
+                $vehicle = \App\Models\Vehicle::find($invoiceExport->vehicle_id);
+            } else {
+                // البحث عن مركبة تطابق اسم الجهة المستلمة
+                $vehicle = \App\Models\Vehicle::where('vehicle_type', 'like', '%' . $invoiceExport->beneficiary . '%')
+                    ->orWhere('plate_number', 'like', '%' . $invoiceExport->beneficiary . '%')
+                    ->first();
+            }
+
+            // إذا لم يوجد مركبة، تخطي السند
+            if (!$vehicle) {
+                $noVehicleCount++;
+                continue;
+            }
+
             // إنشاء العملية بناءً على نوع الأصناف
             if ($hasOil) {
                 $vehicleOperation = new VehicleOperation();
                 $vehicleOperation->event_type = 'oil';
-                $vehicleOperation->vehicle_id = $invoiceExport->vehicle_id;
-                $vehicleOperation->driver_id = $invoiceExport->driver_id;
+                $vehicleOperation->vehicle_id = $vehicle->id;
+                $vehicleOperation->driver_id = $vehicle->driver_id;
                 $vehicleOperation->invoice_export_id = $invoiceExport->id;
                 $vehicleOperation->liters = $oilLiters;
                 $vehicleOperation->operation_date = $invoiceExport->voucher_date;
@@ -185,8 +208,8 @@ class VehicleOperationController extends Controller
             } elseif ($hasRecycledOil) {
                 $vehicleOperation = new VehicleOperation();
                 $vehicleOperation->event_type = 'recycled_oil';
-                $vehicleOperation->vehicle_id = $invoiceExport->vehicle_id;
-                $vehicleOperation->driver_id = $invoiceExport->driver_id;
+                $vehicleOperation->vehicle_id = $vehicle->id;
+                $vehicleOperation->driver_id = $vehicle->driver_id;
                 $vehicleOperation->invoice_export_id = $invoiceExport->id;
                 $vehicleOperation->liters = $recycledOilLiters;
                 $vehicleOperation->operation_date = $invoiceExport->voucher_date;
@@ -198,8 +221,8 @@ class VehicleOperationController extends Controller
             } elseif ($hasMaintenance) {
                 $vehicleOperation = new VehicleOperation();
                 $vehicleOperation->event_type = 'maintenance';
-                $vehicleOperation->vehicle_id = $invoiceExport->vehicle_id;
-                $vehicleOperation->driver_id = $invoiceExport->driver_id;
+                $vehicleOperation->vehicle_id = $vehicle->id;
+                $vehicleOperation->driver_id = $vehicle->driver_id;
                 $vehicleOperation->invoice_export_id = $invoiceExport->id;
                 $vehicleOperation->maintenance_cost = $maintenanceCost;
                 $vehicleOperation->operation_date = $invoiceExport->voucher_date;
@@ -208,14 +231,11 @@ class VehicleOperationController extends Controller
                 $vehicleOperation->idempotency_key = \Illuminate\Support\Str::uuid()->toString();
                 $vehicleOperation->save();
                 $importedCount++;
-            } else {
-                // إذا لم يكن هناك أي صنف معروف، تخطي السند
-                $skippedCount++;
             }
         }
 
         return redirect()->route('vehicle-operations.index')
-            ->with('success', "تم استيراد {$importedCount} عملية بنجاح. تم تخطي {$skippedCount} سند (أصناف مختلطة أو غير معروفة).");
+            ->with('success', "تم استيراد {$importedCount} عملية بنجاح. تم تخطي {$skippedCount} سند (أصناف مختلطة أو غير معروفة). تم تخطي {$noVehicleCount} سند (لا يوجد مركبة مطابقة).");
     }
 
     public function edit($id)
