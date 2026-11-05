@@ -195,6 +195,12 @@
                 <button type="button" class="btn-solid" data-toggle="modal" data-target="#invoiceExportModal">
                     <i class="la la-plus-circle"></i> إنشاء سند صرف جديد
                 </button>
+                <form action="{{ route('vehicle-operations.import-from-inventory') }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn-solid" onclick="return confirm('هل أنت متأكد من استيراد جميع العمليات من المخازن؟ سيتم استيراد السندات التي تحتوي على أصناف (زيت، زيت مكرر، أو تبدأ بـ 4) إلى عمليات مركبات.')">
+                        <i class="la la-download"></i> استيراد عمليات
+                    </button>
+                </form>
                 @if(auth()->user()->hasRole('admin'))
                     <a href="{{ route('invoice_export.skipped-vouchers') }}" class="btn-warn">
                         <i class="la la-step-forward"></i> السندات التي تم تخطيها
