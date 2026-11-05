@@ -578,7 +578,7 @@
             </div>
             <div class="modal-body">
                 <p class="quick-add-context">سيتم اختيار الجهة تلقائياً بعد الإضافة.</p>
-                <form action="{{ route('diesel_recipient.store') }}" method="POST" data-ajax-quick-add data-entity="diesel_recipient">
+                <form action="{{ route('diesel_recipients.store') }}" method="POST" data-ajax-quick-add data-entity="diesel_recipient">
                     @csrf
                     <div data-form-error class="alert alert-danger"></div>
 
