@@ -37,7 +37,7 @@ class SectionController extends Controller
         //
         $request->validate([
             // 'num_section' => 'required',
-            'name_section' => 'required',
+            'name_section' => 'required|unique:sections,name_section',
         ]);
 
         // الحصول على آخر رقم فاتورة وزيادته

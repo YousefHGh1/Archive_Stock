@@ -32,7 +32,7 @@ class SubSectionController extends Controller
     {
         //
         $request->validate([
-            'name'       => 'required',
+            'name'       => 'required|unique:sub_sections,name',
             'section_id' => 'required',
         ]);
         $subSection             = new SubSection();
