@@ -519,5 +519,31 @@ class RolePermissionsSeeder extends Seeder
                 ]);
             }
         }
+
+        // Assign vehicle permissions to roles
+        $vehiclePermissions = DB::table('permissions')
+            ->whereIn('name', [
+                'vehicles', 'vehicles-create', 'vehicles-read', 'vehicles-update', 'vehicles-delete', 'vehicles-manager',
+                'drivers', 'drivers-create', 'drivers-read', 'drivers-update', 'drivers-delete', 'drivers-manager',
+                'vehicle-operations', 'vehicle-operations-create', 'vehicle-operations-read', 'vehicle-operations-update', 'vehicle-operations-delete', 'vehicle-operations-manager',
+                'vehicle-reports', 'vehicle-reports-create', 'vehicle-reports-read', 'vehicle-reports-update', 'vehicle-reports-delete', 'vehicle-reports-manager',
+                'vehicle-full-access'
+            ])
+            ->where('guard_name', 'web')
+            ->pluck('id');
+
+        $vehicleRoles = DB::table('roles')
+            ->whereIn('name', ['admin', 'Super-User', 'vehicle-manager'])
+            ->where('guard_name', 'web')
+            ->pluck('id');
+
+        foreach ($vehicleRoles as $roleId) {
+            foreach ($vehiclePermissions as $permissionId) {
+                DB::table('role_has_permissions')->insertOrIgnore([
+                    'permission_id' => $permissionId,
+                    'role_id' => $roleId,
+                ]);
+            }
+        }
     }
 }

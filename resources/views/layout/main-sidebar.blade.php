@@ -711,7 +711,7 @@
                     @endcan
 
 
-                    @canany(['vehicles-read', 'drivers-read', 'vehicle-operations-read', 'vehicle-reports-read'])
+                    @can('vehicle-full-access')
                         <li class="menu-section">
                             <h4 class="menu-text">الكراج</h4>
                             <i class="menu-icon ki ki-bold-more-hor icon-md"></i>
@@ -877,7 +877,7 @@
                                 </ul>
                             </div>
                         </li>
-                    @endcanany
+                    @endcan
 
 
                     @canany(['diesels-read', 'diesels-manager'])

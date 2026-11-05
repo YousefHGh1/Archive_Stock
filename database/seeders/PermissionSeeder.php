@@ -161,7 +161,7 @@ class PermissionSeeder extends Seeder
             );
         }
 
-        foreach (['vehicles', 'vehicles-create', 'vehicles-read', 'vehicles-update', 'vehicles-delete', 'drivers', 'drivers-create', 'drivers-read', 'drivers-update', 'drivers-delete', 'vehicle-operations', 'vehicle-operations-create', 'vehicle-operations-read', 'vehicle-operations-update', 'vehicle-operations-delete', 'vehicle-reports', 'vehicle-reports-read'] as $permission) {
+        foreach (['vehicles', 'vehicles-create', 'vehicles-read', 'vehicles-update', 'vehicles-delete', 'vehicles-manager', 'drivers', 'drivers-create', 'drivers-read', 'drivers-update', 'drivers-delete', 'drivers-manager', 'vehicle-operations', 'vehicle-operations-create', 'vehicle-operations-read', 'vehicle-operations-update', 'vehicle-operations-delete', 'vehicle-operations-manager', 'vehicle-reports', 'vehicle-reports-create', 'vehicle-reports-read', 'vehicle-reports-update', 'vehicle-reports-delete', 'vehicle-reports-manager', 'vehicle-full-access'] as $permission) {
             DB::table('permissions')->updateOrInsert(
                 ['name' => $permission, 'guard_name' => 'web'],
                 ['name' => $permission, 'guard_name' => 'web']
