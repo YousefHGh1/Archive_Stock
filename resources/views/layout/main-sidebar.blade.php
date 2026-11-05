@@ -711,6 +711,22 @@
                     @endcan
 
 
+                    @can('stock')
+                        <li class="menu-section">
+                            <h4 class="menu-text">النسخ الاحتياطي</h4>
+                            <i class="menu-icon ki ki-bold-more-hor icon-md"></i>
+                        </li>
+                        <li class="menu-item" aria-haspopup="true">
+                            <a href="{{ route('backup.index') }}" class="menu-link">
+                                <span class="svg-icon menu-icon">
+                                    <i class="flaticon-database"></i>
+                                </span>
+                                <span class="menu-text">إدارة النسخ الاحتياطية</span>
+                            </a>
+                        </li>
+                    @endcan
+
+
                     @canany(['vehicles-read', 'drivers-read', 'vehicle-operations-read', 'vehicle-reports-read'])
                         <li class="menu-section">
                             <h4 class="menu-text">الكراج</h4>

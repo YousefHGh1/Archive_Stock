@@ -19,6 +19,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('purchase-requests:check-stale')
             ->dailyAt('08:00')
             ->description('Check for stale purchase requests and send SLA alerts');
+
+        // Schedule daily database backup at 3 PM
+        $schedule->command('backup:daily')
+            ->dailyAt('15:00')
+            ->description('Create daily database backup at 3 PM')
+            ->withoutOverlapping();
     }
 
     /**

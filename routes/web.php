@@ -51,6 +51,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleManagementController;
+use App\Http\Controllers\BackupController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -153,6 +154,14 @@ Route::middleware('auth')->group(function () {
     // });
 
     Route::resource('purchase', PurchaseController::class);
+
+    // Backup Routes
+    Route::prefix('backup')->name('backup.')->middleware('can:stock')->group(function () {
+        Route::get('/', [BackupController::class, 'index'])->name('index');
+        Route::post('/create', [BackupController::class, 'create'])->name('create');
+        Route::get('/download/{filename}', [BackupController::class, 'download'])->name('download');
+        Route::delete('/delete/{filename}', [BackupController::class, 'delete'])->name('delete');
+    });
 
     Route::post('purchase/search', [PurchaseController::class, 'search']);
     Route::post('purchase/sign-president/{id}', [PurchaseController::class, 'signPresident']);
