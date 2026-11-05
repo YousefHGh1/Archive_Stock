@@ -31,12 +31,29 @@ class CreateDailyBackup extends Command
         try {
             $this->info('بدء إنشاء النسخة الاحتياطية...');
 
-            // Read database credentials from .env
-            $database = env('DB_DATABASE');
-            $username = env('DB_USERNAME');
-            $password = env('DB_PASSWORD');
-            $host = env('DB_HOST', '127.0.0.1');
-            $port = env('DB_PORT', '3306');
+            // Try to read from config first, fallback to env
+            $database = config('database.connections.mysql.database') ?: env('DB_DATABASE');
+            $username = config('database.connections.mysql.username') ?: env('DB_USERNAME');
+            $password = config('database.connections.mysql.password') ?: env('DB_PASSWORD');
+            $host = config('database.connections.mysql.host') ?: env('DB_HOST', '127.0.0.1');
+            $port = config('database.connections.mysql.port') ?: env('DB_PORT', '3306');
+
+            // If still empty, try to load from database.php config file directly
+            if (empty($database) || empty($username)) {
+                $config = include base_path('config/database.php');
+                $database = $config['connections']['mysql']['database'] ?? $database;
+                $username = $config['connections']['mysql']['username'] ?? $username;
+                $password = $config['connections']['mysql']['password'] ?? $password;
+                $host = $config['connections']['mysql']['host'] ?? $host;
+                $port = $config['connections']['mysql']['port'] ?? $port;
+            }
+
+            // Validate required fields
+            if (empty($database) || empty($username)) {
+                $this->error('Database credentials are missing. Database: ' . $database . ', Username: ' . $username);
+                Log::error('Database credentials are missing. Database: ' . $database . ', Username: ' . $username);
+                return Command::FAILURE;
+            }
 
             $filename = 'daily_backup_' . date('Y-m-d_H-i-s') . '.sql';
             $backupPath = storage_path('app/backups');
