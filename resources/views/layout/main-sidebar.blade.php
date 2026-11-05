@@ -1060,6 +1060,14 @@
                                                                 الصادر</span>
                                                         </a>
                                                     </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('diesel_recipients.index') }}" class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="flaticon-users"></i>
+                                                            </span>
+                                                            <span class="menu-text">الجهات المستلمة</span>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </li>
