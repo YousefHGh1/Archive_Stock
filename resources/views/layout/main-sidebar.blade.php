@@ -823,11 +823,11 @@
                                             <div class="menu-submenu">
                                                 <i class="menu-arrow"></i>
                                                 <ul class="menu-subnav">
-                                                    <li class="menu-item" aria-haspopup="true">
+                                                    <!-- <li class="menu-item" aria-haspopup="true">
                                                         <a href="{{ route('vehicle-operations.create') }}" class="menu-link">
                                                             <span class="menu-text">إضافة عملية</span>
                                                         </a>
-                                                    </li>
+                                                    </li> -->
                                                     <li class="menu-item" aria-haspopup="true">
                                                         <a href="{{ route('vehicle-operations.index') }}" class="menu-link">
                                                             <span class="menu-text">عرض العمليات</span>
