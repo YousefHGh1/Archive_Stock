@@ -221,6 +221,47 @@ class DieselExportController extends Controller
 
         $dieselexport->notes = $request->notes;
         $dieselexport->save();
+
+        // تحديث العملية المرتبطة إذا وجدت
+        if ($dieselexport->vehicleOperation) {
+            $recipientName = $numSection;
+            $vehicle = Vehicle::where('vehicle_type', 'like', '%' . $recipientName . '%')
+                ->orWhere('plate_number', 'like', '%' . $recipientName . '%')
+                ->first();
+
+            if ($vehicle) {
+                $dieselexport->vehicleOperation->vehicle_id = $vehicle->id;
+                $dieselexport->vehicleOperation->driver_id = $vehicle->driver_id;
+                $dieselexport->vehicleOperation->liters = $request->quantity;
+                $dieselexport->vehicleOperation->operation_date = $request->date;
+                $dieselexport->vehicleOperation->notes = $request->notes;
+                $dieselexport->vehicleOperation->save();
+            } else {
+                // إذا لم يوجد تطابق، احذف العملية
+                $dieselexport->vehicleOperation->delete();
+            }
+        } else {
+            // إذا لم تكن هناك عملية مرتبطة، تحقق من إمكانية إنشائها
+            $recipientName = $numSection;
+            $vehicle = Vehicle::where('vehicle_type', 'like', '%' . $recipientName . '%')
+                ->orWhere('plate_number', 'like', '%' . $recipientName . '%')
+                ->first();
+
+            if ($vehicle) {
+                $vehicleOperation = new VehicleOperation();
+                $vehicleOperation->event_type = 'diesel';
+                $vehicleOperation->vehicle_id = $vehicle->id;
+                $vehicleOperation->driver_id = $vehicle->driver_id;
+                $vehicleOperation->diesel_export_id = $dieselexport->id;
+                $vehicleOperation->liters = $request->quantity;
+                $vehicleOperation->operation_date = $request->date;
+                $vehicleOperation->notes = $request->notes;
+                $vehicleOperation->created_by = auth()->id() ?? null;
+                $vehicleOperation->idempotency_key = \Illuminate\Support\Str::uuid()->toString();
+                $vehicleOperation->save();
+            }
+        }
+
         return redirect('dieselexport')->with('info', 'تمت تعديل بيانات صادر المحروقات بنجاح!');
     }
 
@@ -259,6 +300,46 @@ class DieselExportController extends Controller
             'voucher.numeric'  => 'رقم الإيصال يجب أن يكون رقماً.',
             'voucher.unique'   => 'رقم الإيصال مستخدم مسبقاً، لا يمكن تكرار رقم الإيصال.',
         ];
+    }
+
+    public function importOperations(Request $request)
+    {
+        // جلب جميع سندات السولار التي ليس لها عملية مرتبطة
+        $dieselExports = DieselExport::whereDoesntHave('vehicleOperation')->get();
+
+        $importedCount = 0;
+        $skippedCount = 0;
+
+        foreach ($dieselExports as $dieselExport) {
+            $recipientName = $dieselExport->num_section;
+            $vehicle = Vehicle::where('vehicle_type', 'like', '%' . $recipientName . '%')
+                ->orWhere('plate_number', 'like', '%' . $recipientName . '%')
+                ->first();
+
+            if ($vehicle) {
+                // التحقق من عدم وجود عملية مرتبطة بهذه المركبة لنفس السند
+                $existingOperation = VehicleOperation::where('diesel_export_id', $dieselExport->id)->first();
+                if (!$existingOperation) {
+                    $vehicleOperation = new VehicleOperation();
+                    $vehicleOperation->event_type = 'diesel';
+                    $vehicleOperation->vehicle_id = $vehicle->id;
+                    $vehicleOperation->driver_id = $vehicle->driver_id;
+                    $vehicleOperation->diesel_export_id = $dieselExport->id;
+                    $vehicleOperation->liters = $dieselExport->quantity;
+                    $vehicleOperation->operation_date = $dieselExport->date;
+                    $vehicleOperation->notes = $dieselExport->notes;
+                    $vehicleOperation->created_by = $request->user()->id ?? null;
+                    $vehicleOperation->idempotency_key = \Illuminate\Support\Str::uuid()->toString();
+                    $vehicleOperation->save();
+                    $importedCount++;
+                }
+            } else {
+                $skippedCount++;
+            }
+        }
+
+        return redirect()->route('dieselexport.index')
+            ->with('success', "تم استيراد {$importedCount} عملية بنجاح. تم تخطي {$skippedCount} سند لا يطابق مركبة.");
     }
 
     public function report(Request $request)

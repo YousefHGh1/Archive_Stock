@@ -269,7 +269,7 @@
                                     <select name="vehicle_event_type" class="form-control @error('vehicle_event_type') is-invalid @enderror">
                                         <option value="">اختر نوع الحدث</option>
                                         <option value="oil" {{ old('vehicle_event_type') == 'oil' ? 'selected' : '' }}>زيت</option>
-                                        <option value="recycled_oil" {{ old('vehicle_event_type') == 'recycled_oil' ? 'selected' : '' }}>أضف زيت مكرر</option>
+                                        <option value="recycled_oil" {{ old('vehicle_event_type') == 'recycled_oil' ? 'selected' : '' }}>زيت مكرر</option>
                                         <option value="maintenance" {{ old('vehicle_event_type') == 'maintenance' ? 'selected' : '' }}>صيانة</option>
                                     </select>
                                     @error('vehicle_event_type')

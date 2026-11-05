@@ -93,7 +93,8 @@ Route::prefix('/')->middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::resource('diesel', DieselController::class);
     Route::resource('dieselexport', DieselExportController::class);
-    Route::resource('diesel_recipient', DieselRecipientController::class);
+    Route::resource('diesel_recipients', DieselRecipientController::class);
+    Route::post('dieselexport/import-operations', [DieselExportController::class, 'importOperations'])->name('dieselexport.import-operations');
     Route::resource('user', UserController::class);
     Route::resource('section', SectionController::class);
     Route::resource('supplier', SupplierController::class);

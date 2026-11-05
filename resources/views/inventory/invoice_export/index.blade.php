@@ -393,7 +393,7 @@
                                             <select name="vehicle_event_type" class="form-control" id="modal_vehicle_event_type">
                                                 <option value="">اختر نوع الحدث</option>
                                                 <option value="oil">زيت</option>
-                                                <option value="recycled_oil">أضف زيت مكرر</option>
+                                                <option value="recycled_oil">زيت مكرر</option>
                                                 <option value="maintenance">صيانة</option>
                                             </select>
                                         </div>

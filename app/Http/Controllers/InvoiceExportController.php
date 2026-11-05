@@ -226,6 +226,36 @@ class InvoiceExportController extends Controller
             }
         });
 
+        // التحقق من وجود أصناف تبدأ برقم 4 للإضافة التلقائية كصيانة
+        // هذا لا ينطبق على السولار والزيت وزيت المكرر لأنهم يُسجلون منفصلين
+        $hasMaintenanceItems = false;
+        $totalMaintenanceCost = 0;
+
+        foreach ($validatedData['product'] as $index => $productId) {
+            $product = Item::findOrFail($productId);
+            // التحقق من أن رقم الصنف يبدأ بـ 4
+            if (strpos($product->item_num, '4') === 0) {
+                $hasMaintenanceItems = true;
+                // حساب التكلفة (يمكن إضافة حقل سعر إذا وجد)
+                $totalMaintenanceCost += $validatedData['quantity'][$index];
+            }
+        }
+
+        // إذا كانت هناك أصناف صيانة وتم اختيار مركبة ولم يتم اختيار نوع حدث (زيت/زيت مكرر)، أنشئ عملية صيانة تلقائياً
+        if ($hasMaintenanceItems && !empty($invoiceExport->vehicle_id) && empty($invoiceExport->vehicle_event_type)) {
+            $vehicleOperation = new VehicleOperation();
+            $vehicleOperation->event_type = 'maintenance';
+            $vehicleOperation->vehicle_id = $invoiceExport->vehicle_id;
+            $vehicleOperation->driver_id = $invoiceExport->driver_id ?? null;
+            $vehicleOperation->invoice_export_id = $invoiceExport->id;
+            $vehicleOperation->maintenance_cost = $totalMaintenanceCost;
+            $vehicleOperation->operation_date = $invoiceExport->voucher_date;
+            $vehicleOperation->notes = $invoiceExport->notes;
+            $vehicleOperation->created_by = $request->user()->id ?? null;
+            $vehicleOperation->idempotency_key = \Illuminate\Support\Str::uuid()->toString();
+            $vehicleOperation->save();
+        }
+
         // إذا تم اختيار ربط المركبة، أنشئ عملية مركبة
         if (!empty($invoiceExport->vehicle_event_type) && !empty($invoiceExport->vehicle_id) && !empty($invoiceExport->driver_id)) {
             $vehicleOperation = new VehicleOperation();

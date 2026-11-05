@@ -492,7 +492,7 @@
                                 <select id="event_type" name="event_type" class="form-control" required>
                                     <option value="diesel">سولار</option>
                                     <option value="oil">زيت</option>
-                                    <option value="recycled_oil">أضف زيت مكرر</option>
+                                    <option value="recycled_oil">زيت مكرر</option>
                                     <option value="maintenance">صيانة</option>
                                 </select>
                             </div>

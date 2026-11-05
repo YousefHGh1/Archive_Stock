@@ -8,33 +8,37 @@ use Illuminate\Http\JsonResponse;
 
 class DieselRecipientController extends Controller
 {
-    public function index()
+    public function __construct()
     {
-        $recipients = DieselRecipient::where('is_active', true)
-            ->orderBy('name')
-            ->get();
-
-        return response()->json([
-            'data' => $recipients
-        ]);
+        $this->middleware('permission:diesel_recipient-read', ['only' => ['index', 'show']]);
+        $this->middleware('permission:diesel_recipient-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:diesel_recipient-update', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:diesel_recipient-delete', ['only' => ['destroy']]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function index()
+    {
+        $recipients = DieselRecipient::orderBy('name')->paginate(15);
+        return view('diesel_recipients.index', compact('recipients'));
+    }
+
+    public function create()
+    {
+        return view('diesel_recipients.create');
+    }
+
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|min:2|max:255|unique:diesel_recipients,name',
         ]);
 
-        $recipient = DieselRecipient::create([
+        DieselRecipient::create([
             'name' => $validated['name'],
             'is_active' => true,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'id' => $recipient->id,
-            'name' => $recipient->name,
-        ]);
+        return redirect()->route('diesel_recipients.index')->with('success', 'تمت إضافة الجهة المستلمة بنجاح');
     }
 
     public function show(DieselRecipient $dieselRecipient)
@@ -42,7 +46,12 @@ class DieselRecipientController extends Controller
         return response()->json($dieselRecipient);
     }
 
-    public function update(Request $request, DieselRecipient $dieselRecipient): JsonResponse
+    public function edit(DieselRecipient $dieselRecipient)
+    {
+        return view('diesel_recipients.edit', compact('dieselRecipient'));
+    }
+
+    public function update(Request $request, DieselRecipient $dieselRecipient)
     {
         $validated = $request->validate([
             'name' => 'required|string|min:2|max:255|unique:diesel_recipients,name,' . $dieselRecipient->id,
@@ -51,20 +60,13 @@ class DieselRecipientController extends Controller
 
         $dieselRecipient->update($validated);
 
-        return response()->json([
-            'success' => true,
-            'id' => $dieselRecipient->id,
-            'name' => $dieselRecipient->name,
-        ]);
+        return redirect()->route('diesel_recipients.index')->with('success', 'تم تعديل الجهة المستلمة بنجاح');
     }
 
-    public function destroy(DieselRecipient $dieselRecipient): JsonResponse
+    public function destroy(DieselRecipient $dieselRecipient)
     {
         $dieselRecipient->update(['is_active' => false]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'تم الحذف بنجاح'
-        ]);
+        return redirect()->route('diesel_recipients.index')->with('success', 'تم حذف الجهة المستلمة بنجاح');
     }
 }
