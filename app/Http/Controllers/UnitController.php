@@ -52,7 +52,9 @@ class UnitController extends Controller
 
         // التحقق من صحة البيانات المدخلة
         $validator = Validator::make($request->all(), [
-            'unit_name' => 'required|string|min:2',
+            'unit_name' => 'required|string|min:2|unique:units,unit_name',
+        ], [
+            'unit_name.unique' => 'اسم الوحدة موجود مسبقاً، يرجى اختيار اسم آخر.'
         ]);
 
         if ($validator->fails()) {
@@ -109,8 +111,10 @@ class UnitController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'unit_name' => 'required|string|min:2',
+            'unit_name' => 'required|string|min:2|unique:units,unit_name,' . $id,
             'unit_num' => 'required|numeric',
+        ], [
+            'unit_name.unique' => 'اسم الوحدة موجود مسبقاً، يرجى اختيار اسم آخر.'
         ]);
 
         if ($validator->fails()) {

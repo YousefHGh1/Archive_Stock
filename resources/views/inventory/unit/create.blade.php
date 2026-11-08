@@ -55,6 +55,29 @@
                             <x-add-resource-button />
                         </div>
                     </div>
+
+                    @if(session('warning'))
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            {{ session('warning') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+
+                    @if($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+
                     <!--begin::Form-->
                     <form action="{{ route('unit.store') }}" method="post" class="form needs-validation " novalidate
                         enctype="multipart/form-data" id="kt_form">
@@ -68,12 +91,12 @@
                                 </label>
                                 <div class="col-lg-3">
                                     <div class="input-group">
-                                        <input name="unit_name" id="unit_name" type="text" class="form-control"
-                                            placeholder="ادخل اسم الوحدة">
-                                        @error('unit_name')
-                                            <span>{{ $message }}</span>
-                                        @enderror
+                                        <input name="unit_name" id="unit_name" type="text" class="form-control @error('unit_name') is-invalid @enderror"
+                                            placeholder="ادخل اسم الوحدة" value="{{ old('unit_name') }}">
                                     </div>
+                                    @error('unit_name')
+                                        <div class="mt-1 text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <!-- نموذج HTML لإدخال قيمة unit_num -->

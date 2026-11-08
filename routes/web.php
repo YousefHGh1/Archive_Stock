@@ -222,6 +222,7 @@ Route::middleware('auth')->group(function () {
 Route::prefix('inventory/')->middleware('auth')->group(function () {
     Route::resource('TypesFuel', TypesFuelController::class);
     Route::resource('unit', UnitController::class);
+    Route::get('category/max-num', [CategoryController::class, 'getMaxCategoryNum'])->name('category.max_num');
     Route::resource('category', CategoryController::class);
     Route::resource('item', ItemController::class);
     Route::resource('store', StoreController::class);

@@ -56,6 +56,29 @@
 
                         </div>
                     </div>
+
+                    @if(session('warning'))
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            {{ session('warning') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+
+                    @if($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+
                     <!--begin::Form-->
                     <form action="{{ route('category.store') }}" method="post" class="form needs-validation " novalidate
                         enctype="multipart/form-data" id="kt_form">
@@ -69,9 +92,12 @@
                                 </label>
                                 <div class="col-lg-3">
                                     <div class="input-group">
-                                        <input name="category_name" id="category_name" type="text" class="form-control"
-                                            placeholder="ادخل اسم العائلة">
+                                        <input name="category_name" id="category_name" type="text" class="form-control @error('category_name') is-invalid @enderror"
+                                            placeholder="ادخل اسم العائلة" value="{{ old('category_name') }}">
                                     </div>
+                                    @error('category_name')
+                                        <div class="mt-1 text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <label for="category_num" class="col-lg-2 col-form-label ">
@@ -79,9 +105,13 @@
                                 </label>
                                 <div class="col-lg-3">
                                     <div class="input-group">
-                                        <input name="category_num" type="number" min="0" class="form-control"
-                                            id="category_num"  />
+                                        <input name="category_num" type="number" min="0" class="form-control @error('category_num') is-invalid @enderror"
+                                            id="category_num" value="{{ old('category_num') }}" />
                                     </div>
+                                    @error('category_num')
+                                        <div class="mt-1 text-danger">{{ $message }}</div>
+                                    @enderror
+                                    <div id="max_num_hint" class="mt-1 alert alert-info" style="display: none; padding: 0.5rem 1rem; font-size: 0.9rem;"></div>
                                 </div>
                             </div>
 
@@ -111,4 +141,54 @@
 @endsection
 
 @section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded');
+
+            const categoryNumInput = document.getElementById('category_num');
+            const maxNumHint = document.getElementById('max_num_hint');
+
+            console.log('Input element:', categoryNumInput);
+            console.log('Hint element:', maxNumHint);
+
+            if (categoryNumInput && maxNumHint) {
+                categoryNumInput.addEventListener('input', function() {
+                    const value = this.value;
+                    console.log('Input value:', value);
+
+                    if (value && value.length > 0) {
+                        const prefix = value.charAt(0);
+                        console.log('Prefix:', prefix);
+
+                        const url = "{{ route('category.max_num') }}?prefix=" + prefix;
+                        console.log('Fetching:', url);
+
+                        fetch(url)
+                            .then(response => {
+                                console.log('Response status:', response.status);
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Data received:', data);
+                                if (data.max_num) {
+                                    maxNumHint.innerHTML = '<strong>أكبر رقم موجود يبدأ بـ ' + prefix + ':</strong> ' + data.max_num + '<br><strong>الرقم المقترح:</strong> ' + data.next_num;
+                                    maxNumHint.style.display = 'block';
+                                } else {
+                                    maxNumHint.innerHTML = 'لا يوجد أرقام تبدأ بـ ' + prefix + '<br><strong>الرقم المقترح:</strong> ' + data.next_num;
+                                    maxNumHint.style.display = 'block';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                maxNumHint.style.display = 'none';
+                            });
+                    } else {
+                        maxNumHint.style.display = 'none';
+                    }
+                });
+            } else {
+                console.error('Elements not found');
+            }
+        });
+    </script>
 @endsection

@@ -50,8 +50,11 @@ class CategoryController extends Controller
         // }
 
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'category_num' => 'required',
-            'category_name' => 'required|string|min:2',
+            'category_num' => 'required|unique:categories,category_num',
+            'category_name' => 'required|string|min:2|unique:categories,category_name',
+        ], [
+            'category_num.unique' => 'رقم العائلة موجود مسبقاً، يرجى اختيار رقم آخر.',
+            'category_name.unique' => 'اسم العائلة موجود مسبقاً، يرجى اختيار اسم آخر.'
         ]);
 
         if ($validator->fails()) {
@@ -109,8 +112,11 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'category_num' => 'required',
-            'category_name' => 'required|string|min:2',
+            'category_num' => 'required|unique:categories,category_num,' . $id,
+            'category_name' => 'required|string|min:2|unique:categories,category_name,' . $id,
+        ], [
+            'category_num.unique' => 'رقم العائلة موجود مسبقاً، يرجى اختيار رقم آخر.',
+            'category_name.unique' => 'اسم العائلة موجود مسبقاً، يرجى اختيار اسم آخر.'
         ]);
 
         $category = Category::find($id);
@@ -143,5 +149,40 @@ class CategoryController extends Controller
         $category->delete();
         session()->flash('success', 'تم الحذف بنجاح.');
         return redirect()->route('category.index');
+    }
+
+    public function getMaxCategoryNum(Request $request)
+    {
+        $prefix = $request->input('prefix');
+
+        if (!$prefix) {
+            return response()->json(['max_num' => null, 'next_num' => null]);
+        }
+
+        // Get all category numbers and filter by prefix
+        $allNums = Category::pluck('category_num')->toArray();
+        $maxNum = null;
+
+        foreach ($allNums as $num) {
+            if (strpos(strval($num), strval($prefix)) === 0) {
+                if ($maxNum === null || $num > $maxNum) {
+                    $maxNum = $num;
+                }
+            }
+        }
+
+        // Calculate next suggested number
+        $nextNum = null;
+        if ($maxNum) {
+            $nextNum = intval($maxNum) + 1;
+        } else {
+            // If no numbers with this prefix, suggest prefix + 01
+            $nextNum = intval($prefix) * 100 + 1;
+        }
+
+        return response()->json([
+            'max_num' => $maxNum,
+            'next_num' => $nextNum
+        ]);
     }
 }
