@@ -33,10 +33,14 @@ class DieselRecipientController extends Controller
             'name' => 'required|string|min:2|max:255|unique:diesel_recipients,name',
         ]);
 
-        DieselRecipient::create([
+        $recipient = DieselRecipient::create([
             'name' => $validated['name'],
             'is_active' => true,
         ]);
+
+        if ($request->expectsJson()) {
+            return response()->json($recipient);
+        }
 
         return redirect()->route('diesel_recipients.index')->with('success', 'تمت إضافة الجهة المستلمة بنجاح');
     }
