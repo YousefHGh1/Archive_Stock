@@ -40,21 +40,21 @@
         .btn-soft:hover { background: var(--bg-soft); color: var(--ink); text-decoration: none; }
 
         /* ===== Form cards ===== */
-        .form-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,.05); margin-bottom: 1.5rem; overflow: hidden; }
-        .form-card-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #fff 0%, var(--bg-soft) 100%); }
+        .form-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,.05); margin-bottom: 1.5rem; overflow: visible; }
+        .form-card-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #fff 0%, var(--bg-soft) 100%); border-radius: 14px 14px 0 0; }
         .form-card-title { font-size: 1.05rem; font-weight: 700; color: var(--ink); margin: 0; display: flex; align-items: center; gap: .6rem; }
         .form-card-title i { color: var(--accent); font-size: 1.3rem; }
-        .form-card-body { padding: 1.5rem; }
+        .form-card-body { padding: 1.5rem; overflow: visible; }
         .card-tools { display: flex; gap: .5rem; flex-wrap: wrap; }
         .btn-tool { background: var(--accent-soft); color: var(--accent-dark); border: none; padding: .45rem .9rem; border-radius: 8px; font-weight: 600; font-size: .85rem; display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; text-decoration: none; transition: all .2s; }
         .btn-tool:hover { background: var(--accent); color: #fff; text-decoration: none; }
 
         /* ===== Fields ===== */
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.1rem 1.5rem; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.1rem 1.5rem; overflow: visible; }
         .form-grid .span-all { grid-column: 1 / -1; }
         .field-label { display: block; font-size: .85rem; font-weight: 700; color: var(--ink); margin-bottom: .4rem; }
         .field-label .req { color: #f64e60; margin-inline-start: .2rem; }
-        .field-with-add { display: flex; gap: .5rem; align-items: stretch; }
+        .field-with-add { display: flex; gap: .5rem; align-items: stretch; overflow: visible; position: relative; }
         .field-with-add > .bootstrap-select, .field-with-add > select, .field-with-add > .form-control { flex: 1; width: auto !important; min-width: 0; }
         .btn-add-inline { width: 42px; flex-shrink: 0; border: 1px dashed var(--accent); background: var(--accent-soft); color: var(--accent-dark); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all .2s; padding: 0; }
         .btn-add-inline:hover { background: var(--accent); color: #fff; border-style: solid; }
@@ -84,7 +84,7 @@
         .row-btn.is-del { background: linear-gradient(135deg, #f64e60, #e0364a); }
 
         /* ===== Action bar ===== */
-        .action-bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 1.1rem 1.5rem; background: var(--bg-soft); border-top: 1px solid var(--line); }
+        .action-bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 1.1rem 1.5rem; background: var(--bg-soft); border-top: 1px solid var(--line); border-radius: 0 0 14px 14px; }
         .total-box { display: flex; align-items: center; gap: .75rem; }
         .total-box label { margin: 0; font-weight: 700; color: var(--ink); }
         .total-box input { width: 140px; text-align: center; font-weight: 800; font-size: 1.1rem; color: var(--accent-dark); background: var(--accent-soft); }
@@ -107,7 +107,29 @@
         .quick-add-modal [data-form-error] { display: none; }
         .quick-add-modal [data-field-error] { display: block; }
         .quick-add-modal [data-field-error]:empty { display: none !important; }
-        #quickAddBeneficiaryModal { z-index: 1100 !important; }
+        #quickAddBeneficiaryModal, #quickAddVehicleModal, #quickAddDriverModal { z-index: 1100 !important; }
+
+        /* bootstrap-select dropdown must appear on top */
+        .bs-container { z-index: 99999 !important; }
+        .bs-container .dropdown-menu {
+            z-index: 99999 !important;
+            border: 1px solid #ccc !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,.15) !important;
+            max-height: 300px !important;
+            overflow-y: auto !important;
+        }
+
+        .bootstrap-select { overflow: visible !important; position: relative; }
+
+        /* Vehicle fields section */
+        #vehicle_fields { position: relative; z-index: 1; }
+        #vehicle_fields:not(:empty) { padding-top: 1rem; border-top: 1px solid #e9ecef; }
+
+        /* Dropdown item readability */
+        .bootstrap-select .dropdown-menu li a { font-size: 14px; line-height: 1.5; padding: 10px 15px; }
+        .bootstrap-select .dropdown-menu.inner > li > a .text small { color: #6c757d !important; font-size: 13px; }
+        .bootstrap-select .dropdown-menu.inner > li.selected > a,
+        .bootstrap-select .dropdown-menu.inner > li:hover > a { background: #f8f9fa !important; font-weight: 500; }
 
         @media (max-width: 575.98px) {
             .quick-add-modal .modal-dialog { width: calc(100% - 1rem); margin: .5rem; }
@@ -186,7 +208,7 @@
                             <label for="voucher_date" class="field-label">تاريخ الصرف <span class="req">*</span></label>
                             <input type="date" class="form-control @error('voucher_date') is-invalid @enderror"
                                 id="voucher_date" name="voucher_date"
-                                value="{{ old('voucher_date', date('Y-m-d')) }}" max="{{ date('Y-m-d') }}">
+                                value="{{ old('voucher_date', date('Y-m-d')) }}" max="{{ date('Y-m-d') }}" required>
                             @error('voucher_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -219,7 +241,7 @@
                         <div>
                             <label for="beneficiary" class="field-label">المستلم <span class="req">*</span></label>
                             <div class="field-with-add">
-                                <select class="form-control selectpicker" id="beneficiary" name="beneficiary" required
+                                <select class="form-control selectpicker" id="beneficiary" name="beneficiary" data-size="7" tabindex="null" required
                                     data-live-search="true" title="اختر المستلم">
                                     <option value="">اختر المستلم</option>
                                     @foreach ($beneficiaries as $id => $name)
@@ -234,6 +256,9 @@
                                     <i class="ki ki-solid-plus"></i>
                                 </button>
                             </div>
+                            @error('beneficiary')
+                                <span class="text-sm text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <div class="span-all">
@@ -266,7 +291,7 @@
                             <div class="form-grid">
                                 <div>
                                     <label for="vehicle_event_type" class="field-label">نوع الحدث</label>
-                                    <select name="vehicle_event_type" class="form-control @error('vehicle_event_type') is-invalid @enderror">
+                                    <select name="vehicle_event_type" id="vehicle_event_type" class="form-control @error('vehicle_event_type') is-invalid @enderror">
                                         <option value="">اختر نوع الحدث</option>
                                         <option value="oil" {{ old('vehicle_event_type') == 'oil' ? 'selected' : '' }}>زيت</option>
                                         <option value="recycled_oil" {{ old('vehicle_event_type') == 'recycled_oil' ? 'selected' : '' }}>زيت مكرر</option>
@@ -279,12 +304,19 @@
 
                                 <div>
                                     <label for="vehicle_id" class="field-label">المركبة</label>
-                                    <select name="vehicle_id" class="form-control selectpicker @error('vehicle_id') is-invalid @enderror" data-live-search="true">
-                                        <option value="">اختر المركبة</option>
-                                        @foreach($vehicles as $v)
-                                            <option value="{{ $v->id }}" {{ old('vehicle_id') == $v->id ? 'selected' : '' }}>{{ $v->plate_number }} - {{ $v->vehicle_type }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div class="field-with-add">
+                                        <select name="vehicle_id" id="vehicle_id" data-size="7" tabindex="null" class="form-control selectpicker @error('vehicle_id') is-invalid @enderror" data-live-search="true" data-container="body">
+                                            <option value="">اختر المركبة</option>
+                                            @foreach($vehicles as $v)
+                                                <option value="{{ $v->id }}" {{ old('vehicle_id') == $v->id ? 'selected' : '' }}>{{ $v->plate_number }} - {{ $v->vehicle_type }}</option>
+                                            @endforeach
+                                        </select>
+                                        <button type="button" class="btn-add-inline" title="إضافة مركبة جديدة"
+                                            aria-label="إضافة مركبة جديدة" data-toggle="modal"
+                                            data-target="#quickAddVehicleModal">
+                                            <i class="ki ki-solid-plus"></i>
+                                        </button>
+                                    </div>
                                     @error('vehicle_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -292,12 +324,19 @@
 
                                 <div>
                                     <label for="driver_id" class="field-label">السائق</label>
-                                    <select name="driver_id" class="form-control selectpicker @error('driver_id') is-invalid @enderror" data-live-search="true">
-                                        <option value="">اختر السائق</option>
-                                        @foreach($drivers as $d)
-                                            <option value="{{ $d->id }}" {{ old('driver_id') == $d->id ? 'selected' : '' }}>{{ $d->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div class="field-with-add">
+                                        <select name="driver_id" id="driver_id" data-size="7" tabindex="null" class="form-control selectpicker @error('driver_id') is-invalid @enderror" data-live-search="true" data-container="body">
+                                            <option value="">اختر السائق</option>
+                                            @foreach($drivers as $d)
+                                                <option value="{{ $d->id }}" {{ old('driver_id') == $d->id ? 'selected' : '' }}>{{ $d->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <button type="button" class="btn-add-inline" title="إضافة سائق جديد"
+                                            aria-label="إضافة سائق جديد" data-toggle="modal"
+                                            data-target="#quickAddDriverModal">
+                                            <i class="ki ki-solid-plus"></i>
+                                        </button>
+                                    </div>
                                     @error('driver_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -343,7 +382,7 @@
                                             <select
                                                 class="form-control selectpicker @error('product.' . $index) is-invalid @enderror"
                                                 data-size="7" tabindex="null" title="أدخل الصنف"
-                                                data-live-search="true" name="product[]">
+                                                data-live-search="true" data-container="body" name="product[]">
                                                 <option value="">اختر الصنف</option>
                                                 @foreach ($products as $product)
                                                     <option value="{{ $product->id }}"
@@ -557,6 +596,102 @@
             </div>
         </div>
     </div>
+
+    <!-- Quick Add Vehicle Modal -->
+    <div class="modal fade quick-add-modal" id="quickAddVehicleModal" tabindex="-1" role="dialog"
+        aria-labelledby="quickAddVehicleTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form action="{{ route('vehicles.store') }}" method="post" data-ajax-quick-add data-entity="vehicle">
+                    @csrf
+                    <div class="modal-header">
+                        <div class="quick-add-heading">
+                            <h5 class="modal-title" id="quickAddVehicleTitle">إضافة مركبة جديدة</h5>
+                            <p class="quick-add-context">سيتم اختيار المركبة الجديدة تلقائياً.</p>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger mb-4" role="alert" data-form-error></div>
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="quick_vehicle_type">نوع المركبة</label>
+                                <input id="quick_vehicle_type" class="form-control" type="text" name="vehicle_type"
+                                    maxlength="255" required>
+                                <div class="invalid-feedback" data-field-error="vehicle_type"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="quick_vehicle_plate">رقم اللوحة</label>
+                                <input id="quick_vehicle_plate" class="form-control" type="text" name="plate_number"
+                                    maxlength="50">
+                                <div class="invalid-feedback" data-field-error="plate_number"></div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="quick_vehicle_vin">رقم الشاصي</label>
+                                <input id="quick_vehicle_vin" class="form-control" type="text" name="vin"
+                                    maxlength="50">
+                                <div class="invalid-feedback" data-field-error="vin"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="quick_vehicle_year">سنة الصنع</label>
+                                <input id="quick_vehicle_year" class="form-control" type="number" name="manufacture_year"
+                                    min="1950" max="{{ (int) date('Y') + 1 }}">
+                                <div class="invalid-feedback" data-field-error="manufacture_year"></div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label for="quick_vehicle_notes">ملاحظات</label>
+                            <textarea id="quick_vehicle_notes" class="form-control" name="notes" rows="2"
+                                maxlength="5000"></textarea>
+                            <div class="invalid-feedback" data-field-error="notes"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">إغلاق</button>
+                        <button type="submit" class="btn btn-primary" data-submit-label="حفظ المركبة">حفظ المركبة</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Add Driver Modal -->
+    <div class="modal fade quick-add-modal" id="quickAddDriverModal" tabindex="-1" role="dialog"
+        aria-labelledby="quickAddDriverTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form action="{{ route('drivers.store') }}" method="post" data-ajax-quick-add data-entity="driver">
+                    @csrf
+                    <div class="modal-header">
+                        <div class="quick-add-heading">
+                            <h5 class="modal-title" id="quickAddDriverTitle">إضافة سائق جديد</h5>
+                            <p class="quick-add-context">سيتم اختيار السائق الجديد تلقائياً.</p>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger mb-4" role="alert" data-form-error></div>
+                        <div class="form-group mb-0">
+                            <label for="quick_driver_name">اسم السائق</label>
+                            <input id="quick_driver_name" class="form-control" type="text" name="name"
+                                minlength="2" maxlength="255" required>
+                            <div class="invalid-feedback" data-field-error="name"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">إغلاق</button>
+                        <button type="submit" class="btn btn-primary" data-submit-label="حفظ السائق">حفظ السائق</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -564,6 +699,25 @@
     <script src="{{ asset('js/recipient-select.js') }}"></script>
 
     <script>
+        // الحقول التي نزيل عنها required مؤقتاً عند تخطي رقم السند
+        var SKIP_OPTIONAL_FIELDS = ['subSection_id', 'beneficiary', 'invoice_no'];
+
+        function restoreRequiredFields() {
+            SKIP_OPTIONAL_FIELDS.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) {
+                    el.setAttribute('required', 'required');
+                }
+            });
+        }
+
+        // الحقول المعطّلة لا تُرسل مع الفورم، لذلك نفعّلها قبل أي إرسال
+        function enableProductSelects() {
+            document.querySelectorAll('#products-table select[name="product[]"]').forEach(function(s) {
+                s.disabled = false;
+            });
+        }
+
         function submitSkipForm() {
             // التحقق من تاريخ السند قبل التخطي
             var voucherDate = document.getElementById('voucher_date').value;
@@ -577,10 +731,13 @@
                 return;
             }
 
-            // إزالة required من الحقول الاختيارية قبل التخطي
-            document.getElementById('subSection_id').removeAttribute('required');
-            document.getElementById('beneficiary').removeAttribute('required');
-            document.getElementById('invoice_no').removeAttribute('required');
+            // إزالة required من الحقول الاختيارية أثناء التخطي (تُستعاد عند الإلغاء)
+            SKIP_OPTIONAL_FIELDS.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) {
+                    el.removeAttribute('required');
+                }
+            });
 
             Swal.fire({
                 title: 'سبب تخطي رقم السند',
@@ -616,114 +773,167 @@
                     if (skipReasonField) {
                         skipReasonField.value = result.value;
                     }
+                    enableProductSelects();
                     document.getElementById('kt_form').submit();
+                } else {
+                    restoreRequiredFields();
                 }
             });
         }
     </script>
 
     <script>
-        $(document).ready(function() {
-            // إظهار/إخفاء حقول المركبة بناءً على checkbox
-            $('#link_to_vehicle').on('change', function() {
-                if ($(this).is(':checked')) {
-                    $('#vehicle_fields').show();
-                } else {
-                    $('#vehicle_fields').hide();
+        // Wait for jQuery to be available
+        function waitForJQuery(callback) {
+            if (typeof $ !== 'undefined') {
+                callback();
+            } else {
+                setTimeout(function() {
+                    waitForJQuery(callback);
+                }, 100);
+            }
+        }
+
+        waitForJQuery(function() {
+            $(document).ready(function() {
+                var $eventType = $('#vehicle_event_type');
+
+                function productSelects() {
+                    return $('#products-table tbody select[name="product[]"]');
                 }
-            });
 
-            // اختيار الصنف تلقائياً بناءً على نوع الحدث
-            $('select[name="vehicle_event_type"]').on('change', function() {
-                const eventType = $(this).val();
-                const productSelects = $('#products-table tbody select[name="product[]"]');
-
-                if (eventType === 'oil') {
-                    // البحث عن صنف زيت وتعطيل القائمة
-                    const oilOption = productSelects.first().find('option').filter(function() {
-                        return $(this).text().trim() === 'زيت' || $(this).text().includes('زيت');
-                    }).first();
-
-                    if (oilOption.length) {
-                        const oilId = oilOption.val();
-                        productSelects.each(function() {
-                            $(this).val(oilId).selectpicker('refresh');
-                            $(this).prop('disabled', true);
-                            $(this).closest('.bootstrap-select').addClass('disabled');
-                        });
-                    }
-                } else if (eventType === 'recycled_oil') {
-                    // البحث عن صنف زيت مكرر وتعطيل القائمة
-                    const recycledOilOption = productSelects.first().find('option').filter(function() {
-                        return $(this).text().includes('زيت مكرر') || $(this).text().includes('مكرر');
-                    }).first();
-
-                    if (recycledOilOption.length) {
-                        const oilId = recycledOilOption.val();
-                        productSelects.each(function() {
-                            $(this).val(oilId).selectpicker('refresh');
-                            $(this).prop('disabled', true);
-                            $(this).closest('.bootstrap-select').addClass('disabled');
-                        });
-                    }
-                } else {
-                    // إعادة تفعيل القائمة للخيارات الأخرى
-                    productSelects.each(function() {
-                        $(this).prop('disabled', false);
-                        $(this).closest('.bootstrap-select').removeClass('disabled');
+                // ===== قفل/فتح قوائم الأصناف حسب نوع الحدث =====
+                function lockProducts(optionId) {
+                    productSelects().each(function() {
+                        $(this).val(optionId).prop('disabled', true).selectpicker('refresh');
                     });
                 }
-            });
 
-            // إبراز حقول selectpicker التي عليها خطأ بعد رجوع Laravel
-            $('#products-table .product-row select.is-invalid').each(function() {
-                $(this).closest('td').find('.bootstrap-select > .dropdown-toggle').addClass('is-invalid');
-            });
+                function unlockProducts() {
+                    productSelects().each(function() {
+                        $(this).prop('disabled', false).selectpicker('refresh');
+                    });
+                }
 
-            // إجمالي الكمية
-            function calculateTotalQuantity() {
-                var total = 0;
-                $("#products-table tbody input[name='quantity[]']").each(function() {
-                    total += parseFloat($(this).val()) || 0;
+                function findEventOption(type) {
+                    var $opts = productSelects().first().find('option').filter(function() {
+                        return this.value !== '';
+                    });
+                    if (type === 'recycled_oil') {
+                        return $opts.filter(function() {
+                            return $(this).text().indexOf('مكرر') !== -1;
+                        }).first();
+                    }
+                    // زيت عادي: يحتوي "زيت" ولا يحتوي "مكرر"
+                    return $opts.filter(function() {
+                        var t = $(this).text();
+                        return t.indexOf('زيت') !== -1 && t.indexOf('مكرر') === -1;
+                    }).first();
+                }
+
+                function applyEventTypeLock() {
+                    var type = $eventType.val();
+                    if (type === 'oil' || type === 'recycled_oil') {
+                        var $opt = findEventOption(type);
+                        if ($opt.length) {
+                            lockProducts($opt.val());
+                            return;
+                        }
+                    }
+                    unlockProducts();
+                }
+
+                // ===== إظهار/إخفاء حقول المركبة =====
+                function toggleVehicleFields(show) {
+                    $('#vehicle_fields').toggle(show);
+                    // الحقول المخفية تُعطّل حتى لا تُرسل مع الفورم
+                    $('#vehicle_fields select').each(function() {
+                        $(this).prop('disabled', !show);
+                        if ($(this).hasClass('selectpicker')) {
+                            $(this).selectpicker('refresh');
+                        }
+                    });
+                    if (!show && $eventType.val()) {
+                        $eventType.val('');
+                    }
+                    applyEventTypeLock();
+                }
+
+                $('#link_to_vehicle').on('change', function() {
+                    toggleVehicleFields($(this).is(':checked'));
                 });
-                $("#total-quantity").val(Math.round(total * 100) / 100);
-            }
 
-            // السماح بحذف صف من جدول المنتجات
-            $(document).on('click', '.delete-row', function() {
-                $(this).closest('tr').remove();
+                $eventType.on('change', applyEventTypeLock);
+
+                // الحالة الابتدائية (بعد رجوع Laravel بأخطاء مثلاً)
+                toggleVehicleFields($('#link_to_vehicle').is(':checked'));
+
+                // تفعيل قوائم الأصناف قبل الإرسال العادي حتى تصل القيم
+                $('#kt_form').on('submit', enableProductSelects);
+
+                // إبراز حقول selectpicker التي عليها خطأ بعد رجوع Laravel
+                $('#products-table .product-row select.is-invalid').each(function() {
+                    $(this).closest('td').find('.bootstrap-select > .dropdown-toggle').addClass('is-invalid');
+                });
+
+                // ===== إجمالي الكمية =====
+                function calculateTotalQuantity() {
+                    var total = 0;
+                    $("#products-table tbody input[name='quantity[]']").each(function() {
+                        total += parseFloat($(this).val()) || 0;
+                    });
+                    $("#total-quantity").val(Math.round(total * 100) / 100);
+                }
+
+                // حذف صف
+                $(document).on('click', '.delete-row', function() {
+                    $(this).closest('tr').remove();
+                    calculateTotalQuantity();
+                });
+
+                // إضافة صف: نبني select جديداً نظيفاً من خيارات القائمة الأولى
+                // (بدل استنساخ عنصر selectpicker المهيّأ الذي يكرر غلاف bootstrap-select)
+                $("#add-row").click(function() {
+                    var $first = productSelects().first();
+                    var $newSelect = $('<select>', {
+                        'class': 'form-control selectpicker',
+                        'name': 'product[]',
+                        'data-size': 7,
+                        'data-live-search': 'true',
+                        'data-container': 'body',
+                        'title': 'أدخل الصنف'
+                    });
+                    $first.find('option').each(function() {
+                        $newSelect.append(new Option($(this).text(), this.value));
+                    });
+                    $newSelect.val('');
+
+                    var newRow = $('<tr class="product-row">');
+                    newRow.append($('<td>').append($newSelect));
+                    newRow.append($('<td>').append($('<input>', {
+                        type: 'number',
+                        step: '0.01',
+                        min: '0.1',
+                        name: 'quantity[]',
+                        'class': 'form-control'
+                    })));
+                    newRow.append($('<td>').append(
+                        $('<button>', {
+                            type: 'button',
+                            'class': 'row-btn is-del delete-row',
+                            title: 'حذف الصف'
+                        }).append('<i class="la la-trash"></i>')
+                    ));
+                    $("#products-table tbody").append(newRow);
+
+                    $newSelect.selectpicker();
+                    // إن كان نوع الحدث (زيت/زيت مكرر) مفعّلاً، يأخذ الصف الجديد نفس الصنف المقفول
+                    applyEventTypeLock();
+                });
+
+                $(document).on('input', "input[name='quantity[]']", calculateTotalQuantity);
                 calculateTotalQuantity();
             });
-
-            $("#add-row").click(function() {
-                var firstProductSelect = $('#products-table tbody select[name="product[]"]').first();
-                var newProductSelect = firstProductSelect.clone().val('');
-                newProductSelect.find('option').prop('selected', false);
-                newProductSelect.removeClass('is-invalid');
-
-                var newRow = $('<tr class="product-row">');
-                newRow.append($('<td>').append(newProductSelect));
-                newRow.append($('<td>').append($('<input>', {
-                    type: 'number',
-                    step: '0.01',
-                    min: '0.1',
-                    name: 'quantity[]',
-                    class: 'form-control'
-                })));
-                newRow.append($('<td>').append(
-                    $('<button>', {
-                        type: 'button',
-                        class: 'row-btn is-del delete-row',
-                        title: 'حذف الصف'
-                    }).append('<i class="la la-trash"></i>')
-                ));
-                $("#products-table tbody").append(newRow);
-
-                newProductSelect.selectpicker();
-            });
-
-            $(document).on('input', "input[name='quantity[]']", calculateTotalQuantity);
-            calculateTotalQuantity();
         });
     </script>
 
@@ -753,6 +963,13 @@
             function selectNewItem(item) {
                 var value = String(item.id);
                 var label = item.item_num + ' ' + item.item_name + ' الرصيد: ' + item.balance;
+
+                // إضافة صنف جديد تعني اختيار صنف مختلف، فنفك قفل الزيت إن كان مفعّلاً
+                var $eventType = $('#vehicle_event_type');
+                if ($eventType.val() === 'oil' || $eventType.val() === 'recycled_oil') {
+                    $eventType.val('').trigger('change');
+                }
+
                 var $selects = $('#products-table tbody select[name="product[]"]');
 
                 if (!$selects.filter(function() {
@@ -784,7 +1001,7 @@
                 }
             }
 
-            // معالج واحد لكل نماذج الإضافة السريعة (القسم، الصنف، المستلم)
+            // معالج واحد لكل نماذج الإضافة السريعة (القسم، الصنف، المستلم، المركبة، السائق)
             $(document).on('submit', '[data-ajax-quick-add]', function(event) {
                 event.preventDefault();
                 var form = this;
@@ -811,6 +1028,11 @@
                         selectNewItem(entity);
                     } else if (type === 'beneficiary') {
                         addOption('#beneficiary', entity.id, entity.name);
+                    } else if (type === 'vehicle') {
+                        var vehicleLabel = (entity.plate_number || '') + ' - ' + (entity.vehicle_type || '');
+                        addOption('#vehicle_id', entity.id, vehicleLabel.replace(/^\s*-\s*|\s*-\s*$/g, ''));
+                    } else if (type === 'driver') {
+                        addOption('#driver_id', entity.id, entity.name);
                     }
                     form.reset();
                     $form.closest('.modal').modal('hide');
@@ -868,7 +1090,6 @@
                         dataType: "json",
                         success: function(data) {
                             if (data && data.last_item_num !== undefined) {
-                                // زيادة الرقم كـ string للحفاظ على القيمة الصحيحة
                                 const lastNumStr = String(data.last_item_num);
                                 const newNumStr = String(parseInt(lastNumStr) + 1);
                                 $('#quick_export_item_num').val(newNumStr);
