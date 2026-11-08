@@ -113,7 +113,8 @@ class VehicleOperationController extends Controller
 
     public function show($id)
     {
-        $operation = VehicleOperation::with(['vehicle', 'driver', 'creator'])->findOrFail($id);
+        $operation = VehicleOperation::with(['vehicle', 'driver', 'creator', 'invoiceExport.InvoiceExport_product.item'])
+            ->findOrFail($id);
 
         return view('vehicle_operations.show', compact('operation'));
     }
