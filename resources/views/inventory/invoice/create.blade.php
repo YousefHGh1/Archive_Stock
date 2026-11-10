@@ -79,10 +79,41 @@
         #products-table tbody td { padding: .7rem .8rem; vertical-align: top; border-color: #f1f3f7; }
         #products-table tbody tr:nth-child(even) { background: #fbfcfe; }
         #products-table .row-total { background: var(--accent-soft); font-weight: 800; color: var(--accent-dark); text-align: center; }
+        #products-table .bootstrap-select { width: 100% !important; }
+        #products-table .bootstrap-select > .dropdown-toggle { text-align: right; }
         .row-btn { width: 38px; height: 38px; border: none; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; transition: all .2s; font-size: 1.1rem; }
         .row-btn:hover { transform: scale(1.08); box-shadow: 0 4px 10px rgba(0,0,0,.2); }
         .row-btn.is-add { background: linear-gradient(135deg, #1bc5bd, #17a79f); }
         .row-btn.is-del { background: linear-gradient(135deg, #f64e60, #e0364a); }
+
+        /* ===== Item dropdown (rendered in <body> so it is never clipped) ===== */
+        .bs-container { z-index: 2000 !important; }
+        .bs-container .dropdown-menu {
+            direction: rtl;
+            text-align: right;
+            border: 1px solid var(--accent-border);
+            border-radius: 10px;
+            box-shadow: 0 12px 32px rgba(25, 30, 45, .18);
+            padding: .4rem 0;
+            max-width: 95vw;
+        }
+        .bs-container .bs-searchbox { padding: .5rem .75rem; }
+        .bs-container .bs-searchbox .form-control { border: 1px solid var(--accent-border); border-radius: 8px; }
+        .bs-container .dropdown-menu .inner { max-height: 320px !important; }
+        .bs-container .dropdown-menu li a { padding: .55rem 1rem; border-bottom: 1px solid #f4f5f9; }
+        .bs-container .dropdown-menu li:last-child a { border-bottom: none; }
+        .bs-container .dropdown-menu li a span.text,
+        .bs-container .dropdown-menu .dropdown-item span.text {
+            display: block;
+            white-space: normal !important;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+        .bs-container .dropdown-menu li.selected a,
+        .bs-container .dropdown-menu li a:hover,
+        .bs-container .dropdown-menu .dropdown-item.active,
+        .bs-container .dropdown-menu .dropdown-item:hover { background: var(--accent-soft); color: var(--accent-dark); }
+        .bs-container .dropdown-menu .no-results { padding: .75rem 1rem; text-align: center; }
 
         /* ===== Action bar ===== */
         .action-bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 1.1rem 1.5rem; background: var(--bg-soft); border-top: 1px solid var(--line); }
@@ -278,7 +309,8 @@
                                         <td>
                                             <select name="product[]"
                                                 class="form-control selectpicker @error('product.' . $index) is-invalid @enderror"
-                                                data-live-search="true" data-size="7" title="اختر الصنف">
+                                                data-live-search="true" data-size="7" data-container="body"
+                                                data-width="100%" title="اختر الصنف">
                                                 <option value="">اختر الصنف</option>
                                                 @foreach ($products as $product)
                                                     <option value="{{ $product->id }}"
@@ -323,6 +355,37 @@
                             </tbody>
                         </table>
                     </div>
+
+                    {{-- قالب ثابت لصف جديد: يُستنسخ منه كل صف يضاف بالزر + (لا يُرسل مع النموذج) --}}
+                    <template id="product-row-template">
+                        <tr class="product-row">
+                            <td>
+                                <select name="product[]" class="form-control selectpicker" data-live-search="true"
+                                    data-size="7" data-container="body" data-width="100%" title="اختر الصنف">
+                                    <option value="">اختر الصنف</option>
+                                    @foreach ($products as $product)
+                                        <option value="{{ $product->id }}">
+                                            {{ $product->item_num }}
+                                            {{ $product->item_name }}
+                                            {{ ' الرصيد: ' . $product->balance }}</option>
+                                    @endforeach
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" min="0.1" name="quantity[]" class="form-control">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" min="0" name="price[]" class="form-control">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" class="form-control row-total" readonly tabindex="-1">
+                            </td>
+                            <td>
+                                <button type="button" class="row-btn is-del delete-row" title="حذف الصف"><i class="la la-trash"></i></button>
+                            </td>
+                        </tr>
+                    </template>
+
                     @error('product')
                         <div class="text-danger mt-1">{{ $message }}</div>
                     @enderror
@@ -597,51 +660,24 @@
                 $("#total-all").val(total.toFixed(2));
             }
 
-            // السماح بحذف صف من جدول المنتجات
+            // حذف صف من جدول المنتجات
             $(document).on('click', '.delete-row', function() {
-                $(this).closest('tr').remove();
+                var $row = $(this).closest('tr');
+                // تدمير selectpicker لإزالة القائمة المنسدلة من الـ body
+                $row.find('select.selectpicker').each(function() {
+                    try { $(this).selectpicker('destroy'); } catch (e) {}
+                });
+                $row.remove();
                 calculateTotalAll();
             });
 
-            $("#add-row").click(function() {
-                var firstProductSelect = $('#products-table tbody select[name="product[]"]').first();
-                var newProductSelect = firstProductSelect.clone().val('');
-                newProductSelect.find('option').prop('selected', false);
-                newProductSelect.removeClass('is-invalid');
+            // إضافة صف جديد من القالب الثابت
+            $("#add-row").on('click', function() {
+                var template = document.getElementById('product-row-template');
+                var $newRow = $(template.content.firstElementChild.cloneNode(true));
 
-                var newRow = $('<tr class="product-row">');
-                newRow.append($('<td>').append(newProductSelect));
-                newRow.append($('<td>').append($('<input>', {
-                    type: 'number',
-                    step: '0.01',
-                    min: '0.1',
-                    name: 'quantity[]',
-                    class: 'form-control'
-                })));
-                newRow.append($('<td>').append($('<input>', {
-                    type: 'number',
-                    step: '0.01',
-                    min: '0',
-                    name: 'price[]',
-                    class: 'form-control'
-                })));
-                newRow.append($('<td>').append($('<input>', {
-                    type: 'number',
-                    step: '0.01',
-                    class: 'form-control row-total',
-                    readonly: true,
-                    tabindex: -1
-                })));
-                newRow.append($('<td>').append(
-                    $('<button>', {
-                        type: 'button',
-                        class: 'row-btn is-del delete-row',
-                        title: 'حذف الصف'
-                    }).append('<i class="la la-trash"></i>')
-                ));
-                $("#products-table tbody").append(newRow);
-
-                newProductSelect.selectpicker();
+                $("#products-table tbody").append($newRow);
+                $newRow.find('select.selectpicker').selectpicker();
             });
 
             $(document).on('input', "input[name='quantity[]'], input[name='price[]']", function() {
@@ -680,17 +716,27 @@
                 }
             }
 
+            function appendItemOption($select, item, label) {
+                var value = String(item.id);
+                if (!$select.find('option').filter(function() {
+                        return this.value === value;
+                    }).length) {
+                    $select.append(new Option(label, value));
+                }
+            }
+
             function selectNewItem(item) {
                 var label = item.item_num + ' ' + item.item_name + ' الرصيد: ' + item.balance;
                 var productSelects = $('#products-table tbody select[name="product[]"]');
 
+                // تحديث القالب الثابت ليحتوي الصنف الجديد في الصفوف القادمة
+                var template = document.getElementById('product-row-template');
+                if (template) {
+                    appendItemOption($(template.content).find('select[name="product[]"]'), item, label);
+                }
+
                 productSelects.each(function() {
-                    var value = String(item.id);
-                    if (!$(this).find('option').filter(function() {
-                            return this.value === value;
-                        }).length) {
-                        $(this).append(new Option(label, value));
-                    }
+                    appendItemOption($(this), item, label);
                     if ($(this).hasClass('selectpicker')) {
                         $(this).selectpicker('refresh');
                     }
