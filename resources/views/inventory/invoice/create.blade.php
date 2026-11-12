@@ -522,22 +522,34 @@
                         <div class="form-group row">
                             <div class="col-md-6">
                                 <label for="quick_item_category">العائلة</label>
-                                <select id="quick_item_category" class="form-control selectpicker" name="category_id" data-live-search="true" required>
-                                    <option value="">اختر العائلة</option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->category_name }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="field-with-add">
+                                    <select id="quick_item_category" class="form-control selectpicker" name="category_id" data-live-search="true" required>
+                                        <option value="">اختر العائلة</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->category_num }} {{ $category->category_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <span class="btn-add-inline quick-add-category-btn" role="button" tabindex="0"
+                                        title="اضافة عائلة جديدة" aria-label="اضافة عائلة جديدة">
+                                        <i class="ki ki-solid-plus icon-md"></i>
+                                    </span>
+                                </div>
                                 <div class="invalid-feedback" data-field-error="category_id"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="quick_item_unit">الوحدة</label>
-                                <select id="quick_item_unit" class="form-control" name="unit_id" required>
-                                    <option value="">اختر الوحدة</option>
-                                    @foreach ($units as $unit)
-                                        <option value="{{ $unit->id }}">{{ $unit->unit_name }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="field-with-add">
+                                    <select id="quick_item_unit" class="form-control" name="unit_id" required>
+                                        <option value="">اختر الوحدة</option>
+                                        @foreach ($units as $unit)
+                                            <option value="{{ $unit->id }}">{{ $unit->unit_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <span class="btn-add-inline quick-add-unit-btn" role="button" tabindex="0"
+                                        title="اضافة وحدة جديدة" aria-label="اضافة وحدة جديدة">
+                                        <i class="ki ki-solid-plus icon-md"></i>
+                                    </span>
+                                </div>
                                 <div class="invalid-feedback" data-field-error="unit_id"></div>
                             </div>
                         </div>
@@ -573,6 +585,79 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-dismiss="modal">إلغاء</button>
                         <button type="submit" class="btn btn-primary" data-submit-label="حفظ الصنف">حفظ الصنف</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade quick-add-modal" id="quickAddCategoryModal" tabindex="-1" role="dialog"
+        aria-labelledby="quickAddCategoryTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form action="{{ route('category.store') }}" method="post" data-ajax-quick-add
+                    data-entity="category">
+                    @csrf
+                    <div class="modal-header">
+                        <div class="quick-add-heading">
+                            <h5 class="modal-title" id="quickAddCategoryTitle">إضافة عائلة جديدة</h5>
+                            <p class="quick-add-context">بيانات العائلة المرتبطة بالصنف.</p>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger mb-4" role="alert" data-form-error></div>
+                        <div class="form-group">
+                            <label for="quick_category_num">رقم العائلة</label>
+                            <input id="quick_category_num" class="form-control" type="number" name="category_num"
+                                required>
+                            <div class="invalid-feedback" data-field-error="category_num"></div>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label for="quick_category_name">اسم العائلة</label>
+                            <input id="quick_category_name" class="form-control" type="text" name="category_name"
+                                maxlength="255" required>
+                            <div class="invalid-feedback" data-field-error="category_name"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-primary" data-submit-label="حفظ العائلة">حفظ العائلة</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade quick-add-modal" id="quickAddUnitModal" tabindex="-1" role="dialog"
+        aria-labelledby="quickAddUnitTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form action="{{ route('unit.store') }}" method="post" data-ajax-quick-add data-entity="unit">
+                    @csrf
+                    <div class="modal-header">
+                        <div class="quick-add-heading">
+                            <h5 class="modal-title" id="quickAddUnitTitle">إضافة وحدة جديدة</h5>
+                            <p class="quick-add-context">بيانات الوحدة المرتبطة بالصنف.</p>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger mb-4" role="alert" data-form-error></div>
+                        <div class="form-group mb-0">
+                            <label for="quick_unit_name">اسم الوحدة</label>
+                            <input id="quick_unit_name" class="form-control" type="text" name="unit_name"
+                                maxlength="255" required>
+                            <div class="invalid-feedback" data-field-error="unit_name"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-primary" data-submit-label="حفظ الوحدة">حفظ الوحدة</button>
                     </div>
                 </form>
             </div>
@@ -702,7 +787,8 @@
                 $(form).find('[data-form-error]').text(message).show();
             }
 
-            function addOption(select, id, label) {
+            function addOption(select, id, label, triggerChange) {
+                triggerChange = triggerChange !== undefined ? triggerChange : true;
                 var $select = $(select);
                 var value = String(id);
                 if (!$select.find('option').filter(function() {
@@ -710,11 +796,46 @@
                     }).length) {
                     $select.append(new Option(label, value));
                 }
-                $select.val(value).trigger('change');
+                $select.val(value);
+                if (triggerChange) {
+                    $select.trigger('change');
+                }
                 if ($select.hasClass('selectpicker')) {
                     $select.selectpicker('refresh');
                 }
             }
+
+            // ===== المودالات المتداخلة (عائلة / وحدة فوق مودال الصنف) =====
+
+            // فتح مودال العائلة / الوحدة من داخل مودال الصنف دون إغلاق الأب
+            $(document).on('click keydown', '.quick-add-category-btn, .quick-add-unit-btn', function(e) {
+                if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') {
+                    return;
+                }
+                e.preventDefault();
+                e.stopPropagation();
+                var target = $(this).hasClass('quick-add-category-btn') ?
+                    '#quickAddCategoryModal' : '#quickAddUnitModal';
+                $(target).modal('show');
+            });
+
+            // إبقاء modal-open على body إذا بقي مودال آخر مفتوحاً
+            $(document).on('hidden.bs.modal', '.modal', function() {
+                if ($('.modal.show').length) {
+                    $('body').addClass('modal-open');
+                }
+            });
+
+            // رفع المودالات الفرعية وطبقة التعتيم الخاصة بها فوق مودال الصنف
+            $('#quickAddCategoryModal, #quickAddUnitModal').on('show.bs.modal', function() {
+                var $modal = $(this);
+                setTimeout(function() {
+                    $modal.css('z-index', 1070);
+                    $('.modal-backdrop').last().css('z-index', 1060);
+                }, 0);
+            });
+
+            // ===== تحديث قوائم الأصناف =====
 
             function appendItemOption($select, item, label) {
                 var value = String(item.id);
@@ -761,12 +882,16 @@
                 }
             }
 
+            // ===== إرسال نماذج الإضافة السريعة عبر AJAX (يشمل المورد والعملة والصنف والعائلة والوحدة) =====
+
             $(document).on('submit', '[data-ajax-quick-add]', function(event) {
                 event.preventDefault();
+                event.stopPropagation();
                 var form = this;
                 var $form = $(form);
                 var $submit = $form.find('[type="submit"]');
                 var originalLabel = $submit.data('submit-label');
+                var entityType = $form.data('entity');
 
                 resetQuickAddFeedback(form);
                 $submit.prop('disabled', true).text('جارٍ الحفظ...');
@@ -777,20 +902,30 @@
                     data: $form.serialize(),
                     dataType: 'json',
                     headers: {
-                        Accept: 'application/json'
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 }).done(function(entity) {
-                    if ($form.data('entity') === 'supplier') {
+                    if (entityType === 'supplier') {
                         addOption('#supplier_item_id', entity.id,
                             entity.supplier_item_name + ' ' + entity.supplier_item_num);
-                    } else if ($form.data('entity') === 'currency') {
+                    } else if (entityType === 'currency') {
                         addOption('#currency_id', entity.id, entity.name);
-                    } else if ($form.data('entity') === 'item') {
+                    } else if (entityType === 'category') {
+                        addOption('#quick_item_category', entity.id,
+                            entity.category_num + ' ' + entity.category_name, false);
+                        // تشغيل change لتوليد رقم الصنف تلقائياً
+                        $('#quick_item_category').trigger('change');
+                    } else if (entityType === 'unit') {
+                        addOption('#quick_item_unit', entity.id, entity.unit_name);
+                    } else if (entityType === 'item') {
                         selectNewItem(entity);
                     }
 
                     form.reset();
+                    // إغلاق المودال الحالي فقط دون المودالات الأب
                     $form.closest('.modal').modal('hide');
+
                     if (window.Swal) {
                         Swal.fire({
                             toast: true,
@@ -864,11 +999,12 @@
                 }
             });
 
-            // تهيئة selectpicker عند فتح مودال إضافة الصنف
-            $('#quickAddItemModal').on('shown.bs.modal', function() {
+            // تهيئة selectpicker عند فتح المودالات
+            $('#quickAddItemModal, #quickAddCategoryModal').on('shown.bs.modal', function() {
                 $(this).find('.selectpicker').selectpicker('refresh');
             });
 
+            // تنظيف رسائل الأخطاء عند إغلاق أي مودال
             $('.quick-add-modal').on('hidden.bs.modal', function() {
                 var form = $(this).find('[data-ajax-quick-add]')[0];
                 if (form) {

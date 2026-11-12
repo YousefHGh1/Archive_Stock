@@ -221,14 +221,14 @@
                                 <td>{{ $transaction['sub_section'] }}</td>
                                 <td>
                                     @if($transaction['type'] == 'export')
-                                        {{ $transaction['recipient'] }}
+                                        {{ $transaction['recipient'] ?? '-' }}
                                     @else
                                         -
                                     @endif
                                 </td>
                                 <td>
                                     @if($transaction['type'] == 'export')
-                                        {{ $transaction['num_section'] }}
+                                        {{ $transaction['num_section'] ?? '-' }}
                                     @else
                                         -
                                     @endif
