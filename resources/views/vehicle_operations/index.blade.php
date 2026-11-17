@@ -39,7 +39,7 @@
 </div></div>
 <div class="card-body">
 <form method="GET" class="row mb-4">
-<div class="col-md-3"><select name="vehicle_id" class="form-control"><option value="">كل المركبات</option>@foreach($vehicles as $v)<option value="{{ $v->id }}" @selected(request('vehicle_id')==$v->id)>{{ $v->plate_number }}</option>@endforeach</select></div>
+<div class="col-md-3"><select name="vehicle_id" class="form-control"><option value="">كل المركبات</option>@foreach($vehicles as $v)<option value="{{ $v->id }}" @selected(request('vehicle_id')==$v->id)>{{ $v->plate_number }} - {{ $v->vehicle_type }}</option>@endforeach</select></div>
 <div class="col-md-3"><select name="driver_id" class="form-control"><option value="">كل السائقين</option>@foreach($drivers as $d)<option value="{{ $d->id }}" @selected(request('driver_id')==$d->id)>{{ $d->name }}</option>@endforeach</select></div>
 <div class="col-md-2"><select name="event_type" class="form-control"><option value="">كل الأنواع</option><option value="diesel" @selected(request('event_type')=='diesel')>سولار</option><option value="oil" @selected(request('event_type')=='oil')>زيت</option><option value="recycled_oil" @selected(request('event_type')=='recycled_oil')>زيت مكرر</option><option value="maintenance" @selected(request('event_type')=='maintenance')>صيانة</option></select></div>
 <div class="col-md-2"><input type="date" name="start_date" value="{{ request('start_date') }}" class="form-control"></div>
