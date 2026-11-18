@@ -462,6 +462,11 @@ class DieselExportController extends Controller
             ? SubSection::where('section_id', $request->section_id)->get()
             : SubSection::all();
 
+        // Fetch recipients (الجهات المستلمة)
+        $recipients = DieselRecipient::where('is_active', true)
+            ->orderBy('name')
+            ->pluck('name', 'id');
+
         // Calculate previous balance for Diesel (before start_date if provided)
         $dieselPreviousQuery = Diesel::query();
         $dieselExportPreviousQuery = DieselExport::query();
@@ -493,7 +498,7 @@ class DieselExportController extends Controller
         return view('dieselexport.report', compact(
             'dieselData', 'previousYearsData', 'section', 'subSection',
             'previousBalance', 'totalExported', 'totalEntries', 'dieselExports',
-            'typesfuel', 'remainingByType', 'totalRemaining', 'perPage'
+            'typesfuel', 'remainingByType', 'totalRemaining', 'perPage', 'recipients'
         ));
     }
 

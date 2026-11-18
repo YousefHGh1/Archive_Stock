@@ -185,7 +185,12 @@
                             </div>
                             <div class="form-group col-6 col-md-3 col-xl-2">
                                 <label>الجهة المستلمة</label>
-                                <input name="num_section" type="text" class="form-control" value="{{ request('num_section') }}" />
+                                <select name="num_section" class="form-control selectpicker" data-live-search="true" data-size="7">
+                                    <option value="">الكل</option>
+                                    @foreach($recipients ?? [] as $id => $name)
+                                        <option value="{{ $name }}" {{ request('num_section') == $name ? 'selected' : '' }}>{{ $name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="form-group col-6 col-md-3 col-xl-2">
                                 <label>رقم الدفتر</label>
@@ -366,6 +371,24 @@
             if ($.fn.selectpicker) {
                 $('.fr-filters .selectpicker').selectpicker();
             }
+
+            // تحميل الأقسام الفرعية حسب الدائرة المختارة
+            var $sub = $('select[name="sub_section_id"]');
+            $('select[name="section_id"]').on('change', function() {
+                var sectionId = $(this).val();
+                $sub.empty().append('<option value="">جميع الأقسام</option>');
+                if (!sectionId) {
+                    $sub.selectpicker('refresh');
+                    return;
+                }
+                $.getJSON("{{ URL::to('getsub_section') }}/" + sectionId, function(data) {
+                    $.each(data, function(id, name) {
+                        $sub.append($('<option>', { value: id, text: name }));
+                    });
+                    $sub.selectpicker('refresh');
+                });
+            });
+        });
 
             // تحميل الأقسام الفرعية حسب الدائرة المختارة
             var $sub = $('select[name="sub_section_id"]');
