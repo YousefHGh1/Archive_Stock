@@ -91,6 +91,11 @@ Route::prefix('/')->middleware('auth')->group(function () {
 
 // ************************************************الأرشيف المركزي*************************************************************
 Route::middleware('auth')->group(function () {
+    // مسارات مخصصة للديزل يجب أن تأتي قبل الـ resource لتجنب التعارض
+    Route::match(['get', 'post'], '/dieselreport', [DieselController::class, 'report'])->name('diesel.report');
+    Route::match(['get', 'post'], '/diesel/transactions/{id}', [DieselController::class, 'transactions'])->name('diesel.transactions');
+    Route::match(['get', 'post'], '/diesel/transactions-all', [DieselController::class, 'transactionsAll'])->name('diesel.transactions-all');
+
     Route::resource('diesel', DieselController::class);
     Route::resource('dieselexport', DieselExportController::class);
     Route::resource('diesel_recipients', DieselRecipientController::class);
@@ -273,6 +278,9 @@ Route::prefix('inventory/')->middleware('auth')->group(function () {
     // *********************** Unified Reports Index *************************
     Route::get('reports', [ReportController::class, 'unifiedIndex'])->name('reports.index');
 
+    // *********************** Comprehensive Fuel Report *************************
+    Route::get('reports/comprehensive-fuel', [\App\Http\Controllers\FuelReportController::class, 'comprehensiveReport'])->name('reports.comprehensive-fuel');
+
     // *****************************************Inside_Search******************************************************
     Route::post('invoice/searchdate', [InvoiceController::class, 'searchdate']);
     Route::post('invoice_export/searchdate', [InvoiceExportController::class, 'searchdate']);
@@ -306,11 +314,6 @@ Route::prefix('/')->group(function () {
     Route::post('dieselexport/searchsec', [DieselExportController::class, 'searchsec'])->name('dieselexport.searchsec');
     Route::post('dieselexport/searchname', [DieselExportController::class, 'searchname'])->name('dieselexport.searchname');
     Route::post('dieselexport/searchtotal', [DieselExportController::class, 'searchtotal'])->name('dieselexport.searchtotal');
-    // **************************Diesel********************************************************************
-
-    Route::match(['get', 'post'], '/dieselreport', [DieselController::class, 'report'])->name('diesel.report');
-    Route::match(['get', 'post'], '/diesel/transactions/{id}', [DieselController::class, 'transactions'])->name('diesel.transactions');
-
     // **************************legal********************************************************************
     Route::get('legalreport', [LegalController::class, 'report']);
 });

@@ -977,6 +977,15 @@
                                                                 الوارد</span>
                                                         </a>
                                                     </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('diesel.transactions-all') }}" class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="menu-bullet flaticon-graphic"></i>
+                                                            </span>
+                                                            <span class="menu-text">تقرير حركة
+                                                                الوارد والصادر</span>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </li>
@@ -1051,6 +1060,14 @@
                                                                 <i class="flaticon-users"></i>
                                                             </span>
                                                             <span class="menu-text">الجهات المستلمة</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="{{ route('reports.comprehensive-fuel') }}" class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="flaticon-graphic"></i>
+                                                            </span>
+                                                            <span class="menu-text">التقرير الشامل للمحروقات</span>
                                                         </a>
                                                     </li>
                                                 </ul>

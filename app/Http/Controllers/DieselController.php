@@ -486,4 +486,132 @@ class DieselController extends Controller
         ));
     }
 
+    public function transactionsAll(Request $request)
+    {
+        // Get all fuel types
+        $fuelTypes = TypesFuel::all();
+
+        // Get all diesel entries (imports)
+        $importsQuery = Diesel::with(['supplier', 'typesfuel']);
+
+        // Get all diesel exports
+        $exportsQuery = DieselExport::with(['section', 'subSection', 'typesfuel']);
+
+        // Apply filters if the request is POST
+        if ($request->isMethod('post')) {
+            // Date range filter
+            if ($request->filled('start_date') && $request->filled('end_date')) {
+                $importsQuery->whereBetween('date', [$request->start_date, $request->end_date]);
+                $exportsQuery->whereBetween('date', [$request->start_date, $request->end_date]);
+            }
+
+            // Voucher range filter
+            if ($request->filled('start_voucher') && $request->filled('end_voucher')) {
+                $importsQuery->whereBetween('voucher', [$request->start_voucher, $request->end_voucher]);
+                $exportsQuery->whereBetween('voucher', [$request->start_voucher, $request->end_voucher]);
+            }
+
+            // Invoice number range filter
+            if ($request->filled('start_invoice') && $request->filled('end_invoice')) {
+                $importsQuery->whereBetween('invoice_num', [$request->start_invoice, $request->end_invoice]);
+                $exportsQuery->whereBetween('invoice_num', [$request->start_invoice, $request->end_invoice]);
+            }
+
+            // Type filter (import/export)
+            if ($request->filled('transaction_type')) {
+                if ($request->transaction_type == 'import') {
+                    $exportsQuery->whereRaw('1 = 0'); // Exclude exports
+                } elseif ($request->transaction_type == 'export') {
+                    $importsQuery->whereRaw('1 = 0'); // Exclude imports
+                }
+            }
+
+            // Fuel type filter
+            if ($request->filled('typesfuel_id')) {
+                $importsQuery->where('typesfuel_id', $request->typesfuel_id);
+                $exportsQuery->where('typesfuel_id', $request->typesfuel_id);
+            }
+        }
+
+        $imports = $importsQuery->orderBy('date', 'asc')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'type' => 'import',
+                    'date' => $item->date,
+                    'voucher' => $item->voucher,
+                    'invoice_num' => $item->invoice_num,
+                    'quantity' => $item->quantity,
+                    'supplier' => $item->supplier->name_supplier ?? 'N/A',
+                    'fuel_type' => $item->typesfuel->name ?? 'N/A',
+                    'fuel_type_id' => $item->typesfuel->id ?? null,
+                    'delivery_type' => $item->type,
+                    'section' => '-',
+                    'sub_section' => '-',
+                    'recipient' => '-',
+                    'num_note' => '-',
+                ];
+            });
+
+        $exports = $exportsQuery->orderBy('date', 'asc')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'type' => 'export',
+                    'date' => $item->date,
+                    'voucher' => $item->voucher,
+                    'invoice_num' => $item->invoice_num ?? '-',
+                    'quantity' => $item->quantity,
+                    'supplier' => '-',
+                    'fuel_type' => $item->typesfuel->name ?? 'N/A',
+                    'fuel_type_id' => $item->typesfuel->id ?? null,
+                    'delivery_type' => '-',
+                    'section' => $item->section->name_section ?? 'N/A',
+                    'sub_section' => $item->subSection->name_sub_section ?? 'N/A',
+                    'recipient' => $item->num_section ?? '-',
+                    'num_note' => $item->num_note ?? '-',
+                ];
+            });
+
+        // Merge and sort by date
+        $allTransactions = $imports->concat($exports)->sortBy('date')->values();
+
+        // Calculate a running balance for each fuel type
+        $balancesByType = [];
+        foreach ($fuelTypes as $type) {
+            $balancesByType[$type->id] = 0;
+        }
+
+        $allTransactions = $allTransactions->map(function ($transaction) use (&$balancesByType) {
+            $fuelTypeId = $transaction['fuel_type_id'];
+            if ($fuelTypeId !== null && isset($balancesByType[$fuelTypeId])) {
+                if ($transaction['type'] == 'import') {
+                    $balancesByType[$fuelTypeId] += $transaction['quantity'];
+                } else {
+                    $balancesByType[$fuelTypeId] -= $transaction['quantity'];
+                }
+                $transaction['balance'] = $balancesByType[$fuelTypeId];
+            } else {
+                $transaction['balance'] = 0;
+            }
+
+            return $transaction;
+        })->values();
+
+        // Calculate totals
+        $totalImports = $imports->sum('quantity');
+        $totalExports = $exports->sum('quantity');
+        $balance = $totalImports - $totalExports;
+
+        return view('diesel.transactions_all', compact(
+            'allTransactions',
+            'fuelTypes',
+            'totalImports',
+            'totalExports',
+            'balance'
+        ));
+    }
+
 }
