@@ -225,6 +225,7 @@
                                     @else
                                         -
                                     @endif
+                                    
                                 </td>
                                 <td>
                                     @if($transaction['type'] == 'export')

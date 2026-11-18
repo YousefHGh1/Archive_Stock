@@ -331,6 +331,8 @@ class DieselController extends Controller
                     'delivery_type' => $item->type,
                     'section' => '-',
                     'sub_section' => '-',
+                    'recipient' => '-',
+                    'num_note' => '-',
                 ];
             });
 
@@ -349,6 +351,8 @@ class DieselController extends Controller
                     'delivery_type' => '-',
                     'section' => $item->section->name_section ?? 'N/A',
                     'sub_section' => $item->subSection->name ?? 'N/A',
+                    'recipient' => $item->num_section ?? '-',
+                    'num_note' => $item->num_note ?? '-',
                 ];
             });
 
