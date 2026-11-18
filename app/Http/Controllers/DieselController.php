@@ -164,9 +164,30 @@ class DieselController extends Controller
             return $query;
         };
 
-        $query = $applyFilters(Diesel::with(['typesfuel', 'supplier']))
-            ->orderByDesc('date')
-            ->orderByDesc('id');
+        $query = $applyFilters(Diesel::with(['typesfuel', 'supplier']));
+
+        // الترتيب حسب العمود المحدد
+        $sortBy = $request->input('sort_by', 'date');
+        $sortOrder = $request->input('sort_order', 'desc');
+
+        // الترتيب حسب العلاقات
+        if ($sortBy === 'typesfuel_id') {
+            $query->join('types_fuels', 'diesels.typesfuel_id', '=', 'types_fuels.id')
+                  ->orderBy('types_fuels.name', $sortOrder)
+                  ->select('diesels.*');
+        } elseif ($sortBy === 'supplier_id') {
+            $query->join('supplier_items', 'diesels.supplier_id', '=', 'supplier_items.id')
+                  ->orderBy('supplier_items.name_supplier', $sortOrder)
+                  ->select('diesels.*');
+        } else {
+            // الترتيب حسب الأعمدة المباشرة
+            $allowedSortColumns = ['date', 'id', 'voucher', 'quantity', 'invoice_num', 'type'];
+            if (in_array($sortBy, $allowedSortColumns)) {
+                $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
+            } else {
+                $query->orderByDesc('date')->orderByDesc('id');
+            }
+        }
 
         // تصدير جميع النتائج المفلترة إلى ملف Excel (xlsx)
         if ($request->input('export') === 'excel') {

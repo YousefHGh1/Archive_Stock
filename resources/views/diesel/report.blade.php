@@ -14,6 +14,9 @@
         .fr-page .fr-hero { box-shadow: 0 10px 30px -12px rgba(27, 197, 189, .6); }
         .fr-page .fr-qty { background: rgba(27, 197, 189, .12); }
         .fr-page .fr-month.is-current { box-shadow: 0 0 0 3px rgba(27, 197, 189, .15); }
+        .fr-sort { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+        .fr-sort:hover { color: var(--fr-accent); }
+        .fr-sort i { font-size: 0.8em; }
     </style>
 @endsection
 
@@ -222,13 +225,62 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>نوع المحروقات</th>
-                                <th>اسم المورد</th>
-                                <th>كمية التوريد</th>
-                                <th>جهة التوريد</th>
-                                <th>سند التوريد</th>
-                                <th>رقم الفاتورة</th>
-                                <th>تاريخ التوريد</th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'typesfuel_id', 'sort_order' => request('sort_by') == 'typesfuel_id' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        نوع المحروقات
+                                        @if(request('sort_by') == 'typesfuel_id')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'supplier_id', 'sort_order' => request('sort_by') == 'supplier_id' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        اسم المورد
+                                        @if(request('sort_by') == 'supplier_id')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'quantity', 'sort_order' => request('sort_by') == 'quantity' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        كمية التوريد
+                                        @if(request('sort_by') == 'quantity')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'type', 'sort_order' => request('sort_by') == 'type' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        جهة التوريد
+                                        @if(request('sort_by') == 'type')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'voucher', 'sort_order' => request('sort_by') == 'voucher' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        سند التوريد
+                                        @if(request('sort_by') == 'voucher')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'invoice_num', 'sort_order' => request('sort_by') == 'invoice_num' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        رقم الفاتورة
+                                        @if(request('sort_by') == 'invoice_num')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'date', 'sort_order' => request('sort_by') == 'date' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        تاريخ التوريد
+                                        @if(request('sort_by') == 'date')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
