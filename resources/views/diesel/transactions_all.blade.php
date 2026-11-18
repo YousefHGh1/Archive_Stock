@@ -237,7 +237,7 @@
                                     @if($transaction['type'] == 'import')
                                         {{ $transaction['delivery_type'] }}
                                     @else
-                                        {{ $transaction['sub_section'] }}
+                                        {{ $transaction['section'] }}
                                     @endif
                                 </td>
                                 <td>
