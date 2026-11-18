@@ -384,9 +384,34 @@ class DieselExportController extends Controller
             return $query;
         };
 
-        $query = $applyFilters(DieselExport::with(['section', 'subSection', 'typesfuel']))
-            ->orderByDesc('date')
-            ->orderByDesc('id');
+        $query = $applyFilters(DieselExport::with(['section', 'subSection', 'typesfuel']));
+
+        // الترتيب حسب العمود المحدد
+        $sortBy = $request->input('sort_by', 'date');
+        $sortOrder = $request->input('sort_order', 'desc');
+
+        // الترتيب حسب العلاقات
+        if ($sortBy === 'section_id') {
+            $query->join('sections', 'diesel_exports.section_id', '=', 'sections.id')
+                  ->orderBy('sections.name_section', $sortOrder)
+                  ->select('diesel_exports.*');
+        } elseif ($sortBy === 'sub_section_id') {
+            $query->join('sub_sections', 'diesel_exports.sub_section_id', '=', 'sub_sections.id')
+                  ->orderBy('sub_sections.name', $sortOrder)
+                  ->select('diesel_exports.*');
+        } elseif ($sortBy === 'typesfuel_id') {
+            $query->join('types_fuels', 'diesel_exports.typesfuel_id', '=', 'types_fuels.id')
+                  ->orderBy('types_fuels.name', $sortOrder)
+                  ->select('diesel_exports.*');
+        } else {
+            // الترتيب حسب الأعمدة المباشرة
+            $allowedSortColumns = ['date', 'id', 'voucher', 'quantity', 'num_section', 'num_note'];
+            if (in_array($sortBy, $allowedSortColumns)) {
+                $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
+            } else {
+                $query->orderByDesc('date')->orderByDesc('id');
+            }
+        }
 
         // تصدير جميع النتائج المفلترة إلى ملف Excel (xlsx)
         if ($request->input('export') === 'excel') {

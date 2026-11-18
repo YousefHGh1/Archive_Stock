@@ -14,6 +14,9 @@
         .fr-page .fr-hero { box-shadow: 0 10px 30px -12px rgba(246, 78, 96, .55); }
         .fr-page .fr-qty { background: rgba(246, 78, 96, .1); }
         .fr-page .fr-month.is-current { box-shadow: 0 0 0 3px rgba(246, 78, 96, .12); }
+        .fr-sort { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+        .fr-sort:hover { color: var(--fr-accent); }
+        .fr-sort i { font-size: 0.8em; }
     </style>
 @endsection
 
@@ -243,14 +246,70 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>نوع المحروقات</th>
-                                <th>الدائرة</th>
-                                <th>القسم الفرعي</th>
-                                <th>رقم الإيصال</th>
-                                <th>كمية الصادر</th>
-                                <th>الجهة المستلمة</th>
-                                <th>رقم الدفتر</th>
-                                <th>تاريخ الصادر</th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'typesfuel_id', 'sort_order' => request('sort_by') == 'typesfuel_id' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        نوع المحروقات
+                                        @if(request('sort_by') == 'typesfuel_id')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'section_id', 'sort_order' => request('sort_by') == 'section_id' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        الدائرة
+                                        @if(request('sort_by') == 'section_id')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'sub_section_id', 'sort_order' => request('sort_by') == 'sub_section_id' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        القسم الفرعي
+                                        @if(request('sort_by') == 'sub_section_id')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'voucher', 'sort_order' => request('sort_by') == 'voucher' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        رقم الإيصال
+                                        @if(request('sort_by') == 'voucher')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'quantity', 'sort_order' => request('sort_by') == 'quantity' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        كمية الصادر
+                                        @if(request('sort_by') == 'quantity')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'num_section', 'sort_order' => request('sort_by') == 'num_section' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        الجهة المستلمة
+                                        @if(request('sort_by') == 'num_section')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'num_note', 'sort_order' => request('sort_by') == 'num_note' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        رقم الدفتر
+                                        @if(request('sort_by') == 'num_note')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->url() }}?{{ http_build_query(array_merge(request()->except(['sort_by', 'sort_order']), ['sort_by' => 'date', 'sort_order' => request('sort_by') == 'date' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="fr-sort">
+                                        تاريخ الصادر
+                                        @if(request('sort_by') == 'date')
+                                            <i class="la la-{{ request('sort_order') == 'asc' ? 'sort-amount-up' : 'sort-amount-down' }}"></i>
+                                        @endif
+                                    </a>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
