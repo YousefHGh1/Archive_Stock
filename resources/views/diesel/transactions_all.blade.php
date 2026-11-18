@@ -232,7 +232,7 @@
                                         {{ $transaction['section'] }}
                                     @endif
                                 </td>
-                                <td>{{ $transaction['sub_section'] }}</td>
+                                <!-- <td>{{ $transaction['sub_section'] }}</td> -->
                                 <td>
                                     @if($transaction['type'] == 'import')
                                         {{ $transaction['delivery_type'] }}
