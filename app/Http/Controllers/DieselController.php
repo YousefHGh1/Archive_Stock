@@ -348,7 +348,7 @@ class DieselController extends Controller
                     'fuel_type' => $item->typesfuel->name ?? 'N/A',
                     'delivery_type' => '-',
                     'section' => $item->section->name_section ?? 'N/A',
-                    'sub_section' => $item->subSection->name_sub_section ?? 'N/A',
+                    'sub_section' => $item->subSection->name ?? 'N/A',
                 ];
             });
 
@@ -466,7 +466,7 @@ class DieselController extends Controller
                     'fuel_type_id' => $item->typesfuel->id ?? null,
                     'delivery_type' => '-',
                     'section' => $item->section->name_section ?? 'N/A',
-                    'sub_section' => $item->subSection->name_sub_section ?? 'N/A',
+                    'sub_section' => $item->subSection->name ?? 'N/A',
                     'recipient' => $item->num_section ?? '-',
                     'num_note' => $item->num_note ?? '-',
                 ];
