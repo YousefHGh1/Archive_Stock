@@ -229,7 +229,7 @@
                                 </td>
                                 <td>
                                     @if($transaction['type'] == 'export')
-                                        {{ $transaction['num_section'] ?? '-' }}
+                                        {{ $transaction['num_note'] ?? '-' }}
                                     @else
                                         -
                                     @endif
