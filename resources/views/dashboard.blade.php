@@ -20,8 +20,9 @@
         .db-hero h2 { color: #fff; font-weight: 800; font-size: 1.65rem; margin: 0 0 .35rem; }
         .db-hero p { color: #B5B5C3; margin: 0; }
         .db-hero-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
-        .db-hero-actions a { display: inline-flex; align-items: center; gap: .45rem; padding: .6rem 1rem; border-radius: 11px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12); color: #fff; font-weight: 600; transition: background .15s ease, transform .15s ease; }
-        .db-hero-actions a:hover { background: #fff; color: #1E1E2D; text-decoration: none; transform: translateY(-1px); }
+        .db-hero-actions a, .db-hero-actions button { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; padding: .6rem 1rem; border-radius: 11px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12); color: #fff; font-weight: 600; line-height: 1.4; transition: background .15s ease, transform .15s ease; }
+        .db-hero-actions a:hover, .db-hero-actions button:hover { background: #fff; color: #1E1E2D; text-decoration: none; transform: translateY(-1px); }
+        .db-hero-actions a:focus-visible, .db-hero-actions button:focus-visible, .db-quick a:focus-visible { outline: 3px solid rgba(54, 153, 255, .35); outline-offset: 2px; }
         .db-hero-actions a i { font-size: 1.15rem; }
 
         /* ===== KPI ===== */
@@ -66,6 +67,7 @@
         .db-panel-head h4 { margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--app-dark); display: flex; align-items: center; gap: .5rem; }
         .db-panel-head h4 i { font-size: 1.25rem; color: var(--app-primary); }
         .db-panel-head .db-link { font-size: .88rem; font-weight: 600; color: var(--app-primary); white-space: nowrap; }
+        .db-panel-head kbd { border: 1px solid var(--app-border); border-radius: 6px; background: var(--app-soft); color: var(--app-muted); padding: .15rem .4rem; font: inherit; font-size: .78rem; white-space: nowrap; }
         .db-panel-body { padding: 1.25rem; flex: 1; }
         .db-chart { min-height: 300px; }
         .db-chart-sm { min-height: 250px; }
@@ -85,6 +87,25 @@
         .db-mini-stats div { background: var(--app-soft); border-radius: 12px; padding: .7rem .8rem; }
         .db-mini-stats small { color: var(--app-muted); display: block; font-size: .8rem; }
         .db-mini-stats b { color: var(--app-dark); }
+
+        /* ===== Focus KPIs ===== */
+        .db-focus-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem; margin-bottom: 1rem; }
+        .db-focus-kpi { display: flex; align-items: center; gap: .75rem; min-width: 0; padding: .9rem 1rem; border: 1px solid var(--app-border); border-radius: 14px; background: #fff; box-shadow: var(--app-shadow); }
+        .db-focus-icon { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 40px; width: 40px; height: 40px; border-radius: 12px; }
+        .db-focus-icon i { font-size: 1.25rem; }
+        .db-focus-copy { min-width: 0; }
+        .db-focus-copy small { display: block; margin-bottom: .15rem; color: var(--app-muted); font-size: .8rem; }
+        .db-focus-copy b { display: block; color: var(--app-dark); font-size: 1.15rem; font-weight: 800; line-height: 1.2; }
+        .db-focus-copy b small { display: inline; font-size: .76rem; }
+        .db-stock-insights { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; gap: 1rem; }
+        .db-stock-chart { min-height: 260px; }
+        .db-stock-alerts { margin: 0; padding: 0; list-style: none; }
+        .db-stock-alert { display: flex; align-items: center; justify-content: space-between; gap: .8rem; padding: .7rem 0; border-bottom: 1px dashed var(--app-border); }
+        .db-stock-alert:last-child { border-bottom: 0; }
+        .db-stock-alert b { display: block; color: var(--app-dark); }
+        .db-stock-alert small { color: var(--app-muted); }
+        .db-stock-amount { flex-shrink: 0; text-align: left; }
+        .db-stock-empty { padding: 1.25rem; border-radius: 12px; background: var(--app-soft); color: var(--app-muted); text-align: center; }
 
         /* ===== Inventory tiles ===== */
         .db-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
@@ -118,7 +139,13 @@
 
         /* ===== Quick links ===== */
         .db-quick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+        .db-quick-search { position: relative; display: block; margin-bottom: .8rem; }
+        .db-quick-search > i { position: absolute; top: 50%; right: .9rem; transform: translateY(-50%); color: var(--app-muted); font-size: 1.1rem; pointer-events: none; }
+        .db-quick-search input { width: 100%; min-height: 44px; padding: .65rem 2.6rem .65rem .8rem; border: 1px solid var(--app-border); border-radius: 11px; background: #fff; color: var(--app-text); transition: border-color .15s ease, box-shadow .15s ease; }
+        .db-quick-search input:focus { border-color: var(--app-primary); outline: 0; box-shadow: 0 0 0 3px rgba(54, 153, 255, .12); }
+        .db-quick-empty { display: none; padding: 1rem; border-radius: 11px; background: var(--app-soft); color: var(--app-muted); text-align: center; }
         .db-quick a { display: flex; align-items: center; gap: .7rem; padding: .75rem; border-radius: 12px; border: 1px solid var(--app-border); color: var(--app-text); transition: border-color .15s ease, background .15s ease; }
+        .db-quick a[hidden] { display: none; }
         .db-quick a:hover { border-color: var(--app-primary); background: #F8FAFF; text-decoration: none; }
         .db-quick a span.db-q-icon { width: 36px; height: 36px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .db-quick a span.db-q-icon i { font-size: 1.2rem; }
@@ -133,14 +160,25 @@
         /* ===== Responsive ===== */
         @media (max-width: 1399.98px) { .db-depts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
         @media (max-width: 991.98px) { .db-depts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 991.98px) { .db-focus-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 575.98px) {
             .db-hero { padding: 1.25rem; }
             .db-hero h2 { font-size: 1.3rem; }
             .db-hero-actions { width: 100%; }
-            .db-hero-actions a { flex: 1 1 calc(50% - .5rem); justify-content: center; }
+            .db-hero-actions a, .db-hero-actions button { flex: 1 1 calc(50% - .5rem); min-width: 0; padding-inline: .55rem; font-size: .88rem; }
             .db-kpi-value { font-size: 1.4rem; }
             .db-depts { grid-template-columns: 1fr; }
             .db-quick { grid-template-columns: 1fr; }
+            .db-panel-head { align-items: flex-start; padding: .85rem 1rem; }
+            .db-panel-head h4 { font-size: .98rem; }
+            .db-panel-head .text-muted { text-align: left; font-size: .75rem; }
+            .db-panel-body { padding: 1rem; }
+            .db-chart { min-height: 250px; }
+            .db-stock-insights { grid-template-columns: 1fr; }
+            .db-focus-kpi { padding: .75rem; gap: .55rem; }
+            .db-focus-icon { flex-basis: 34px; width: 34px; height: 34px; }
+            .db-focus-copy small { font-size: .72rem; }
+            .db-focus-copy b { font-size: 1rem; }
         }
     </style>
 @endsection
@@ -150,6 +188,7 @@
         $s = $dashboardStats ?? [];
         $charts = $dashboardCharts ?? [];
         $fuel = $fuelSummary ?? [];
+        $inventory = $inventorySummary ?? [];
         $num = fn($v) => number_format((float) $v);
         $liters = function ($v) {
             $f = number_format((float) $v, 2);
@@ -191,7 +230,7 @@
                 <a href="{{ route('dieselexport.create') }}"><i class="la la-file-export"></i> صرف محروقات</a>
                 <a href="{{ url('inventory/invoice/create') }}"><i class="la la-file-invoice"></i> فاتورة وارد</a>
                 <a href="{{ url('inventory/invoice_export/create') }}"><i class="la la-dolly"></i> سند صرف</a>
-                <button type="button" class="btn" data-toggle="modal" data-target="#vehicleOperationModal" style="display: inline-flex; align-items: center; gap: .45rem; padding: .6rem 1rem; border-radius: 11px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12); color: #fff; font-weight: 600; transition: background .15s ease, transform .15s ease; cursor: pointer;">
+                <button type="button" class="btn" data-toggle="modal" data-target="#vehicleOperationModal" style="cursor: pointer;">
                     <i class="la la-car"></i> تسجيل عملية مركبة
                 </button>
             </div>
@@ -305,6 +344,16 @@
         </div>
 
         {{-- ===== Fuel ===== --}}
+        <div class="db-section-title">
+            <h3><i class="la la-gas-pump"></i> مؤشرات المحروقات</h3>
+            <span class="text-muted font-size-sm">هذا الشهر · {{ now()->year }}: الوارد {{ $liters($fuel['yearIn'] ?? 0) }} لتر · الصادر {{ $liters($fuel['yearOut'] ?? 0) }} لتر</span>
+        </div>
+        <div class="db-focus-grid">
+            <div class="db-focus-kpi"><span class="db-focus-icon bg-light-success"><i class="la la-arrow-down text-success"></i></span><span class="db-focus-copy"><small>الوارد هذا الشهر</small><b>{{ $liters($fuel['monthIn'] ?? 0) }} <small>لتر</small></b></span></div>
+            <div class="db-focus-kpi"><span class="db-focus-icon bg-light-danger"><i class="la la-arrow-up text-danger"></i></span><span class="db-focus-copy"><small>الصادر هذا الشهر</small><b>{{ $liters($fuel['monthOut'] ?? 0) }} <small>لتر</small></b></span></div>
+            <div class="db-focus-kpi"><span class="db-focus-icon bg-light-primary"><i class="la la-exchange-alt text-primary"></i></span><span class="db-focus-copy"><small>صافي حركة الشهر</small><b class="{{ (($fuel['monthIn'] ?? 0) - ($fuel['monthOut'] ?? 0)) < 0 ? 'text-danger' : '' }}">{{ $liters(($fuel['monthIn'] ?? 0) - ($fuel['monthOut'] ?? 0)) }} <small>لتر</small></b></span></div>
+            <div class="db-focus-kpi"><span class="db-focus-icon bg-light-warning"><i class="la la-exclamation-triangle text-warning"></i></span><span class="db-focus-copy"><small>أنواع برصيد سالب</small><b class="{{ ($fuel['negativeTypes'] ?? 0) > 0 ? 'text-danger' : '' }}">{{ $num($fuel['negativeTypes'] ?? 0) }} <small>من {{ $num($fuel['typeCount'] ?? 0) }}</small></b></span></div>
+        </div>
         <div class="row">
             <div class="col-xl-8">
                 <div class="db-panel">
@@ -342,6 +391,18 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-12">
+                <div class="db-panel">
+                    <div class="db-panel-head">
+                        <h4><i class="la la-chart-bar"></i> الوارد والصادر حسب نوع المحروقات</h4>
+                        <span class="text-muted font-size-sm">منذ بداية {{ now()->year }} · لتر</span>
+                    </div>
+                    <div class="db-panel-body"><div id="fuel-type-chart" class="db-chart-sm"></div></div>
+                </div>
+            </div>
+        </div>
+
         {{-- ===== Archive charts ===== --}}
         <div class="row">
             <div class="col-xl-8">
@@ -358,6 +419,48 @@
                         <h4><i class="la la-layer-group"></i> توزيع معاملات الدوائر</h4>
                     </div>
                     <div class="db-panel-body"><div id="archive-distribution-chart" class="db-chart"></div></div>
+                </div>
+            </div>
+        </div>
+
+        {{-- ===== Inventory health ===== --}}
+        <div class="db-section-title">
+            <h3><i class="la la-boxes"></i> مؤشرات المخازن</h3>
+            <span class="text-muted font-size-sm">حالة الرصيد مقارنة بحد إعادة الطلب</span>
+        </div>
+        @php
+            $inventoryCount = (int) ($inventory['itemCount'] ?? 0);
+            $healthyPercent = $inventoryCount ? round(($inventory['healthyItems'] ?? 0) / $inventoryCount * 100) : 0;
+        @endphp
+        <div class="db-focus-grid">
+            <div class="db-focus-kpi"><span class="db-focus-icon bg-light-primary"><i class="la la-cubes text-primary"></i></span><span class="db-focus-copy"><small>إجمالي الأصناف</small><b>{{ $num($inventoryCount) }}</b></span></div>
+            <div class="db-focus-kpi"><span class="db-focus-icon bg-light-warning"><i class="la la-bell text-warning"></i></span><span class="db-focus-copy"><small>تحت حد إعادة الطلب</small><b class="{{ ($inventory['lowStockItemsCount'] ?? 0) > 0 ? 'text-warning' : '' }}">{{ $num($inventory['lowStockItemsCount'] ?? 0) }}</b></span></div>
+            <div class="db-focus-kpi"><span class="db-focus-icon bg-light-danger"><i class="la la-exclamation-circle text-danger"></i></span><span class="db-focus-copy"><small>أصناف رصيدها نافد</small><b class="{{ ($inventory['outOfStockItemsCount'] ?? 0) > 0 ? 'text-danger' : '' }}">{{ $num($inventory['outOfStockItemsCount'] ?? 0) }}</b></span></div>
+            <div class="db-focus-kpi"><span class="db-focus-icon bg-light-success"><i class="la la-check-circle text-success"></i></span><span class="db-focus-copy"><small>فئات الأصناف · رصيد سليم</small><b>{{ $num($inventory['categoryCount'] ?? 0) }} <small>فئة · {{ $healthyPercent }}%</small></b></span></div>
+        </div>
+        <div class="row">
+            <div class="col-xl-5">
+                <div class="db-panel">
+                    <div class="db-panel-head"><h4><i class="la la-chart-pie"></i> توزيع حالة المخزون</h4></div>
+                    <div class="db-panel-body"><div id="inventory-health-chart" class="db-stock-chart"></div></div>
+                </div>
+            </div>
+            <div class="col-xl-7">
+                <div class="db-panel">
+                    <div class="db-panel-head">
+                        <h4><i class="la la-bell"></i> أصناف تحتاج متابعة</h4>
+                        <a href="{{ url('inventory/item') }}" class="db-link">عرض الأصناف <i class="la la-angle-left"></i></a>
+                    </div>
+                    <div class="db-panel-body">
+                        @forelse ($inventory['lowStockItems'] ?? [] as $item)
+                            <div class="db-stock-alert">
+                                <span><b>{{ $item->item_name }}</b><small>حد إعادة الطلب: {{ $num($item->low_limit) }}</small></span>
+                                <span class="db-stock-amount"><b class="{{ $item->balance <= 0 ? 'text-danger' : 'text-warning' }}">{{ $num($item->balance) }}</b><small class="d-block">الرصيد الحالي</small></span>
+                            </div>
+                        @empty
+                            <div class="db-stock-empty"><i class="la la-check-circle text-success"></i> جميع الأصناف أعلى من حد إعادة الطلب.</div>
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </div>
@@ -454,10 +557,14 @@
                 <div class="db-panel">
                     <div class="db-panel-head">
                         <h4><i class="la la-bolt"></i> التنقل السريع</h4>
-                        <span class="text-muted font-size-sm">أو اضغط <kbd>Ctrl</kbd> + <kbd>K</kbd> للبحث</span>
+                        <span class="text-muted font-size-sm">اختصار البحث: <kbd>Ctrl</kbd> + <kbd>K</kbd></span>
                     </div>
                     <div class="db-panel-body">
-                        <div class="db-quick">
+                        <label class="db-quick-search" for="dashboard-quick-search">
+                            <i class="la la-search" aria-hidden="true"></i>
+                            <input id="dashboard-quick-search" type="search" autocomplete="off" placeholder="ابحث عن خدمة..." aria-label="ابحث في التنقل السريع">
+                        </label>
+                        <div class="db-quick" id="dashboard-quick-links">
                             <a href="{{ route('diesel.index') }}"><span class="db-q-icon bg-light-warning"><i class="la la-gas-pump text-warning"></i></span><span><b>وارد المحروقات</b><small>سجل التوريد</small></span></a>
                             <a href="{{ route('dieselexport.index') }}"><span class="db-q-icon bg-light-danger"><i class="la la-file-export text-danger"></i></span><span><b>صادر المحروقات</b><small>سجل الصرف</small></span></a>
                             <a href="{{ url('inventory/item') }}"><span class="db-q-icon bg-light-primary"><i class="la la-boxes text-primary"></i></span><span><b>الأصناف</b><small>عرض وإدارة الأصناف</small></span></a>
@@ -467,6 +574,7 @@
                             <a href="{{ route('archive.index') }}"><span class="db-q-icon bg-light-primary"><i class="la la-archive text-primary"></i></span><span><b>الأرشيف المركزي</b><small>الوارد</small></span></a>
                             <a href="{{ url('/profile') }}"><span class="db-q-icon bg-light-dark"><i class="la la-user text-dark"></i></span><span><b>حسابي</b><small>البيانات الشخصية</small></span></a>
                         </div>
+                        <div class="db-quick-empty" id="dashboard-quick-empty" role="status">لا توجد خدمات تطابق بحثك</div>
                     </div>
                 </div>
             </div>
@@ -572,6 +680,37 @@
 
         /* ===== Vehicle Operation Modal Logic ===== */
         document.addEventListener('DOMContentLoaded', function() {
+            var quickSearch = document.getElementById('dashboard-quick-search');
+            var quickLinks = document.getElementById('dashboard-quick-links');
+            var quickEmpty = document.getElementById('dashboard-quick-empty');
+
+            if (quickSearch && quickLinks && quickEmpty) {
+                var quickCards = Array.prototype.slice.call(quickLinks.querySelectorAll('a'));
+                quickSearch.addEventListener('input', function() {
+                    var query = this.value.trim().toLocaleLowerCase();
+                    var visibleCount = 0;
+
+                    quickCards.forEach(function(card) {
+                        var matches = card.textContent.toLocaleLowerCase().indexOf(query) !== -1;
+                        card.hidden = !matches;
+                        if (matches) visibleCount++;
+                    });
+
+                    quickEmpty.style.display = visibleCount ? 'none' : 'block';
+                });
+
+                document.addEventListener('keydown', function(event) {
+                    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+                        event.preventDefault();
+                        quickSearch.focus();
+                    } else if (event.key === 'Escape' && document.activeElement === quickSearch) {
+                        quickSearch.value = '';
+                        quickSearch.dispatchEvent(new Event('input'));
+                        quickSearch.blur();
+                    }
+                });
+            }
+
             var type = document.getElementById('event_type');
             var lw = document.getElementById('liters_wrap');
             var cw = document.getElementById('cost_wrap');
@@ -744,6 +883,23 @@
                 legend: { position: 'top', horizontalAlign: 'right', fontWeight: 600 }
             }, [fuel.incoming, fuel.outgoing]);
 
+            var fuelByType = charts.fuelByType || {};
+            render('#fuel-type-chart', {
+                series: [
+                    { name: 'الوارد', data: fuelByType.incoming || [] },
+                    { name: 'الصادر', data: fuelByType.outgoing || [] }
+                ],
+                chart: { type: 'bar', height: 260 },
+                colors: ['#1BC5BD', '#F64E60'],
+                plotOptions: { bar: { horizontal: true, barHeight: '58%', borderRadius: 5 } },
+                dataLabels: { enabled: false },
+                grid: { borderColor: '#EBEDF3', strokeDashArray: 4 },
+                xaxis: { categories: fuelByType.labels || [], labels: { style: { colors: muted }, formatter: function(v) { return Math.round(v).toLocaleString('en'); } } },
+                yaxis: { labels: { style: { colors: '#3F4254', fontWeight: 600 } } },
+                tooltip: { y: { formatter: function(v) { return Number(v).toLocaleString('en') + ' لتر'; } } },
+                legend: { position: 'top', horizontalAlign: 'right', fontWeight: 600 }
+            }, [fuelByType.incoming, fuelByType.outgoing]);
+
             var archive = charts.monthlyArchive || {};
             render('#archive-monthly-chart', areaOptions([
                 { name: 'الوارد', data: archive.incoming || [] },
@@ -771,6 +927,21 @@
                 { name: 'فواتير الوارد', data: inventory.incoming || [] },
                 { name: 'سندات الصرف', data: inventory.outgoing || [] }
             ], ['#3699FF', '#F64E60'], 230, 'سند'), [inventory.incoming, inventory.outgoing]);
+
+            var inventoryHealth = charts.inventoryHealth || {};
+            render('#inventory-health-chart', {
+                series: inventoryHealth.values || [],
+                labels: inventoryHealth.labels || [],
+                chart: { type: 'donut', height: 260 },
+                colors: ['#1BC5BD', '#FFA800', '#F64E60'],
+                dataLabels: { enabled: false },
+                stroke: { width: 3 },
+                legend: { position: 'bottom', fontWeight: 600 },
+                plotOptions: { pie: { donut: { size: '68%', labels: { show: true, total: { show: true, label: 'إجمالي الأصناف', formatter: function(w) {
+                    return w.globals.seriesTotals.reduce(function(t, v) { return t + v; }, 0).toLocaleString('en');
+                } } } } } },
+                tooltip: { y: { formatter: function(v) { return Number(v).toLocaleString('en') + ' صنف'; } } }
+            }, [inventoryHealth.values]);
         });
     </script>
 @endsection

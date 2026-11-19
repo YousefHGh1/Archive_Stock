@@ -15,11 +15,14 @@ class HeadController extends Controller
     public function nots()
     {
         $stats = $this->dashboardStats();
+        $fuelSummary = $this->fuelSummary();
+        $inventorySummary = $this->inventorySummary();
 
         return view('dashboard', [
             'dashboardStats'  => $stats,
-            'dashboardCharts' => $this->dashboardCharts($stats),
-            'fuelSummary'     => $this->fuelSummary(),
+            'dashboardCharts' => $this->dashboardCharts($stats, $fuelSummary, $inventorySummary),
+            'fuelSummary'     => $fuelSummary,
+            'inventorySummary' => $inventorySummary,
             'vehicles'        => Vehicle::all(),
             'drivers'         => Driver::all(),
             'dieselExports'   => DieselExport::with('typesfuel')->latest()->take(50)->get(),
@@ -103,7 +106,7 @@ class HeadController extends Controller
         return $counts;
     }
 
-    private function dashboardCharts(array $stats)
+    private function dashboardCharts(array $stats, array $fuelSummary, array $inventorySummary)
     {
         return [
             'monthLabels'         => ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
@@ -147,6 +150,19 @@ class HeadController extends Controller
             'fuelFlow'            => [
                 'incoming' => $this->monthlyCounts([['diesels', 'date']], 'quantity'),
                 'outgoing' => $this->monthlyCounts([['diesel_exports', 'date']], 'quantity'),
+            ],
+            'fuelByType'          => [
+                'labels'   => array_column($fuelSummary['byType'], 'name'),
+                'incoming' => array_column($fuelSummary['byType'], 'incoming'),
+                'outgoing' => array_column($fuelSummary['byType'], 'outgoing'),
+            ],
+            'inventoryHealth'     => [
+                'labels' => ['مخزون سليم', 'قريب من النفاد', 'نافد'],
+                'values' => [
+                    $inventorySummary['healthyItems'],
+                    $inventorySummary['lowStockItemsCount'],
+                    $inventorySummary['outOfStockItemsCount'],
+                ],
             ],
             'messages'            => [
                 'labels' => ['الأرشيف', 'القانونية', 'الحاسوب', 'الرقابة', 'الجباية'],
@@ -199,6 +215,30 @@ class HeadController extends Controller
     private function fuelSummary()
     {
         $balances = $this->fuelRemainingByType(new Request());
+        $currentYear = now()->year;
+        $currentMonth = now()->month;
+
+        $incomingByType = DB::table('diesels')
+            ->select('typesfuel_id')
+            ->selectRaw('SUM(quantity) as total')
+            ->whereYear('date', $currentYear)
+            ->groupBy('typesfuel_id')
+            ->pluck('total', 'typesfuel_id');
+
+        $outgoingByType = DB::table('diesel_exports')
+            ->select('typesfuel_id')
+            ->selectRaw('SUM(quantity) as total')
+            ->whereYear('date', $currentYear)
+            ->groupBy('typesfuel_id')
+            ->pluck('total', 'typesfuel_id');
+
+        $byType = $balances['typesfuel']->map(function ($type) use ($incomingByType, $outgoingByType) {
+            return [
+                'name' => $type->name,
+                'incoming' => (float) ($incomingByType[$type->id] ?? 0),
+                'outgoing' => (float) ($outgoingByType[$type->id] ?? 0),
+            ];
+        })->values()->all();
 
         $latestIn = DB::table('diesels')
             ->leftJoin('types_fuels', 'types_fuels.id', '=', 'diesels.typesfuel_id')
@@ -221,6 +261,11 @@ class HeadController extends Controller
             'totalOut'        => (float) DB::table('diesel_exports')->sum('quantity'),
             'yearIn'          => (float) DB::table('diesels')->whereYear('date', now()->year)->sum('quantity'),
             'yearOut'         => (float) DB::table('diesel_exports')->whereYear('date', now()->year)->sum('quantity'),
+            'monthIn'         => (float) DB::table('diesels')->whereYear('date', $currentYear)->whereMonth('date', $currentMonth)->sum('quantity'),
+            'monthOut'        => (float) DB::table('diesel_exports')->whereYear('date', $currentYear)->whereMonth('date', $currentMonth)->sum('quantity'),
+            'typeCount'       => $balances['typesfuel']->count(),
+            'negativeTypes'   => collect($balances['remainingByType'])->filter(fn ($balance) => $balance < 0)->count(),
+            'byType'          => $byType,
             'typesfuel'       => $balances['typesfuel'],
             'remainingByType' => $balances['remainingByType'],
             'totalRemaining'  => $balances['totalRemaining'],
@@ -228,6 +273,28 @@ class HeadController extends Controller
                 ->sortByDesc(fn($row) => $row->date . sprintf('%010d', $row->id))
                 ->take(6)
                 ->values(),
+        ];
+    }
+
+    /**
+     * لقطة سريعة لحالة الأصناف مقارنة بحد إعادة الطلب المسجل لكل صنف.
+     */
+    private function inventorySummary(): array
+    {
+        $items = DB::table('items');
+
+        return [
+            'itemCount' => (clone $items)->count(),
+            'healthyItems' => (clone $items)->whereColumn('balance', '>', 'low_limit')->count(),
+            'lowStockItemsCount' => (clone $items)->where('balance', '>', 0)->whereColumn('balance', '<=', 'low_limit')->count(),
+            'outOfStockItemsCount' => (clone $items)->where('balance', '<=', 0)->count(),
+            'categoryCount' => DB::table('categories')->count(),
+            'lowStockItems' => (clone $items)
+                ->whereColumn('balance', '<=', 'low_limit')
+                ->orderBy('balance')
+                ->orderBy('item_name')
+                ->limit(5)
+                ->get(['id', 'item_name', 'balance', 'low_limit']),
         ];
     }
 
