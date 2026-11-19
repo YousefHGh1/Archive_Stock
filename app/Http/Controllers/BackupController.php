@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Symfony\Component\Process\ExecutableFinder;
+use Symfony\Component\Process\Process;
 
 class BackupController extends Controller
 {
@@ -63,7 +66,7 @@ class BackupController extends Controller
 
             // Validate required fields
             if (empty($database) || empty($username)) {
-                throw new \Exception('Database credentials are missing. Database: ' . $database . ', Username: ' . $username);
+                throw new \RuntimeException('Database connection settings are incomplete.');
             }
 
             $filename = 'backup_' . date('Y-m-d_H-i-s') . '.sql';
@@ -85,85 +88,38 @@ class BackupController extends Controller
                 if (file_exists($outputFile) && filesize($outputFile) > 0) {
                     return redirect()->route('backup.index')->with('success', 'تم إنشاء النسخة الاحتياطية بنجاح');
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // If db:dump is not available, try mysqldump
             }
 
-            // Try mysqldump on Windows
-            $mysqldumpPath = $this->findMysqldump();
-
-            if ($mysqldumpPath) {
-                // Build command with or without password
-                if (empty($password)) {
-                    $command = sprintf(
-                        '"%s" --host=%s --port=%s --user=%s %s > "%s"',
-                        $mysqldumpPath,
-                        $host,
-                        $port,
-                        $username,
-                        $database,
-                        $outputFile
-                    );
-                } else {
-                    $command = sprintf(
-                        '"%s" --host=%s --port=%s --user=%s --password=%s %s > "%s"',
-                        $mysqldumpPath,
-                        $host,
-                        $port,
-                        $username,
-                        $password,
-                        $database,
-                        $outputFile
-                    );
-                }
-
-                exec($command, $output, $returnCode);
-
-                if ($returnCode === 0 && file_exists($outputFile) && filesize($outputFile) > 0) {
-                    return redirect()->route('backup.index')->with('success', 'تم إنشاء النسخة الاحتياطية بنجاح');
-                }
-            }
-
-            // Fallback: Try using environment variable for password
-            if ($mysqldumpPath) {
-                $command = sprintf(
-                    '"%s" --host=%s --port=%s --user=%s %s > "%s"',
-                    $mysqldumpPath,
-                    $host,
-                    $port,
-                    $username,
-                    $database,
-                    $outputFile
-                );
-
-                if (!empty($password)) {
-                    putenv('MYSQL_PWD=' . $password);
-                }
-                exec($command, $output, $returnCode);
-                if (!empty($password)) {
-                    putenv('MYSQL_PWD');
-                }
-
-                if ($returnCode === 0 && file_exists($outputFile) && filesize($outputFile) > 0) {
-                    return redirect()->route('backup.index')->with('success', 'تم إنشاء النسخة الاحتياطية بنجاح');
-                }
+            // Symfony Process works on hosted PHP where exec() is disabled.
+            if ($this->backupUsingMysqldump($database, $username, $password, $host, $port, $outputFile)) {
+                return redirect()->route('backup.index')->with('success', 'تم إنشاء النسخة الاحتياطية بنجاح');
             }
 
             // Final fallback: Use PHP to create backup
-            if ($this->backupUsingPHP($database, $username, $password, $host, $port, $outputFile)) {
+            if ($this->backupUsingPHP($outputFile)) {
                 return redirect()->route('backup.index')->with('success', 'تم إنشاء النسخة الاحتياطية بنجاح (باستخدام PHP)');
             }
 
             throw new \Exception('فشل جميع طرق إنشاء النسخة الاحتياطية');
-        } catch (\Exception $e) {
-            return redirect()->route('backup.index')->with('error', 'فشل إنشاء النسخة الاحتياطية: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            if (isset($outputFile) && is_file($outputFile)) {
+                @unlink($outputFile);
+            }
+            Log::error('Backup creation failed', ['exception' => $e]);
+            return redirect()->route('backup.index')->with('error', 'فشل إنشاء النسخة الاحتياطية. يرجى مراجعة سجل التطبيق.');
         }
     }
 
     private function findMysqldump()
     {
-        // Common mysqldump paths on Windows
+        // Check common Linux/macOS locations and local Windows installations.
         $possiblePaths = [
+            '/usr/bin/mysqldump',
+            '/usr/local/bin/mysqldump',
+            '/usr/local/mysql/bin/mysqldump',
+            '/opt/homebrew/bin/mysqldump',
             'C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqldump.exe',
             'C:\laragon\bin\mysql\mysql-5.7.35-winx64\bin\mysqldump.exe',
             'C:\xampp\mysql\bin\mysqldump.exe',
@@ -172,84 +128,162 @@ class BackupController extends Controller
             'C:\Program Files\MySQL\MySQL Server 5.7\bin\mysqldump.exe',
         ];
 
-        // Also check PATH
-        $possiblePaths[] = 'mysqldump';
+        $pathCandidate = (new ExecutableFinder())->find('mysqldump');
+        if ($pathCandidate) {
+            array_unshift($possiblePaths, $pathCandidate);
+        }
 
         foreach ($possiblePaths as $path) {
-            if (file_exists($path) || $path === 'mysqldump') {
-                if ($path === 'mysqldump') {
-                    // Try to find it in PATH
-                    exec('where mysqldump', $output, $returnCode);
-                    if ($returnCode === 0 && !empty($output)) {
-                        return trim($output[0]);
-                    }
-                } else {
-                    return $path;
-                }
+            if (is_file($path) && (DIRECTORY_SEPARATOR === '\\' || is_executable($path))) {
+                return $path;
             }
         }
 
         return null;
     }
 
-    private function backupUsingPHP($database, $username, $password, $host, $port, $outputFile)
+    private function backupUsingMysqldump($database, $username, $password, $host, $port, $outputFile): bool
     {
+        $mysqldumpPath = $this->findMysqldump();
+        if (!$mysqldumpPath) {
+            return false;
+        }
+
+        $handle = @fopen($outputFile, 'wb');
+        if ($handle === false) {
+            return false;
+        }
+
+        $process = new Process([
+            $mysqldumpPath,
+            '--host=' . $host,
+            '--port=' . $port,
+            '--user=' . $username,
+            '--default-character-set=utf8mb4',
+            '--single-transaction',
+            $database,
+        ], null, ['MYSQL_PWD' => $password ?: null]);
+        $process->setTimeout(null);
+        $writeFailed = false;
+
         try {
-            $mysqli = new \mysqli($host, $username, $password, $database, $port);
-
-            if ($mysqli->connect_error) {
-                throw new \Exception('Connection failed: ' . $mysqli->connect_error);
-            }
-
-            $mysqli->query('SET NAMES utf8mb4');
-            $mysqli->query('SET FOREIGN_KEY_CHECKS = 0');
-
-            $tables = [];
-            $result = $mysqli->query('SHOW TABLES');
-            while ($row = $result->fetch_row()) {
-                $tables[] = $row[0];
-            }
-
-            $sql = '';
-            foreach ($tables as $table) {
-                $result = $mysqli->query('SHOW CREATE TABLE ' . $table);
-                $tableData = $result->fetch_row();
-                $sql .= "\n\n" . $tableData[1] . ";\n\n";
-
-                $result = $mysqli->query('SELECT * FROM ' . $table);
-                $numColumns = $result->field_count;
-
-                while ($row = $result->fetch_row()) {
-                    $sql .= 'INSERT INTO ' . $table . ' VALUES(';
-                    for ($i = 0; $i < $numColumns; $i++) {
-                        $row[$i] = addslashes($row[$i]);
-                        $row[$i] = preg_replace("/\n/", "\\n", $row[$i]);
-                        if (isset($row[$i])) {
-                            $sql .= '"' . $row[$i] . '"';
-                        } else {
-                            $sql .= '""';
-                        }
-                        if ($i < $numColumns - 1) {
-                            $sql .= ',';
-                        }
+            $process->run(function ($type, $buffer) use ($handle, &$writeFailed) {
+                if ($type === Process::OUT && !$writeFailed) {
+                    if (!$this->writeBackupChunk($handle, $buffer)) {
+                        $writeFailed = true;
                     }
-                    $sql .= ");\n";
+                }
+            });
+        } catch (\Throwable $exception) {
+            fclose($handle);
+            @unlink($outputFile);
+            return false;
+        }
+
+        fclose($handle);
+
+        if (!$writeFailed && $process->isSuccessful() && is_file($outputFile) && filesize($outputFile) > 0) {
+            return true;
+        }
+
+        @unlink($outputFile);
+        return false;
+    }
+
+    private function backupUsingPHP($outputFile)
+    {
+        $handle = @fopen($outputFile, 'wb');
+        if ($handle === false) {
+            return false;
+        }
+
+        $pdo = null;
+        try {
+            $pdo = \Illuminate\Support\Facades\DB::connection('mysql')->getPdo();
+            $pdo->exec('SET NAMES utf8mb4');
+            $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+
+            if (!$this->writeBackupChunk($handle, "SET NAMES utf8mb4;\nSET FOREIGN_KEY_CHECKS = 0;\n\n")) {
+                throw new \RuntimeException('Unable to write backup file.');
+            }
+
+            $tables = $pdo->query('SHOW TABLES')->fetchAll(\PDO::FETCH_COLUMN);
+            foreach ($tables as $table) {
+                $quotedTable = '`' . str_replace('`', '``', $table) . '`';
+                $create = $pdo->query('SHOW CREATE TABLE ' . $quotedTable)->fetch(\PDO::FETCH_NUM);
+                if (!$create || !isset($create[1])) {
+                    throw new \RuntimeException('Unable to read table definition.');
                 }
 
-                $sql .= "\n\n\n";
+                if (!$this->writeBackupChunk($handle, "DROP TABLE IF EXISTS {$quotedTable};\n{$create[1]};\n\n")) {
+                    throw new \RuntimeException('Unable to write backup file.');
+                }
+
+                $rows = $pdo->query('SELECT * FROM ' . $quotedTable);
+                while ($row = $rows->fetch(\PDO::FETCH_NUM)) {
+                    $values = [];
+                    foreach ($row as $value) {
+                        if ($value === null) {
+                            $values[] = 'NULL';
+                            continue;
+                        }
+
+                        $quotedValue = $pdo->quote((string) $value);
+                        if ($quotedValue === false) {
+                            throw new \RuntimeException('Unable to encode a database value.');
+                        }
+                        $values[] = $quotedValue;
+                    }
+
+                    if (!$this->writeBackupChunk($handle, 'INSERT INTO ' . $quotedTable . ' VALUES (' . implode(', ', $values) . ");\n")) {
+                        throw new \RuntimeException('Unable to write backup file.');
+                    }
+                }
+
+                if (!$this->writeBackupChunk($handle, "\n")) {
+                    throw new \RuntimeException('Unable to write backup file.');
+                }
             }
 
-            $mysqli->query('SET FOREIGN_KEY_CHECKS = 1');
-            $mysqli->close();
-
-            if (file_put_contents($outputFile, $sql)) {
-                return true;
+            if (!$this->writeBackupChunk($handle, "SET FOREIGN_KEY_CHECKS = 1;\n")) {
+                throw new \RuntimeException('Unable to write backup file.');
             }
+            fclose($handle);
+            $handle = null;
 
+            return is_file($outputFile) && filesize($outputFile) > 0;
+        } catch (\Throwable $e) {
+            Log::warning('PHP database backup failed', ['exception' => $e]);
             return false;
-        } catch (\Exception $e) {
-            throw new \Exception('PHP backup failed: ' . $e->getMessage());
+        } finally {
+            if ($pdo instanceof \PDO) {
+                try {
+                    $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
+                } catch (\Throwable $ignored) {
+                    // The connection will be discarded if the server is no longer available.
+                }
+            }
+
+            if (is_resource($handle)) {
+                fclose($handle);
+            }
         }
+    }
+
+    private function writeBackupChunk($handle, string $contents): bool
+    {
+        $length = strlen($contents);
+        $offset = 0;
+
+        while ($offset < $length) {
+            $written = fwrite($handle, substr($contents, $offset));
+            if ($written === false || $written === 0) {
+                return false;
+            }
+            $offset += $written;
+        }
+
+        return true;
     }
 
     public function download($filename)
