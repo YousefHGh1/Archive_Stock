@@ -93,13 +93,9 @@ class BackupController extends Controller
                 // If db:dump is not available, try mysqldump
             }
 
-            // Try mysqldump using exec() instead of Process (works when proc_open is disabled)
-            if ($this->backupUsingMysqldumpExec($database, $username, $password, $host, $port, $outputFile)) {
-                return redirect()->route('backup.index')->with('success', 'تم إنشاء النسخة الاحتياطية بنجاح');
-            }
-
-            // Final fallback: Use PHP to create backup
-            if ($this->backupUsingPHP($outputFile)) {
+            // Skip mysqldump methods on servers with disabled system functions
+            // Go directly to PHP-based backup which uses only PDO
+            if ($this->backupUsingPHP($database, $username, $password, $host, $port, $outputFile)) {
                 return redirect()->route('backup.index')->with('success', 'تم إنشاء النسخة الاحتياطية بنجاح (باستخدام PHP)');
             }
 
@@ -262,9 +258,9 @@ class BackupController extends Controller
         return false;
     }
 
-    private function backupUsingPHP($outputFile)
+    private function backupUsingPHP($database, $username, $password, $host, $port, $outputFile)
     {
-        Log::info('Attempting PHP-based backup');
+        Log::info('Attempting PHP-based backup', ['database' => $database, 'host' => $host]);
 
         $handle = @fopen($outputFile, 'wb');
         if ($handle === false) {
@@ -274,7 +270,13 @@ class BackupController extends Controller
 
         $pdo = null;
         try {
-            $pdo = \Illuminate\Support\Facades\DB::connection('mysql')->getPdo();
+            // Connect directly using PDO
+            $dsn = "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4";
+            $pdo = new \PDO($dsn, $username, $password, [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+            ]);
+
             $pdo->exec('SET NAMES utf8mb4');
             $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
 
