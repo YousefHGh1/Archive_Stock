@@ -93,8 +93,8 @@ class BackupController extends Controller
                 // If db:dump is not available, try mysqldump
             }
 
-            // Symfony Process works on hosted PHP where exec() is disabled.
-            if ($this->backupUsingMysqldump($database, $username, $password, $host, $port, $outputFile)) {
+            // Try mysqldump using exec() instead of Process (works when proc_open is disabled)
+            if ($this->backupUsingMysqldumpExec($database, $username, $password, $host, $port, $outputFile)) {
                 return redirect()->route('backup.index')->with('success', 'تم إنشاء النسخة الاحتياطية بنجاح');
             }
 
@@ -144,6 +144,54 @@ class BackupController extends Controller
 
         Log::warning('mysqldump not found in any expected path');
         return null;
+    }
+
+    private function backupUsingMysqldumpExec($database, $username, $password, $host, $port, $outputFile): bool
+    {
+        $mysqldumpPath = $this->findMysqldump();
+        if (!$mysqldumpPath) {
+            Log::warning('mysqldump not found in expected paths');
+            return false;
+        }
+
+        Log::info('Using mysqldump with exec() for backup', ['path' => $mysqldumpPath, 'database' => $database]);
+
+        // Build command
+        $command = sprintf(
+            '"%s" --host=%s --port=%s --user=%s --default-character-set=utf8mb4 --single-transaction %s > "%s"',
+            $mysqldumpPath,
+            $host,
+            $port,
+            $username,
+            $database,
+            $outputFile
+        );
+
+        // Set password as environment variable for security
+        putenv('MYSQL_PWD=' . $password);
+
+        exec($command, $output, $returnCode);
+
+        // Clear the environment variable
+        putenv('MYSQL_PWD');
+
+        if ($returnCode === 0 && file_exists($outputFile) && filesize($outputFile) > 0) {
+            Log::info('mysqldump backup created successfully using exec()', ['size' => filesize($outputFile)]);
+            return true;
+        }
+
+        Log::error('mysqldump exec() backup failed', [
+            'return_code' => $returnCode,
+            'output' => implode("\n", $output),
+            'file_exists' => file_exists($outputFile),
+            'file_size' => file_exists($outputFile) ? filesize($outputFile) : 0
+        ]);
+
+        if (file_exists($outputFile)) {
+            @unlink($outputFile);
+        }
+
+        return false;
     }
 
     private function backupUsingMysqldump($database, $username, $password, $host, $port, $outputFile): bool
