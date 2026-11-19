@@ -89,6 +89,7 @@ class BackupController extends Controller
                     return redirect()->route('backup.index')->with('success', 'تم إنشاء النسخة الاحتياطية بنجاح');
                 }
             } catch (\Throwable $e) {
+                Log::warning('db:dump command failed', ['exception' => $e->getMessage()]);
                 // If db:dump is not available, try mysqldump
             }
 
@@ -107,8 +108,8 @@ class BackupController extends Controller
             if (isset($outputFile) && is_file($outputFile)) {
                 @unlink($outputFile);
             }
-            Log::error('Backup creation failed', ['exception' => $e]);
-            return redirect()->route('backup.index')->with('error', 'فشل إنشاء النسخة الاحتياطية. يرجى مراجعة سجل التطبيق.');
+            Log::error('Backup creation failed', ['exception' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return redirect()->route('backup.index')->with('error', 'فشل إنشاء النسخة الاحتياطية: ' . $e->getMessage() . '. يرجى مراجعة سجل التطبيق للحصول على التفاصيل.');
         }
     }
 
@@ -131,14 +132,17 @@ class BackupController extends Controller
         $pathCandidate = (new ExecutableFinder())->find('mysqldump');
         if ($pathCandidate) {
             array_unshift($possiblePaths, $pathCandidate);
+            Log::info('Found mysqldump via ExecutableFinder', ['path' => $pathCandidate]);
         }
 
         foreach ($possiblePaths as $path) {
             if (is_file($path) && (DIRECTORY_SEPARATOR === '\\' || is_executable($path))) {
+                Log::info('Found mysqldump', ['path' => $path]);
                 return $path;
             }
         }
 
+        Log::warning('mysqldump not found in any expected path');
         return null;
     }
 
@@ -146,11 +150,15 @@ class BackupController extends Controller
     {
         $mysqldumpPath = $this->findMysqldump();
         if (!$mysqldumpPath) {
+            Log::warning('mysqldump not found in expected paths');
             return false;
         }
 
+        Log::info('Using mysqldump for backup', ['path' => $mysqldumpPath, 'database' => $database]);
+
         $handle = @fopen($outputFile, 'wb');
         if ($handle === false) {
+            Log::error('Failed to open backup file for writing', ['file' => $outputFile]);
             return false;
         }
 
@@ -174,7 +182,16 @@ class BackupController extends Controller
                     }
                 }
             });
+
+            if (!$process->isSuccessful()) {
+                Log::error('mysqldump process failed', [
+                    'exit_code' => $process->getExitCode(),
+                    'output' => $process->getOutput(),
+                    'error_output' => $process->getErrorOutput()
+                ]);
+            }
         } catch (\Throwable $exception) {
+            Log::error('mysqldump process exception', ['exception' => $exception->getMessage()]);
             fclose($handle);
             @unlink($outputFile);
             return false;
@@ -183,17 +200,27 @@ class BackupController extends Controller
         fclose($handle);
 
         if (!$writeFailed && $process->isSuccessful() && is_file($outputFile) && filesize($outputFile) > 0) {
+            Log::info('mysqldump backup created successfully', ['size' => filesize($outputFile)]);
             return true;
         }
 
+        Log::warning('mysqldump backup validation failed', [
+            'write_failed' => $writeFailed,
+            'is_successful' => $process->isSuccessful(),
+            'file_exists' => is_file($outputFile),
+            'file_size' => is_file($outputFile) ? filesize($outputFile) : 0
+        ]);
         @unlink($outputFile);
         return false;
     }
 
     private function backupUsingPHP($outputFile)
     {
+        Log::info('Attempting PHP-based backup');
+
         $handle = @fopen($outputFile, 'wb');
         if ($handle === false) {
+            Log::error('Failed to open backup file for writing (PHP method)', ['file' => $outputFile]);
             return false;
         }
 
@@ -208,11 +235,13 @@ class BackupController extends Controller
             }
 
             $tables = $pdo->query('SHOW TABLES')->fetchAll(\PDO::FETCH_COLUMN);
+            Log::info('Backing up tables', ['count' => count($tables)]);
+
             foreach ($tables as $table) {
                 $quotedTable = '`' . str_replace('`', '``', $table) . '`';
                 $create = $pdo->query('SHOW CREATE TABLE ' . $quotedTable)->fetch(\PDO::FETCH_NUM);
                 if (!$create || !isset($create[1])) {
-                    throw new \RuntimeException('Unable to read table definition.');
+                    throw new \RuntimeException('Unable to read table definition for: ' . $table);
                 }
 
                 if (!$this->writeBackupChunk($handle, "DROP TABLE IF EXISTS {$quotedTable};\n{$create[1]};\n\n")) {
@@ -220,6 +249,7 @@ class BackupController extends Controller
                 }
 
                 $rows = $pdo->query('SELECT * FROM ' . $quotedTable);
+                $rowCount = 0;
                 while ($row = $rows->fetch(\PDO::FETCH_NUM)) {
                     $values = [];
                     foreach ($row as $value) {
@@ -238,11 +268,13 @@ class BackupController extends Controller
                     if (!$this->writeBackupChunk($handle, 'INSERT INTO ' . $quotedTable . ' VALUES (' . implode(', ', $values) . ");\n")) {
                         throw new \RuntimeException('Unable to write backup file.');
                     }
+                    $rowCount++;
                 }
 
                 if (!$this->writeBackupChunk($handle, "\n")) {
                     throw new \RuntimeException('Unable to write backup file.');
                 }
+                Log::debug('Backed up table', ['table' => $table, 'rows' => $rowCount]);
             }
 
             if (!$this->writeBackupChunk($handle, "SET FOREIGN_KEY_CHECKS = 1;\n")) {
@@ -251,9 +283,15 @@ class BackupController extends Controller
             fclose($handle);
             $handle = null;
 
-            return is_file($outputFile) && filesize($outputFile) > 0;
+            $success = is_file($outputFile) && filesize($outputFile) > 0;
+            if ($success) {
+                Log::info('PHP backup created successfully', ['size' => filesize($outputFile)]);
+            } else {
+                Log::error('PHP backup validation failed');
+            }
+            return $success;
         } catch (\Throwable $e) {
-            Log::warning('PHP database backup failed', ['exception' => $e]);
+            Log::error('PHP database backup failed', ['exception' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return false;
         } finally {
             if ($pdo instanceof \PDO) {
